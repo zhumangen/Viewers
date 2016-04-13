@@ -138,14 +138,18 @@ Package.onUse(function(api) {
     api.addFiles('lib/WLPresets.js', 'client');
     api.addFiles('lib/resizeViewportElements.js', 'client');
     api.addFiles('lib/setFocusToActiveViewport.js', 'client');
-    api.addFiles('lib/updateAllViewports.js', 'client');
-    
+    api.addFiles('lib/updateAllViewports.js', 'client');    
     api.addFiles('lib/instanceClassSpecificViewport.js', 'client');
     api.addFiles('lib/setMammogramViewportAlignment.js', 'client');
     api.addFiles('lib/isImage.js', 'client');
     api.addFiles('lib/sopClassDictionary.js', 'client');
     api.addFiles('lib/debugReactivity.js', 'client');
-
+    api.addFiles('lib/queryStudies.js', 'client');
+    api.addFiles('lib/exportStudies.js', 'client');
+    api.addFiles('lib/importStudies.js', 'client');
+    api.addFiles('lib/anonymizeStudies.js', 'client');
+    api.addFiles('lib/encodeQueryData.js', 'server');
+    
     api.export('resizeViewportElements', 'client');
     api.export('handleResize', 'client');
     api.export('enableHotkeys', 'client');
@@ -164,6 +168,7 @@ Package.onUse(function(api) {
     api.export('getNumberOfFilesInStudy', 'client');
     api.export('exportStudies', 'client');
     api.export('importStudies', 'client');
+    api.export('anonymizeStudies', 'client');
     api.export('getActiveViewportElement', 'client');
     api.export('getInstanceClassDefaultViewport', 'client');
     api.export('showConfirmDialog', 'client');

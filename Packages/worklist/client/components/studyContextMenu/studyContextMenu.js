@@ -14,7 +14,7 @@ function closeHandler(dialog) {
 openStudyContextMenu = function(e) {
     Worklist.functions['exportSelectedStudies'] = exportSelectedStudies;
     Worklist.functions['viewSeriesDetails'] = viewSeriesDetails;
-
+    Worklist.functions['anonymizeSelectedStudies'] = anonymizeSelectedStudies;
 
     Template.studyContextMenu.study = $(e.currentTarget);
 
@@ -87,6 +87,18 @@ function viewSeriesDetails() {
     Modal.show('viewSeriesDetailsModal', {
         selectedStudies: selectedStudies
     });
+
+/**
+ * Anonymizes all selected studies on the worklist
+ */
+function anonymizeSelectedStudies() {
+    var selectedStudies = WorklistSelectedStudies.find({}, {
+            sort: {
+                studyDate: 1
+            }
+        }).fetch() || [];
+
+    anonymizeStudies(selectedStudies);
 }
 
 Template.studyContextMenu.events({
