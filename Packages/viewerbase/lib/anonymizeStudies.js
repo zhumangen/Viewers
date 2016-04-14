@@ -47,6 +47,7 @@ function anonymizeQueriedStudies(studiesToAnonymize) {
                         dataSet = anonymizeDataSet(dataSet);
 
                         console.log(dataSet.string('x00100010'));
+                        console.log(dataSet.string('x00100020'));
 
                         //  Create a new file with the anonymized study
                         var anonymizedStudy = new Blob([dataSet.byteArray], {type: "application/dicom"});
@@ -96,19 +97,37 @@ function updateAnonymizationStatus(anonymizationStatus, isSuccess) {
 }
 
 function anonymizeDataSet(dataSet) {
-    dataSet = anonymizeDataSetElement(dataSet, dataSet.elements.x00100010, "TEST^TES"); //  Patients Name (0010,0010)
+    dataSet = anonymizeDataSetElement(dataSet, dataSet.elements.x00100010, "Patient^Anonymous"); //  Patients Name (0010,0010)
     //TODO: Anonymize other dicom tags
 
     return dataSet;
 }
 
-function anonymizeDataSetElement(dataSet, element, value) {
-    //TODO: New value length can currently not be greater than old value length. Resize dataset when it is greater.
+function anonymizeDataSetElement(dataSet, targetElement, newValue) {
+    //  Resize byte array of data set
+    var gapInLength = newValue.length - targetElement.length;
+    var newByteArray = new Uint8Array(dataSet.byteArray.length + gapInLength);
 
-    for(var i=0; i < element.length; i++) {
-        var char = (value.length > i) ? value.charCodeAt(i) : 32;
-        dataSet.byteArray[element.dataOffset + i] = char;
+    newByteArray.set(dataSet.byteArray.slice(0, targetElement.dataOffset), 0);
+    newByteArray.set(dataSet.byteArray.slice(targetElement.dataOffset + targetElement.length, dataSet.byteArray.length), targetElement.dataOffset + newValue.length);
+
+    for(var i = 0; i < newValue.length; i++) {
+        newByteArray[targetElement.dataOffset + i] = newValue.charCodeAt(i);
     }
+
+    dataSet.byteArray = newByteArray;
+
+    //  Update elements of data set
+    var elementsAfterTargetElement = Object.keys(dataSet.elements).filter(function(key) {
+        return dataSet.elements[key].dataOffset > targetElement.dataOffset;
+    });
+
+    for(var i = 0; i < elementsAfterTargetElement.length; i++) {
+        var elementKeyAfterTargetElement = elementsAfterTargetElement[i];
+        dataSet.elements[elementKeyAfterTargetElement].dataOffset += gapInLength;
+    }
+
+    dataSet.elements[targetElement.tag].length = newValue.length;
 
     return dataSet;
 }
