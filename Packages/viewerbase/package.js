@@ -34,6 +34,9 @@ Package.onUse(function(api) {
     });
     api.addFiles('client/compatibility/dialogPolyfill.styl', 'client');
 
+    // ---------- Namespace ----------
+    api.addFiles('client/namespace.js', 'client');
+
     // ---------- Collections ----------
     api.addFiles('client/collections.js', 'client');
 
@@ -126,6 +129,12 @@ Package.onUse(function(api) {
     api.addFiles('client/components/viewer/displaySetNavigation/displaySetNavigation.html', 'client');
     api.addFiles('client/components/viewer/displaySetNavigation/displaySetNavigation.js', 'client');
 
+    // Unsaved Changes
+    api.addFiles('client/components/viewer/unsavedChangesDialog/unsavedChangesDialog.html', 'client');
+    api.addFiles('client/components/viewer/unsavedChangesDialog/unsavedChangesDialog.js', 'client');
+    api.addFiles('client/components/viewer/unsavedChangesDialog/unsavedChangesDialog.styl', 'client');
+    api.addFiles('client/components/viewer/unsavedChanges/unsavedChanges.js', 'client');
+
     // Library functions
     api.addFiles('lib/layoutManager.js', 'client');
     api.addFiles('lib/createStacks.js', 'client');
@@ -189,6 +198,9 @@ Package.onUse(function(api) {
 
     // Collections
     api.export('ViewerStudies', 'client');
+
+    // Namespace
+    api.export('ViewerBase', 'client');
 
     // UI Helpers
     api.addFiles([

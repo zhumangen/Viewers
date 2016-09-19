@@ -1,0 +1,20 @@
+<template name="unsavedChangesDialog">
+    <div id="unsavedChangesDialog" tabindex="0">
+
+        {{#if title}}
+            <h5>{{title}}</h5>
+        {{else}}
+            <h5>You have unsaved changes!</h5>
+        {{/if}}
+
+        {{#if message}}
+            <p>{{message}}</p>
+        {{else}}
+            <p>Your changes will be lost if you don't save them... Are you sure you want to proceed?</p>
+        {{/if}}
+
+        <button class="btn btn-primary action-no" tabindex="0">No</button>
+        <button class="btn btn-link action-yes" tabindex="0">Yes</button>
+
+    </div>
+</template>
