@@ -12,11 +12,17 @@ Template.ohifViewer.events({
     'click .js-toggle-studyList'() {
         const contentId = Session.get('activeContentId');
 
-        if (contentId !== worklistContentId) {
-            switchToTab(worklistContentId);
-        } else {
-            switchToTab(lastContentId);
-        }
+        ViewerBase.UnsavedChanges.prompt('viewer.*', null, function (confirmed) {
+            if (confirmed) {
+                ViewerBase.UnsavedChanges.clear('viewer.*');
+                if (contentId !== worklistContentId) {
+                    switchToTab(worklistContentId);
+                } else {
+                    switchToTab(lastContentId);
+                }
+            }
+        });
+
     }
 });
 

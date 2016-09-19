@@ -313,6 +313,10 @@ Template.ruleEntryDialog.events({
 
         // Close the dialog
         closeHandler(dialog);
+
+        // Raise flag for unsaved changes
+        ViewerBase.UnsavedChanges.set('viewer.hangingprotocols.rules');
+
     },
     /**
      * Allow the user to click the Cancel button to close the dialog

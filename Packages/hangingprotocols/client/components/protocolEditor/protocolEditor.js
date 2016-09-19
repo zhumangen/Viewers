@@ -313,6 +313,10 @@ Template.protocolEditor.events({
         HangingProtocols.update(id, {
             $set: selectedProtocol
         });
+
+        // Clear flag for unsaved changes
+        ViewerBase.UnsavedChanges.clear('viewer.hangingprotocols.*');
+
     },
     /**
      * Save the current Protocol as a new document in the HangingProtocols Collection

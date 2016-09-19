@@ -175,6 +175,10 @@ Template.stageSortable.events({
 
         // Switch to the last stage in the display set sequence
         ProtocolEngine.setCurrentProtocolStage(stageIndex);
+
+        // Raise flag for unsaved changes
+        ViewerBase.UnsavedChanges.set('viewer.hangingprotocols.stages');
+
     },
     /**
      * Deletes a stage from the currently loaded Protocol by removing it from
