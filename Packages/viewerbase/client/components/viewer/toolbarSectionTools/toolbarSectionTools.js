@@ -4,5 +4,11 @@ Template.toolbarSectionTools.events({
         const isActive = $target.hasClass('active');
         $target.toggleClass('active', !isActive);
         $target.closest('.toolbarSection').toggleClass('expanded', !isActive);
+    },
+    'mouseenter .toolbarSectionButton'(event, instance) {
+        $(event.currentTarget).find('.buttonLabel').removeClass('notVisible');
+    },
+    'mouseleave .toolbarSectionButton'(event, instance) {
+        $(event.currentTarget).find('.buttonLabel').addClass('notVisible');
     }
 });
