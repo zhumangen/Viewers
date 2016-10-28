@@ -3923,7 +3923,74 @@ var JpegImage = (function jpegImage() {
     // Basic Offset Table is not empty
     return dicomParser.readEncapsulatedImageFrame(dataSet, dataSet.elements.x7fe00010, frame);
   }
+
+  /**
+   * This function extracts miltiframe information from a dicomParser.DataSet object.
+   *
+   * @param image {Object} An instance of dicomParser.DataSet object where multiframe information can be found.
+   * @return {Object} An object containing multiframe image metadata (frameIncrementPointer, frameTime, frameTimeVector, etc).
+   */
+  function getMultiframeMetadata(dataSet) {
+
+    var numberOfFrames,
+        frameIncrementPointer,
+        frameTime,
+        frameTimeVector,
+        imageInfo = {
+          isMultiframeImage: false,
+          frameIncrementPointer: null,
+          numberOfFrames: 0,
+          frameTime: 0,
+          frameTimeVector: null,
+          averageFrameRate: 0 // backwards compatibility only... it might be useless in the future
+        };
+
+    if (dataSet instanceof dicomParser.DataSet) {
+
+      // (0028,0008) = Number of Frames
+      numberOfFrames = dataSet.intString('x00280008', -1);
+      if (numberOfFrames > 0) {
+
+        // set multi-frame image indicator
+        imageInfo.isMultiframeImage = true;
+        imageInfo.numberOfFrames = numberOfFrames;
+
+        // (0028,0009) = Frame Increment Pointer
+        frameIncrementPointer = dataSet.attributeTag('x00280009') || '';
+
+        if (frameIncrementPointer === 'x00181065') {
+          // Frame Increment Pointer points to Frame Time Vector (0018,1065) field
+          frameTimeVector = dataSet.floatArray('x00181065');
+          if (frameTimeVector instanceof Array) {
+            imageInfo.frameIncrementPointer = 'frameTimeVector';
+            imageInfo.frameTimeVector = frameTimeVector;
+            frameTime = (frameTimeVector.reduce(function(a, b) {
+              return a + b;
+            }) / frameTimeVector.length);
+            imageInfo.averageFrameRate = 1000 / frameTime;
+          }
+        } else if (frameIncrementPointer === 'x00181063' || frameIncrementPointer === '') {
+          // Frame Increment Pointer points to Frame Time (0018,1063) field or is not defined (for addtional flexibility).
+          // Yet another value is possible for this field (5200,9230 for Multi-frame Functional Groups)
+          // but that case is currently not supported.
+          frameTime = dataSet.floatString('x00181063', -1);
+          if (frameTime > 0) {
+            imageInfo.frameIncrementPointer = 'frameTime';
+            imageInfo.frameTime = frameTime;
+            imageInfo.averageFrameRate = 1000 / frameTime;
+          }
+        }
+      }
+
+    }
+
+    return imageInfo;
+
+  }
+
   cornerstoneWADOImageLoader.getEncodedImageFrame = getEncodedImageFrame;
+  cornerstoneWADOImageLoader.getMultiframeMetadata = getMultiframeMetadata;
+
 }($, cornerstone, cornerstoneWADOImageLoader));
 (function (cornerstoneWADOImageLoader) {
 
@@ -4497,7 +4564,8 @@ var JpegImage = (function jpegImage() {
                 data: dataSet,
                 invert: false,
                 sizeInBytes: sizeInBytes,
-                sharedCacheKey: sharedCacheKey
+                sharedCacheKey: sharedCacheKey,
+                multiframeMetadata: cornerstoneWADOImageLoader.getMultiframeMetadata(dataSet)
             };
 
           if(image.windowCenter === undefined || isNaN(image.windowCenter) ||
@@ -4640,7 +4708,8 @@ var JpegImage = (function jpegImage() {
             data: dataSet,
             invert: invert,
             sizeInBytes: sizeInBytes,
-            sharedCacheKey: sharedCacheKey
+            sharedCacheKey: sharedCacheKey,
+            multiframeMetadata: cornerstoneWADOImageLoader.getMultiframeMetadata(dataSet)
         };
 
         // modality LUT

@@ -1409,6 +1409,55 @@ var dicomParser = (function (dicomParser)
         return undefined;
     };
 
+    /**
+     * Parses the string representation of a multi-valued element into an array of strings. If the parser
+     * parameter is passed and is a function, it will be applied to each element of the resulting array.
+     * @param {String} A DICOM tag with in the format xGGGGEEEE.
+     * @param {Function} An optional parser function that can be applied to each element of the array.
+     * @returns {Array} An array of floating point numbers or undefined if not present or data not long enough.
+     */
+    dicomParser.DataSet.prototype.multiValue = function(tag, parser) {
+        var string, element = this.elements[tag];
+        if (element && element.length > 0) {
+            string = dicomParser.readFixedString(this.byteArray, element.dataOffset, element.length);
+            if (typeof string === 'string' && string.length > 0) {
+                if (typeof parser !== 'function') {
+                    parser = null;
+                }
+                return string.split('\\').map(function(value) {
+                    value = value.trim();
+                    return parser ? parser(value) : value;
+                });
+            }
+        }
+        return undefined;
+    };
+
+    /**
+     * Parses a string to an array of floats for a multi-valued element.
+     * @param {String} A DICOM tag with in the format xGGGGEEEE.
+     * @returns {Array} An array of floating point numbers or undefined if not present or data not long enough.
+     */
+    dicomParser.DataSet.prototype.floatArray = function(tag, parser) {
+        return this.multiValue(tag, parseFloat);
+    };
+
+    /**
+     * Parses an element tag according to the 'AT' VR definition.
+     * @param {String} A DICOM tag with in the format xGGGGEEEE.
+     * @returns {String} A string representation of a data element tag or undefined if not present or data not long enough.
+     */
+    dicomParser.DataSet.prototype.attributeTag = function(tag) {
+        var parser, bytes, offset, element = this.elements[tag];
+        if (element && element.length === 4) {
+            parser = getByteArrayParser(element, this.byteArrayParser).readUint16;
+            bytes = this.byteArray;
+            offset = element.dataOffset;
+            return 'x' + ('00000000' + (parser(bytes, offset) * 65536 + parser(bytes, offset + 2)).toString(16)).substr(-8);
+        }
+        return undefined;
+    };
+
     //dicomParser.DataSet = DataSet;
 
     return dicomParser;
