@@ -1,3 +1,5 @@
+import { parseFloatArray } from '../../lib/parseFloatArray';
+
 /**
  * Parses the SourceImageSequence, if it exists, in order
  * to return a ReferenceSOPInstanceUID. The ReferenceSOPInstanceUID
@@ -14,6 +16,21 @@ function getSourceImageInstanceUid(instance) {
     if (SourceImageSequence && SourceImageSequence.length) {
         return SourceImageSequence[0][0x00081155];
     }
+}
+
+/**
+ * Returns the value of the element (e.g. '00280009')
+ *
+ * @param element - The group/element of the element (e.g. '00280009')
+ * @param defaultValue - The default value to return if the element does not exist
+ * @returns {*}
+ */
+function getValue(element, defaultValue) {
+    if (!element || !element.value) {
+        return defaultValue;
+    }
+
+    return element.value;
 }
 
 /**
@@ -100,8 +117,11 @@ function resultDataToStudyMetadata(studyInstanceUid, resultData) {
             sourceImageInstanceUid: getSourceImageInstanceUid(instance),
             laterality: instance[0x00200062],
             viewPosition: instance[0x00185101],
+            acquisitionDatetime: instance[0x0008002A],
             numFrames: parseFloat(instance[0x00280008]),
+            frameIncrementPointer: getValue(instance[0x00280009]),
             frameTime: parseFloat(instance[0x00181063]),
+            frameTimeVector: parseFloatArray(instance[0x00181065]),
             lossyImageCompression: instance[0x00282110],
             derivationDescription: instance[0x00282111],
             lossyImageCompressionRatio: instance[0x00282112],
@@ -110,8 +130,8 @@ function resultDataToStudyMetadata(studyInstanceUid, resultData) {
         };
 
         // Retrieve the actual data over WADO-URI
-        var server = Meteor.settings.servers.dicomWeb[0];
-        instanceSummary.wadouri = WADOProxy.convertURL(server.wadoUriRoot + '?requestType=WADO&studyUID=' + studyInstanceUid + '&seriesUID=' + seriesInstanceUid + '&objectUID=' + sopInstanceUid + "&contentType=application%2Fdicom", server.requestOptions);
+        var server = getCurrentServer();
+        instanceSummary.wadouri = WADOProxy.convertURL(server.wadoUriRoot + '?requestType=WADO&studyUID=' + studyInstanceUid + '&seriesUID=' + seriesInstanceUid + '&objectUID=' + sopInstanceUid + '&contentType=application%2Fdicom', server.requestOptions);
 
         series.instances.push(instanceSummary);
     });
@@ -127,8 +147,8 @@ function resultDataToStudyMetadata(studyInstanceUid, resultData) {
  * @returns {{seriesList: Array, patientName: *, patientId: *, accessionNumber: *, studyDate: *, modalities: *, studyDescription: *, imageCount: *, studyInstanceUid: *}}
  */
 Services.DIMSE.RetrieveMetadata = function(studyInstanceUid) {
-    // TODO: Find active server
-    const activeServer = Meteor.settings.servers.dimse[0].peers[0];
+    // TODO: Check which peer it should point to
+    const activeServer = getCurrentServer().peers[0];
     const supportsInstanceRetrievalByStudyUid = activeServer.supportsInstanceRetrievalByStudyUid;
     let results;
 

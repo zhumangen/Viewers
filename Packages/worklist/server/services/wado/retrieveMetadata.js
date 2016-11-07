@@ -1,3 +1,5 @@
+import { parseFloatArray } from '../../lib/parseFloatArray';
+
 /**
  * Creates a URL for a WADO search
  *
@@ -106,8 +108,11 @@ function resultDataToStudyMetadata(server, studyInstanceUid, resultData) {
             sourceImageInstanceUid: getSourceImageInstanceUid(instance),
             laterality: DICOMWeb.getString(instance['00200062']),
             viewPosition: DICOMWeb.getString(instance['00185101']),
+            acquisitionDatetime: DICOMWeb.getString(instance['0008002A']),
             numFrames: DICOMWeb.getNumber(instance['00280008']),
+            frameIncrementPointer: DICOMWeb.getAttribute(instance['00280009']),
             frameTime: DICOMWeb.getNumber(instance['00181063']),
+            frameTimeVector: parseFloatArray(DICOMWeb.getString(instance['00181065'])),
             sliceThickness: DICOMWeb.getNumber(instance['00180050']),
             lossyImageCompression: DICOMWeb.getString(instance['00282110']),
             derivationDescription: DICOMWeb.getString(instance['00282111']),

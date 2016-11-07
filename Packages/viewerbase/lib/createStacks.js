@@ -49,6 +49,9 @@ createStacks = function(study) {
                 // Include the instance number
                 displaySet.instanceNumber = instance.instanceNumber;
 
+                // Include the acquisition datetime
+                displaySet.acquisitionDatetime = instance.acquisitionDatetime;
+
                 displaySets.push(displaySet);
             } else if (isSingleImageModality(instance.modality)) {
                 displaySet = makeDisplaySet(series, [ instance ]);
@@ -58,6 +61,9 @@ createStacks = function(study) {
 
                 // Include the instance number
                 displaySet.instanceNumber = instance.instanceNumber;
+
+                // Include the acquisition datetime
+                displaySet.acquisitionDatetime = instance.acquisitionDatetime;
 
                 displaySets.push(displaySet);
             } else {
@@ -85,7 +91,8 @@ function makeDisplaySet(series, instances) {
         numImageFrames: instances.length,
         frameRate: instance.frameTime,
         images: instances,
-        modality: series.modality
+        modality: series.modality,
+        isMultiFrame: isMultiFrame(instance)
     };
 
     // Sort the images in this series

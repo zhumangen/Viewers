@@ -146,6 +146,9 @@ function loadDisplaySetIntoViewport(data, templateData) {
         enabledElement.image = image;
         enabledElement.viewport = cornerstone.getDefaultViewport(enabledElement.canvas, image);
 
+        // Update the metaData for missing fields
+        updateMetaData(image);
+
         // Check if there are default viewport settings for this sopClassUid
         if (!displaySet.images || !displaySet.images.length) {
             return;
@@ -210,15 +213,15 @@ function loadDisplaySetIntoViewport(data, templateData) {
         cornerstoneTools.addToolState(element, 'stack', stack);
 
         // Set the default CINE settings
-        var frameRate = 1000 / displaySet.images[0].frameTime;
+        var multiframeMetadata = instance.multiframeMetadata;
         var cineToolData = {
             loop: OHIF.viewer.cine.loop,
-            framesPerSecond: frameRate || OHIF.viewer.cine.framesPerSecond
+            framesPerSecond: multiframeMetadata.averageFrameRate || OHIF.viewer.cine.framesPerSecond
         };
         cornerstoneTools.addToolState(element, 'playClip', cineToolData);
 
         // Autoplay datasets that have framerates set
-        if (frameRate) {
+        if (multiframeMetadata.isMultiframeImage && multiframeMetadata.averageFrameRate > 0) {
             cornerstoneTools.playClip(element);
         }
 
@@ -265,6 +268,9 @@ function loadDisplaySetIntoViewport(data, templateData) {
         // (e.g. during scrolling)
         function onNewImage(e, eventData) {
             log.info('imageViewerViewport onNewImage');
+
+            // Update the metaData for missing fields
+            updateMetaData(eventData.enabledElement.image);
 
             // Update the templateData with the new imageId
             // This allows the template helpers to update reactively
@@ -380,7 +386,6 @@ function setDisplaySet(data, displaySetInstanceUid, templateData) {
     var study = data.study;
     if (!study || !study.displaySets) {
         throw 'Study does not exist or has no display sets';
-        return;
     }
 
     study.displaySets.every(displaySet => {
@@ -395,7 +400,6 @@ function setDisplaySet(data, displaySetInstanceUid, templateData) {
     // If we didn't find anything, stop here
     if (!data.displaySet) {
         throw 'Display set not found in specified study!';
-        return;
     }
 
     // Otherwise, load pass the data object into loadSeriesIntoViewport
@@ -497,6 +501,9 @@ Template.imageViewerViewport.onDestroyed(function() {
 
     // When a viewport element is being destroyed
     var element = this.find('.imageViewerViewport');
+    if (!element || !$(element).find('canvas').length) {
+        return;
+    }
 
     // Try to stop any currently playing clips
     // Otherwise the interval will continuously throw errors

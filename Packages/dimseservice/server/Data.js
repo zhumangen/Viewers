@@ -210,11 +210,14 @@ util.inherits(AttributeTag, ValueRepresentation);
 
 AttributeTag.prototype.readBytes = function(stream, length) {
     var group = stream.read(C.TYPE_UINT16),
-   element = stream.read(C.TYPE_UINT16);
+    element = stream.read(C.TYPE_UINT16);
     return tagFromNumbers(group, element);
 };
 
 AttributeTag.prototype.getFields = function(value) {
+    if (!value)
+        return AttributeTag.super_.prototype.getFields.call(this, [new StringField("")]);
+
     return AttributeTag.super_.prototype.getFields.call(this, [new UInt16Field(value.group()), new UInt16Field(value.element())]);
 };
 
@@ -283,13 +286,16 @@ DateTime = function() {
 util.inherits(DateTime, ValueRepresentation);
 
 DateTime.prototype.getFields = function(value) {
-    var year = date.getUTCFullYear(),
-   month = paddingLeft('00', date.getUTCMonth()), 
-        day = paddingLeft('00', date.getUTCDate()),
-   hour = paddingLeft('00', date.getUTCHours()),
-        minute = paddingLeft('00', date.getUTCMinutes()),
-   second = paddingLeft('00', date.getUTCSeconds()),
-        millisecond = paddingLeft('000', date.getUTCMilliseconds());
+    if (!value)
+        return DateTime.super_.prototype.getFields.call(this, [new StringField("")]);
+
+    var year = value.getUTCFullYear(),
+        month = paddingLeft('00', value.getUTCMonth()),
+        day = paddingLeft('00', value.getUTCDate()),
+        hour = paddingLeft('00', value.getUTCHours()),
+        minute = paddingLeft('00', value.getUTCMinutes()),
+        second = paddingLeft('00', value.getUTCSeconds()),
+        millisecond = paddingLeft('000', value.getUTCMilliseconds());
 
     return DateTime.super_.prototype.getFields.call(this, [new StringField(year + month + day + hour + minute + second + '.' + millisecond + '+0000')]);
 };
