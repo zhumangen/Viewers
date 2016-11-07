@@ -5,7 +5,7 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom('1.3.5.1');
+    api.versionsFrom('1.4');
 
     api.use('jquery');
     api.use('dicomweb');
@@ -22,12 +22,6 @@ Package.onUse(function(api) {
     api.addFiles('client/cornerstoneWADOImageLoader.js', 'client', {
         bare: true
     });
-    api.addFiles('client/libopenjpeg.js', 'client', {
-        bare: true
-    });
-    api.addFiles('client/libCharLS.js', 'client', {
-        bare: true
-    });
     api.addFiles('client/dicomParser.js', 'client', {
         bare: true
     });
@@ -37,6 +31,9 @@ Package.onUse(function(api) {
     api.addFiles('client/jquery.hammer.js', 'client', {
         bare: true
     });
+
+    api.addAssets('public/js/cornerstoneWADOImageLoaderCodecs.js', 'client');
+    api.addAssets('public/js/cornerstoneWADOImageLoaderWebWorker.js', 'client');
 
     api.export('cornerstone', 'client');
     api.export('cornerstoneMath', 'client');
