@@ -224,6 +224,7 @@ function loadDisplaySetIntoViewport(data, templateData) {
             }
             if (multiframeMetadata.frameIncrementPointer === 'frameTimeVector') {
                 cineToolData.frameTimeVector = multiframeMetadata.frameTimeVector;
+                cineToolData.speed = 1;
                 cineToolData.ignoreFrameTimeVector = false;
             }
         }

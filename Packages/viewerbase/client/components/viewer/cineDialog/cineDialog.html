@@ -36,10 +36,21 @@
         </div>
         <div class="cine-options">
             <div class="fps-section">
-                {{#inputRange key='framesPerSecond' class='p-a-0' labelClass='form-group m-a-0' labelAsDiv=true}}
-                {{/inputRange}}
+                {{#if isVariableFrameRate}}
+                    {{#inputRange key='speed' class='p-a-0' labelClass='form-group m-a-0' labelAsDiv=true}}
+                    {{/inputRange}}
+                {{else}}
+                    {{#inputRange key='framesPerSecond' class='p-a-0' labelClass='form-group m-a-0' labelAsDiv=true}}
+                    {{/inputRange}}
+                {{/if}}
             </div>
-            <span id="fps">{{framerate}} fps</span>
+            <span id="fps">
+                {{#if isVariableFrameRate}}
+                    <span class="var-fps-text" title="Variable frame rate instances or loops only allow relative speed updates.">{{framerate}} &#215; VAR</span>
+                {{else}}
+                    {{framerate}} fps
+                {{/if}}
+            </span>
         </div>
     {{/form}}
 </template>

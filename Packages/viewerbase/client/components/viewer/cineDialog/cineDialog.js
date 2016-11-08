@@ -26,12 +26,19 @@ Template.cineDialog.onCreated(() => {
             min: 1,
             max: 90,
             optional: true
+        },
+        speed: {
+            type: Number,
+            label: '',
+            defaultValue: 8,
+            min: 1,
+            max: 32,
+            optional: true
         }
     });
 
     // Update the current viewport frame rate
     instance.updateFramerate = rate => {
-        OHIF.viewer.cine.framesPerSecond = rate;
 
         // Update playClip toolData for this imageId
         const element = getActiveViewportElement();
@@ -39,8 +46,20 @@ Template.cineDialog.onCreated(() => {
             return;
         }
 
-        const playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
-        playClipToolData.data[0].framesPerSecond = OHIF.viewer.cine.framesPerSecond;
+        let playClipData = cornerstoneTools.getToolState(element, 'playClip');
+        if (!playClipData || !playClipData.data || !playClipData.data.length) {
+            return;
+        }
+
+        playClipData = playClipData.data[0];
+
+        if (playClipData.usingFrameTimeVector === true) {
+            OHIF.viewer.cine.speed = rate / 8;
+            playClipData.speed = OHIF.viewer.cine.speed;
+        } else {
+            OHIF.viewer.cine.framesPerSecond = rate;
+            playClipData.framesPerSecond = OHIF.viewer.cine.framesPerSecond;
+        }
 
         // If the movie is playing, restart playing to update the framerate
         if (isPlaying()) {
@@ -76,8 +95,10 @@ Template.cineDialog.onCreated(() => {
     // Run this computation every time the active viewport is changed
     instance.autorun(() => {
         Session.get('activeViewport');
+        Session.get('NewSeriesLoaded');
 
         Tracker.afterFlush(() => {
+
             // Get the active viewportElement
             const element = getActiveViewportElement();
             if (!element) {
@@ -85,17 +106,22 @@ Template.cineDialog.onCreated(() => {
             }
 
             // Get the cornerstone playClip tool data
-            const toolData = cornerstoneTools.getToolState(element, 'playClip').data[0];
+            const playClipData = cornerstoneTools.getToolState(element, 'playClip');
+            if (!playClipData || !playClipData.data || !playClipData.data.length) {
+                return;
+            }
 
             // Get the cine object
             const cine = OHIF.viewer.cine;
 
             // replace the cine values with the tool data
-            _.extend(cine, toolData);
+            _.extend(cine, playClipData.data[0]);
 
             // Set the defaults
             cine.framesPerSecond = cine.framesPerSecond || 24;
             cine.loop = _.isUndefined(cine.loop) ? true : cine.loop;
+            cine.speed = _.isUndefined(cine.speed) ? 1 : cine.speed;
+            cine.usingFrameTimeVector = _.isUndefined(cine.usingFrameTimeVector) ? false : cine.usingFrameTimeVector;
 
             // Set the updated data on the form inputs
             instance.$('form:first').data('component').value(cine);
@@ -228,7 +254,7 @@ Template.cineDialog.events({
         OHIF.viewer.cine.loop = playClipToolData.data[0].loop;
     },
 
-    'input [data-key=framesPerSecond] input'(event, instance) {
+    'input [data-key=framesPerSecond] input, input [data-key=speed] input'(event, instance) {
         // Update the FPS text onscreen
         const rate = parseFloat($(event.currentTarget).val());
         instance.updateFramerate(rate);
@@ -240,9 +266,20 @@ Template.cineDialog.helpers({
         return isPlaying();
     },
 
+    isVariableFrameRate() {
+        Session.get('UpdateCINE');
+        return OHIF.viewer.cine.usingFrameTimeVector === true;
+    },
+
     framerate() {
         Session.get('UpdateCINE');
-        return OHIF.viewer.cine.framesPerSecond.toFixed(1);
+        let value;
+        if (OHIF.viewer.cine.usingFrameTimeVector === true) {
+            value = OHIF.viewer.cine.speed;
+        } else {
+            value = OHIF.viewer.cine.framesPerSecond;
+        }
+        return value.toFixed(1);
     },
 
     displaySetDisabled(isNext) {
