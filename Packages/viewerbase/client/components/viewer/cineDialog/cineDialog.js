@@ -42,9 +42,8 @@ Template.cineDialog.onCreated(() => {
         const playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
         playClipToolData.data[0].framesPerSecond = OHIF.viewer.cine.framesPerSecond;
 
-        // If the movie is playing, stop/start to update the framerate
+        // If the movie is playing, restart playing to update the framerate
         if (isPlaying()) {
-            cornerstoneTools.stopClip(element);
             cornerstoneTools.playClip(element);
         }
 

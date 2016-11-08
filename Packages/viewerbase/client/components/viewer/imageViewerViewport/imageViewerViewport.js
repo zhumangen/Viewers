@@ -216,12 +216,21 @@ function loadDisplaySetIntoViewport(data, templateData) {
         var multiframeMetadata = instance.multiframeMetadata;
         var cineToolData = {
             loop: OHIF.viewer.cine.loop,
-            framesPerSecond: multiframeMetadata ? multiframeMetadata.averageFrameRate : OHIF.viewer.cine.framesPerSecond
+            framesPerSecond: OHIF.viewer.cine.framesPerSecond
         };
+        if (multiframeMetadata) {
+            if (multiframeMetadata.averageFrameRate > 0) {
+                cineToolData.framesPerSecond = multiframeMetadata.averageFrameRate;
+            }
+            if (multiframeMetadata.frameIncrementPointer === 'frameTimeVector') {
+                cineToolData.frameTimeVector = multiframeMetadata.frameTimeVector;
+                cineToolData.ignoreFrameTimeVector = false;
+            }
+        }
         cornerstoneTools.addToolState(element, 'playClip', cineToolData);
 
         // Autoplay datasets that have framerates set
-        if (multiframeMetadata && multiframeMetadata.isMultiframeImage && multiframeMetadata.averageFrameRate > 0) {
+        if (multiframeMetadata && multiframeMetadata.isMultiframeImage) {
             cornerstoneTools.playClip(element);
         }
 
