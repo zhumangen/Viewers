@@ -1,4 +1,4 @@
-import { moment } from 'meteor/mrt:moment';
+
 
 /**
  * Parses resulting data from a QIDO call into a set of Study MetaData

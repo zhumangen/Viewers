@@ -182,7 +182,7 @@ util.inherits(AgeString, ValueRepresentation);
 
 AgeString.prototype.getFields = function(value) {
     var str = '';
-    if (value) {
+    if (value && typeof value == 'object') {
         if (value.days) {
             str = paddingLeft('000' + value.days) + 'D';
         } else if (value.weeks) {
@@ -194,6 +194,8 @@ AgeString.prototype.getFields = function(value) {
         } else {
             throw 'Invalid age string';
         }    
+    } else if (value) {
+        str = value;
     }
 
     return AgeString.super_.prototype.getFields.call(this, [new StringField(str)]);
