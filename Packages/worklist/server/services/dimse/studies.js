@@ -26,7 +26,8 @@ function resultDataToStudies(resultData) {
             imageCount: study[0x00201208],
             studyId: study[0x00200010],
             studyDescription: study[0x00081030],
-            modalities: study[0x00080061]
+            modalities: study[0x00080061],
+            patientAge: study[0x00101010]
         });
     });
     return studies;
@@ -51,7 +52,8 @@ Services.DIMSE.Studies = function(filter) {
         0x00081030: filter.studyDescription,
         0x00100040: '',
         0x00201208: '',
-        0x00080061: filter.modalitiesInStudy
+        0x00080061: filter.modalitiesInStudy,
+        0x00100010: filter.patientAge
     };
 
     var results = DIMSE.retrieveStudies(parameters);

@@ -136,7 +136,8 @@ function search() {
         studyDescription: getFilter($('input#studyDescription').val()),
         studyDateFrom: studyDateFrom,
         studyDateTo: studyDateTo,
-        modalitiesInStudy: $('input#modality').val() ? $('input#modality').val() : ""
+        modalitiesInStudy: $('input#modality').val() ? $('input#modality').val() : "",
+        patientAge: getFilter($('input#patientAge').val())
     };
 
     // Make sure that modality has a reasonable value, since it is occasionally

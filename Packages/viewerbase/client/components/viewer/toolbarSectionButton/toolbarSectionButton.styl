@@ -2,14 +2,17 @@
 
 .toolbarSectionButton
   display: inline-block
-  theme('color', '$defaultColor')
-  theme('fill', '$defaultColor')
-  theme('stroke', '$defaultColor')
-  min-width: 60px
+  color: #888888
+  fill: #888888
+  stroke: #888888
+  //theme('color', '$defaultColor')
+  //theme('fill', '$defaultColor')
+  //theme('stroke', '$defaultColor')
+  padding: calcSize(22px)
   cursor: pointer
   text-align: center
   vertical-align: middle
-  height: 45px
+  min-width: calcSize(84px)
 
   &.disabled
     opacity: 0.5
@@ -39,18 +42,34 @@
     
     i
       theme('color', '$textSecondaryColor')
-      font-size: 18px
+      font-size: calcSize(40px)
+      line-height: 30px
+
+  .textContainer
+    margin: 0 auto
+    text-align: center
+
+    span
+      theme('color', '$textSecondaryColor')
+      font-family: $helveticaBold
+      font-size: calcSize(40px)
       line-height: 30px
 
   svg
     background-color: transparent
-    margin: 2px
-    width: 21px
-    height: 21px
+    //margin: 2px
+    width: calcSize(40px)
+    height: calcSize(40px)
 
   &:hover
+    background-color: #444444
+
     .buttonLabel
       theme('color', '$hoverColor')
+
+    .textContainer
+      span
+        theme('color', '$hoverColor')
 
     svg
       theme('fill', '$hoverColor')
@@ -60,6 +79,8 @@
       theme('color', '$hoverColor')
 
   &:active, &.active
+    background-color: #444444
+
     .buttonLabel
       theme('color', '$activeColor')
 
@@ -69,3 +90,4 @@
       
     i
       theme('color', '$activeColor')
+

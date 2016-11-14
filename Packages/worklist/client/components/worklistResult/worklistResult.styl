@@ -5,11 +5,20 @@ $tableTextPrimaryColor = white
 $tableTextSecondaryColor = #91b9cd
 
 $inputBackgroundColor = #2c363f
-$inputPlaceholderColor = lightgray
+$inputPlaceholderColor = #888888
 
 $studyListToolbarHeight = 75px
 $tablePadding = 0
 $bodyCellHeight = 40px
+
+$headerFont = 'Helvetica Bold', Arial, 'Lucida Grande', sans-serif
+$headerFontLight = "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+$headerFontSize = calcSize(47px)
+$headerFontColor = #ccc
+$placeholderPadding = calcSize(22px)
+$rowPadding = calcSize(22px)
+$bodySize = calcSize(44px)
+$rowTopPadding = calcSize(30px)
 
 .studyListToolbar
   theme('background', '$uiGrayDarker')
@@ -40,7 +49,8 @@ $bodyCellHeight = 40px
     line-height: $studyListToolbarHeight
 
 .theadBackground
-  theme('background-color', '$uiGrayDarker')
+  //#theme('background-color', '$uiGrayDarker')
+  background-color: #000000
   width: 100%
   height: 122px
   position: absolute
@@ -48,7 +58,8 @@ $bodyCellHeight = 40px
 
 #studyListContainer
   width: 100%
-  padding: 0 $tablePadding
+  padding-left: calcSize(60px)
+  padding-right: calcSize(60px)
   position: absolute
   z-index: 2
 
@@ -64,7 +75,8 @@ $bodyCellHeight = 40px
 
   table#tblStudyList
     thead
-      theme('background-color', '$uiGrayDarker')
+      //theme('background-color', '$uiGrayDarker')
+      background-color: #000000
       white-space: nowrap
 
       tr
@@ -72,6 +84,8 @@ $bodyCellHeight = 40px
           padding: 0
           border-bottom: solid 1px #6fbde2
           width: 100%
+          font-family: $headerFont
+          font-weight: 600
 
           &:first-child
             padding-left: $tablePadding
@@ -90,7 +104,8 @@ $bodyCellHeight = 40px
             padding: 20px
 
             span
-              font-size: 15px
+              font-size: $headerFontSize
+              color: $headerFontColor
               float: left
 
             i
@@ -103,15 +118,16 @@ $bodyCellHeight = 40px
               theme('color', '$activeColor')
 
           input.worklist-search
-            height: 34px
+            height: auto
             margin: 0 5px 20px 5px
-            padding: 20px
+            padding: $placeholderPadding
             cursor: pointer
             border: none
             background-color: $inputBackgroundColor
             color: $inputPlaceholderColor
-            font-size: 10pt
-            font-weight: normal
+            font-family: $headerFontLight
+            font-size: $headerFontSize
+            font-weight: 100
             width: calc(100% - 10px)
             border-radius: 4px
             box-sizing: border-box
@@ -132,26 +148,18 @@ $bodyCellHeight = 40px
 
     tbody
       tr
-        padding: 5px
+        padding: $rowTopPadding $rowPadding
         background-color: black
-
-        &:nth-child(even)
-          theme('background-color', '$uiGrayDarker')
 
         td
           height: $bodyCellHeight
           line-height: $bodyCellHeight
           color: $tableTextPrimaryColor
           font-weight: 300
+          font-size: $bodySize
           border-top: 1px solid #436270
           white-space: nowrap
           transition(all 0.1s ease)
-
-          &:first-child
-            padding-left: $tablePadding
-
-          &:last-child
-            padding-right: $tablePadding
 
         &:hover, &:active, &.active
           background-color: $tableHoverColor
@@ -160,7 +168,7 @@ $bodyCellHeight = 40px
           td
             // This selector is necessary to override bootstrap's 'table' class
             border-top: 1px solid #436270
-            border-bottom: 1px solid #436270
+            //border-bottom: 1px solid #436270
             background-color: $tableHoverColor
 
 

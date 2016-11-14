@@ -4,27 +4,43 @@
             {{>toolbarSectionButton toolbarButton}}
         {{/each}}
 
-        {{ #if extraToolbarButtons}}
-        <div id="moreTools" class="js-open-more-tools toolbarSectionButton rp-x-1 rm-l-3">
-            <div class="svgContainer">
-                <svg>
-                    <use xlink:href="/packages/viewerbase/assets/icons.svg#icon-tools-more"></use>
-                </svg>
-            </div>
-            <div class="buttonLabel">
-                <span>More</span>
+        <div id="moreTools" class="js-open-more-tools toolbarSectionButton rp-x-1 rm-l-3 dropdown">
+            <div class="textContainer dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span>more</span>
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
             </div>
+            <ul class="dropdown-menu">
+            {{#each toolbarButtons}}
+                <li class="checkbox">
+                    <label>
+                        <input type="checkbox" aria-label="{{title}}" checked={{not hide}} data-tool="{{id}}">
+                        {{title}}
+                    </label>
+                </li>
+            {{/each}}
+            </ul>
         </div>
 
-        <div class="toolbarSectionDrawerContainer">
-            <!-- TODO: [design] check which group of tools shall be shown -->
-            <div class="toolbarSectionDrawer">
-                {{#each toolbarButton in extraToolbarButtons}}
-                    {{>toolbarSectionButton toolbarButton}}
-                {{/each}}
+        <div id="viewMore" class="js-view-more toolbarSectionButton rp-x-1 rm-l-3 dropdown">
+            <div class="textContainer dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span>view</span>
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
             </div>
+            <ul class="dropdown-menu">
+                <li class="checkbox">
+                    <label data-tool="series">
+                        <input type="checkbox" aria-label="Hanging Protocol">
+                        Series
+                    </label>
+                </li>
+                <li class="checkbox">
+                    <label data-tool="hanging">
+                        <input type="checkbox" aria-label="Hanging Protocol">
+                        Hanging Protocol
+                    </label>
+                </li>
+            </ul>
         </div>
-        {{ /if }}
+
     </div>
 </template>

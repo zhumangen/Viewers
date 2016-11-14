@@ -7,8 +7,11 @@ $toolbarDrawerHeight = 62px
 $studiesSidebarMenuWidth = 307px
 $lesionsSidebarMenuWidth = 323px
 
+$helveticaBold = "HelveticaNeue-Bold", "Helvetica Neue Bold", "Helvetica Bold", Helvetica, Arial, "Lucida Grande", sans-serif
+$helveticaLight = "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+
 // Fonts
-$logoFontFamily = "Sanchez"
+$logoFontFamily = $helveticaBold
 $logoFontWeight = 300
 
 // Transitions
@@ -20,3 +23,8 @@ $sidebarTransition = all $transitionDuration $transitionEffect
 // Thicknesses
 $viewportBorderThickness = 1px
 $uiBorderThickness = 1px
+
+$screenBaseSize = 30px
+
+calcSize(sizeInPX)
+  unit(sizeInPX / $screenBaseSize, 'rem')
