@@ -53,7 +53,7 @@ Services.DIMSE.Studies = function(filter) {
         0x00100040: '',
         0x00201208: '',
         0x00080061: filter.modalitiesInStudy,
-        0x00100010: filter.patientAge
+        0x00101010: filter.patientAge
     };
 
     var results = DIMSE.retrieveStudies(parameters);
