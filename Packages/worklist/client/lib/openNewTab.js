@@ -20,6 +20,9 @@ openNewTab = function(studyInstanceUid, title) {
         studyInstanceUids: [studyInstanceUid]
     };
 
+    OpenedTabs[contentid] = {title: title, id: contentid};
+    Session.set('OpenedTabs', OpenedTabs);
+
     // Switch to the new tab
     switchToTab(contentid);
 };
