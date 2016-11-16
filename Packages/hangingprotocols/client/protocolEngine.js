@@ -175,7 +175,7 @@ HP.ProtocolEngine = class ProtocolEngine {
      * Resets the ProtocolEngine to the best match
      */
     reset() {
-        var protocol = this.getBestMatch();
+        var protocol = this.getBestMatch();console.log('constructed protocol', protocol);
         this.setHangingProtocol(protocol);
     }
 
@@ -409,8 +409,9 @@ HP.ProtocolEngine = class ProtocolEngine {
                             ViewerStudies.update({_id: study._id}, study);
                         } else {
                             ViewerStudies.insert(study);
+                            this.studies.push(study);
                         }
-                        this.studies.push(study);
+
                         this.matchImages(viewport);
                         this.updateViewports();
                     });
