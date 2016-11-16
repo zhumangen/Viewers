@@ -399,7 +399,9 @@ HP.ProtocolEngine = class ProtocolEngine {
                 });
 
                 if (!alreadyLoaded) {
+                    console.log('prior.studyinstanceuid', priorStudy.studyInstanceUid);
                     getStudyMetadata(priorStudy.studyInstanceUid, study => {
+                        console.log('prior', study);
                         study.abstractPriorValue = abstractPriorValue;
                         study.displaySets = createStacks(study);
                         ViewerStudies.insert(study);
