@@ -638,9 +638,9 @@ HP.ProtocolEngine = class ProtocolEngine {
                 currentViewportData.imageId = currentMatch.imageId;
             }
 
-            if (!currentViewportData.displaySetInstanceUid) {
+            /*if (!currentViewportData.displaySetInstanceUid) {
                 throw 'No matching display set found?';
-            }
+            }*/
 
             viewportData.push(currentViewportData);
         });
