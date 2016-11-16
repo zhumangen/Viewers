@@ -232,6 +232,10 @@ Template.worklistResult.onRendered(() => {
         }
     }).data('daterangepicker');
 
+    instance.$('.selectFilter').select2({
+        placeholder: "Select Status"
+    });
+
     // Retrieve all studies
     search();
 });

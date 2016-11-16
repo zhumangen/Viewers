@@ -141,6 +141,22 @@ $rowTopPadding = calcSize(30px)
             &:active, &:hover
               background-color: $inputBackgroundColor
 
+          .select2-container
+            height: auto
+            margin: 0 5px 20px 5px
+            padding: $placeholderPadding
+            cursor: pointer
+            border: none
+            background-color: $inputBackgroundColor
+            color: $inputPlaceholderColor
+            font-family: $headerFontLight
+            font-size: $headerFontSize
+            font-weight: 100
+            width: calc(100% - 10px)
+            border-radius: 4px
+            box-sizing: border-box
+            display: block
+
       ::-webkit-datetime-edit-year-field:not([aria-valuenow]),
       ::-webkit-datetime-edit-month-field:not([aria-valuenow]),
       ::-webkit-datetime-edit-day-field:not([aria-valuenow])

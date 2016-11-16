@@ -94,6 +94,18 @@
                         </div>
                         <input type="text" class="form-control worklist-search invisible"/>
                     </th>
+                    <th class="procedureStatus">
+                        <div id="_procedureStatus" class="sortingCell">
+                            <span>Procedure Status</span>
+                            <i class="{{sortingColumnsIcons.procedureStatus}}">&nbsp;</i>
+                        </div>
+                        <select class="selectFilter">
+                            <option>imaging scheduled</option>
+                            <option>recalled for imaging</option>
+                            <option>biopsy scheduled</option>
+                            <option>biopsy complete</option>
+                        </select>
+                    </th>
                 </tr>
             </thead>
             <tbody id="studyListData">
