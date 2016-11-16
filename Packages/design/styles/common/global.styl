@@ -64,6 +64,37 @@ label.form-group
       theme('border-color', '$uiBorderColor')
 
 
+.select2-container
+  cursor: pointer
+  border: none
+  background-color: $inputBackgroundColor
+  color: $inputPlaceholderColor
+  font-family: $helveticaLight
+
+  .select2-selection__arrow
+    background-color: #2c363f !important
+    border-radius: 0 !important
+    border-left-color: transparent !important
+
+    b
+      display: block !important
+
+  .select2-results__option
+    background-color: #2c363f !important
+
+  .select2-results__option--highlighted
+    background-color: #2c363f !important
+
+  .select2-dropdown
+    border: 0 !important
+    border-radius: 0 !important
+
+  .select2-selection
+    background-color: #2c363f !important
+
+  .select2-selection__rendered
+    color: #cccccc !important
+
 @media screen and (min-width: 4096px) {
   body {
     font-size: $screenBaseSize

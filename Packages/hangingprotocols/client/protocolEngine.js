@@ -175,7 +175,7 @@ HP.ProtocolEngine = class ProtocolEngine {
      * Resets the ProtocolEngine to the best match
      */
     reset() {
-        var protocol = this.getBestMatch();console.log('constructed protocol', protocol);
+        var protocol = this.getBestMatch();
         this.setHangingProtocol(protocol);
     }
 
@@ -399,9 +399,7 @@ HP.ProtocolEngine = class ProtocolEngine {
                 });
 
                 if (!alreadyLoaded) {
-                    console.log('prior.studyinstanceuid', priorStudy.studyInstanceUid);
                     getStudyMetadata(priorStudy.studyInstanceUid, study => {
-                        console.log('prior', study);
 
                         study.abstractPriorValue = abstractPriorValue;
                         study.displaySets = createStacks(study);
@@ -638,9 +636,9 @@ HP.ProtocolEngine = class ProtocolEngine {
                 currentViewportData.imageId = currentMatch.imageId;
             }
 
-            /*if (!currentViewportData.displaySetInstanceUid) {
+            if (!currentViewportData.displaySetInstanceUid) {
                 throw 'No matching display set found?';
-            }*/
+            }
 
             viewportData.push(currentViewportData);
         });

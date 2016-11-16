@@ -170,6 +170,7 @@ function search() {
 
                 // Convert numberOfStudyRelatedInstance string into integer
                 study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
+                study.procedureStatus = 'imaging scheduled';
 
                 // Insert any matching studies into the WorklistStudies Collection
                 WorklistStudies.insert(study);
@@ -233,7 +234,9 @@ Template.worklistResult.onRendered(() => {
     }).data('daterangepicker');
 
     instance.$('.selectFilter').select2({
-        placeholder: "Select Status"
+        placeholder: "Select Status",
+        width: "calc(100% - 10px)",
+        minimumResultsForSearch: -1
     });
 
     // Retrieve all studies

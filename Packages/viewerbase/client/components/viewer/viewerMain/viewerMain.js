@@ -17,8 +17,8 @@ Template.viewerMain.onRendered(() => {
     const studies = instance.data.studies;
     const parentElement = instance.$('#layoutManagerTarget').get(0);
     window.layoutManager = new LayoutManager(parentElement, studies);
-    console.log('VIEWERMAIN: protocol problem before', studies, window.layoutManager);
-    ProtocolEngine = new HP.ProtocolEngine(window.layoutManager, studies);console.log('VIEWERMAIN: protocol problem after viewermain');
+
+    ProtocolEngine = new HP.ProtocolEngine(window.layoutManager, studies);
     HP.setEngine(ProtocolEngine);
 
     // Enable hotkeys
