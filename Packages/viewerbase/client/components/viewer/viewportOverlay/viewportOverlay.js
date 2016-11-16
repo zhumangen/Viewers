@@ -135,6 +135,10 @@ function getImage(viewportIndex) {
     return enabledElement.image;
 }
 
+function formatDateTime(date, time) {
+    return `${date} ${time}`;
+}
+
 Template.viewportOverlay.helpers({
     wwwc: function() {
         Session.get('CornerstoneImageRendered' + this.viewportIndex);
@@ -306,23 +310,27 @@ Template.viewportOverlay.helpers({
         }
 
         // Make sure there are more than two studies loaded in the viewer
-        //
-        // Here we sort the collection in ascending order by study date, so
-        // that we can obtain the oldest study as the first element of the array
-        //
-        // TODO= Find out if we should encode studyDate as a Date in the ViewerStudies Collection
-        var viewportStudies = ViewerStudies.find({}, {
-            sort: {
-                studyDate: 1
-            }
-        });
+        var viewportStudies = ViewerStudies.find();
         if (viewportStudies.count() < 2) {
             return;
         }
 
+        // Here we sort the collection in ascending order by study date, so
+        // that we can obtain the oldest study as the first element of the array
+        //
+        // TODO= Find out if we should encode studyDate as a Date in the ViewerStudies Collection
+        var viewportStudiesArray = _.sortBy(viewportStudies.fetch(), function(study) {
+            return formatDateTime(study.studyDate, study.studyTime);
+        });
+
         // Get study data
         var study = cornerstoneTools.metaData.get('study', this.imageId);
-        if (study.studyDate === viewportStudies.fetch()[0].studyDate) {
+        if (!study) {
+            return;
+        }
+
+        var oldestStudy = viewportStudiesArray[0];
+        if (formatDateTime(study.studyDate, study.studyTime) <= formatDateTime(oldestStudy.studyDate, oldestStudy.studyTime)) {
             return 'Prior';
         }
     }

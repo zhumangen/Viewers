@@ -252,9 +252,9 @@ HP.ProtocolEngine = class ProtocolEngine {
                     id: protocol.id
                 });
 
-                // If it is not already in the MatchedProtocols Collection, insert it
+                // If it is not already in the MatchedProtocols Collection, insert it with its score
                 if (!protocolInCollection) {
-                    MatchedProtocols.insert(protocol);
+                    MatchedProtocols.insert(matchedDetail);
                 }
             });
         });
@@ -277,7 +277,7 @@ HP.ProtocolEngine = class ProtocolEngine {
         }).fetch();
 
         // Return the highest scoring Protocol
-        return sorted[0];
+        return sorted[0].protocol;
     }
 
     /**
@@ -435,7 +435,7 @@ HP.ProtocolEngine = class ProtocolEngine {
                     // This tests to make sure there is actually image data in this instance
                     // TODO: Change this when we add PDF and MPEG support
                     // See https://ohiforg.atlassian.net/browse/LT-227
-                    if (!instance.rows || !instance.columns) {
+                    if (!isImage(instance.sopClassUid) && !instance.rows) {
                         return;
                     }
 
@@ -466,8 +466,8 @@ HP.ProtocolEngine = class ProtocolEngine {
                         sortingInfo: {
                             score: totalMatchScore,
                             study: study.studyDate + study.studyTime,
-                            series: series.seriesNumber, // TODO: change for seriesDateTime
-                            instance: instance.instanceNumber // TODO: change for acquisitionTime
+                            series: parseInt(series.seriesNumber), // TODO: change for seriesDateTime
+                            instance: parseInt(instance.instanceNumber) // TODO: change for acquisitionTime
                         }
                     };
 
@@ -501,9 +501,9 @@ HP.ProtocolEngine = class ProtocolEngine {
             name: 'study',
             reverse: true
         }, {
-            name: 'series'
-        }, {
             name: 'instance'
+        }, {
+            name: 'series'
         });
         matchingScores.sort((a, b) => sortingFunction(a.sortingInfo, b.sortingInfo));
 
