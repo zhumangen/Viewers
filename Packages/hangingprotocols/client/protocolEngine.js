@@ -402,6 +402,10 @@ HP.ProtocolEngine = class ProtocolEngine {
                     console.log('prior.studyinstanceuid', priorStudy.studyInstanceUid);
                     getStudyMetadata(priorStudy.studyInstanceUid, study => {
                         console.log('prior', study);
+
+                        if (ViewerStudies.findOne({_id: study._id})) {
+                            return;
+                        }
                         study.abstractPriorValue = abstractPriorValue;
                         study.displaySets = createStacks(study);
                         ViewerStudies.insert(study);
