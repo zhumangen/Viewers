@@ -17,10 +17,10 @@ Template.viewerMain.onRendered(() => {
     const studies = instance.data.studies;
     const parentElement = instance.$('#layoutManagerTarget').get(0);
     window.layoutManager = new LayoutManager(parentElement, studies);
-    console.log('protocol problem before viewermain');
+    console.log('VIEWERMAIN: protocol problem before ');
     ProtocolEngine = new HP.ProtocolEngine(window.layoutManager, studies);
     HP.setEngine(ProtocolEngine);
-    console.log('protocol problem after viewermain');
+    console.log('VIEWERMAIN: protocol problem after viewermain');
     // Enable hotkeys
     enableHotkeys();
 });
