@@ -61,15 +61,15 @@ Template.protocolEditor.helpers({
     activeProtocol() {
         // Whenever the Layout Manager is updated, trigger this helper
         Session.get('LayoutManagerUpdated');
-        console.log('protocol engine before check');
+
         // If no ProtocolEngine, protocol, or stage is defined, stop here
         if (!ProtocolEngine ||
             !ProtocolEngine.protocol ||
             !ProtocolEngine.LayoutManager ||
-            ProtocolEngine.stage === undefined) {
+            ProtocolEngine.stage === undefined) {console.log('protocol problem', ProtocolEngine);
             return;
         }
-        console.log('protocol engine after check');
+
         // Update the Protocol Select box
         updateProtocolSelect();
 
