@@ -621,7 +621,7 @@ HP.ProtocolEngine = class ProtocolEngine {
                 currentPosition++;
             }
 
-            if (currentMatch.imageId) {
+            if (currentMatch && currentMatch.imageId) {
                 currentViewportData.studyInstanceUid = currentMatch.studyInstanceUid;
                 currentViewportData.seriesInstanceUid = currentMatch.seriesInstanceUid;
                 currentViewportData.sopInstanceUid = currentMatch.sopInstanceUid;
