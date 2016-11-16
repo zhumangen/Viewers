@@ -66,7 +66,7 @@ Template.protocolEditor.helpers({
         if (!ProtocolEngine ||
             !ProtocolEngine.protocol ||
             !ProtocolEngine.LayoutManager ||
-            ProtocolEngine.stage === undefined) {console.log('protocol problem', ProtocolEngine);
+            ProtocolEngine.stage === undefined) {
             return;
         }
 
