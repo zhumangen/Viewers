@@ -409,9 +409,8 @@ HP.ProtocolEngine = class ProtocolEngine {
                             ViewerStudies.update({_id: study._id}, study);
                         } else {
                             ViewerStudies.insert(study);
-                            this.studies.push(study);
                         }
-
+                        this.studies.push(study);
                         this.matchImages(viewport);
                         this.updateViewports();
                     });
