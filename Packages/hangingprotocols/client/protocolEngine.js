@@ -346,7 +346,7 @@ HP.ProtocolEngine = class ProtocolEngine {
     }
 
     // Match images given a list of Studies and a Viewport's image matching reqs
-    matchImages(viewport) {
+    matchImages(viewport, doneCallback) {
         var studyMatchingRules = viewport.studyMatchingRules;
         var seriesMatchingRules = viewport.seriesMatchingRules;
         var instanceMatchingRules = viewport.imageMatchingRules;
@@ -362,58 +362,7 @@ HP.ProtocolEngine = class ProtocolEngine {
 
         studyMatchingRules.forEach(rule => {
             if (rule.attribute === 'abstractPriorValue') {
-                var validatorType = Object.keys(rule.constraint)[0];
-                var validator = Object.keys(rule.constraint[validatorType])[0];
-                var abstractPriorValue = rule.constraint[validatorType][validator];
-                abstractPriorValue = parseInt(abstractPriorValue, 10);
-                // TODO: Restrict or clarify validators for abstractPriorValue?
 
-                var studies = WorklistStudies.find({
-                    patientId: currentStudy.patientId,
-                    studyDate: {
-                        $lt: currentStudy.studyDate
-                    }
-                }, {
-                    sort: {
-                        studyDate: -1
-                    }
-                }).fetch();
-
-                // TODO: Revisit this later: What about two studies with the same
-                // study date?
-
-                var priorStudy;
-                if (abstractPriorValue === -1) {
-                    priorStudy = studies[studies.length - 1];
-                } else {
-                    var studyIndex = Math.max(abstractPriorValue - 1, 0);
-                    priorStudy = studies[studyIndex];
-                }
-
-                if (!priorStudy) {
-                    return;
-                }
-
-                var alreadyLoaded = ViewerStudies.findOne({
-                    studyInstanceUid: priorStudy.studyInstanceUid
-                });
-
-                if (!alreadyLoaded) {
-                    getStudyMetadata(priorStudy.studyInstanceUid, study => {
-
-                        study.abstractPriorValue = abstractPriorValue;
-                        study.displaySets = createStacks(study);
-                        if (ViewerStudies.findOne({_id: study._id})) {
-                            ViewerStudies.update({_id: study._id}, study);
-                        } else {
-                            ViewerStudies.insert(study);
-                            this.studies.push(study);
-                        }
-
-                        this.matchImages(viewport);
-                        this.updateViewports();
-                    });
-                }
             }
             // TODO: Add relative Date / time
         });
@@ -422,7 +371,7 @@ HP.ProtocolEngine = class ProtocolEngine {
         this.studies.forEach(function(study) {
             var studyMatchDetails = HP.match(study, studyMatchingRules);
             if ((studyMatchingRules.length && !studyMatchDetails.score) ||
-                studyMatchDetails.score < highestStudyMatchingScore) {
+              studyMatchDetails.score < highestStudyMatchingScore) {
                 return;
             }
 
@@ -431,7 +380,7 @@ HP.ProtocolEngine = class ProtocolEngine {
             study.seriesList.forEach(function(series) {
                 var seriesMatchDetails = HP.match(series, seriesMatchingRules);
                 if ((seriesMatchingRules.length && !seriesMatchDetails.score) ||
-                    seriesMatchDetails.score < highestSeriesMatchingScore) {
+                  seriesMatchDetails.score < highestSeriesMatchingScore) {
                     return;
                 }
 
@@ -519,6 +468,89 @@ HP.ProtocolEngine = class ProtocolEngine {
         };
     }
 
+    loadUnavailableStudies(viewports, doneCallBack) {
+        var currentStudy = this.studies[0];
+        currentStudy.abstractPriorValue = 0;
+
+        var studies = WorklistStudies.find({
+            patientId: currentStudy.patientId,
+            studyDate: {
+                $lt: currentStudy.studyDate
+            }
+        }, {
+            sort: {
+                studyDate: -1
+            }
+        }).fetch();
+
+        var loadPriors = [];
+        var priorUids = [];
+
+        viewports.forEach(viewport => {
+            viewport.studyMatchingRules.forEach(rule => {
+                if (rule.attribute === 'abstractPriorValue') {
+                    var validatorType = Object.keys(rule.constraint)[0];
+                    var validator = Object.keys(rule.constraint[validatorType])[0];
+                    var abstractPriorValue = rule.constraint[validatorType][validator];
+                    abstractPriorValue = parseInt(abstractPriorValue, 10);
+                    // TODO: Restrict or clarify validators for abstractPriorValue?
+
+                    // TODO: Revisit this later: What about two studies with the same
+                    // study date?
+
+                    var priorStudy;
+                    if (abstractPriorValue === -1) {
+                        priorStudy = studies[studies.length - 1];
+                    } else {
+                        var studyIndex = Math.max(abstractPriorValue - 1, 0);
+                        priorStudy = studies[studyIndex];
+                    }
+
+                    if (!priorStudy) {
+                        return;
+                    }
+
+                    var alreadyLoaded = ViewerStudies.findOne({
+                        studyInstanceUid: priorStudy.studyInstanceUid
+                    });
+                    var priorUid = priorStudy.studyInstanceUid;
+
+                    if (!alreadyLoaded && priorUids.indexOf(priorUid) == -1) {
+                        loadPriors.push({uid: priorUid, priorValue: abstractPriorValue});
+                        priorUids.push(priorUid);
+                    }
+                }
+                // TODO: Add relative Date / time
+            });
+        });
+
+        if (loadPriors.length) {
+            var left = loadPriors.length;
+            var self = this;
+            loadPriors.forEach(p => {
+                var studyUid = p.uid;
+                var abstractPriorValue = p.priorValue;
+                getStudyMetadata(studyUid, study => {
+                    study.abstractPriorValue = abstractPriorValue;
+                    study.displaySets = createStacks(study);
+                    ViewerStudies.insert(study);
+                    self.studies.push(study);
+                    left--;
+                    if (left < 1) {
+                        doneCallBack();
+                    }
+                }, err => {
+                    left--;
+                    if (left < 1) {
+                        doneCallBack();
+                    }
+                });
+            });
+        } else {
+            doneCallBack();
+        }
+    }
+
     /**
      * Rerenders viewports that are part of the current ProtocolEngine's LayoutManager
      * using the matching rules internal to each viewport.
@@ -527,8 +559,9 @@ HP.ProtocolEngine = class ProtocolEngine {
      * is rerendered.
      *
      * @param viewportIndex
+     * @param doneCallback
      */
-    updateViewports(viewportIndex) {
+    updateViewports(viewportIndex, doneCallback) {
         // Make sure we have an active protocol with a non-empty array of display sets
         if (!this.protocol || !this.protocol.stages || !this.protocol.stages.length) {
             return;
@@ -567,91 +600,114 @@ HP.ProtocolEngine = class ProtocolEngine {
         // This will be used to store the pass/fail details and score
         // for each of the viewport matching procedures
         this.matchDetails = [];
+        var self = this;
 
-        // Loop through each viewport
-        stageModel.viewports.forEach((viewport, viewportIndex) => {
-            var details = this.matchImages(viewport);
-            this.matchDetails[viewportIndex] = details;
+        this.loadUnavailableStudies(stageModel.viewports, () => {
+            // Loop through each viewport
+            stageModel.viewports.forEach((viewport, viewportIndex) => {
+                var details = this.matchImages(viewport);
+                self.matchDetails[viewportIndex] = details;
 
-            // Convert any YES/NO values into true/false for Cornerstone
-            var cornerstoneViewportParams = {};
-            Object.keys(viewport.viewportSettings).forEach(function(key) {
-                var value = viewport.viewportSettings[key];
-                if (value === 'YES') {
-                    value = true;
-                } else if (value === 'NO') {
-                    value = false;
+                // Convert any YES/NO values into true/false for Cornerstone
+                var cornerstoneViewportParams = {};
+                Object.keys(viewport.viewportSettings).forEach(function(key) {
+                    var value = viewport.viewportSettings[key];
+                    if (value === 'YES') {
+                        value = true;
+                    } else if (value === 'NO') {
+                        value = false;
+                    }
+
+                    cornerstoneViewportParams[key] = value;
+                });
+
+                // imageViewerViewports occasionally needs relevant layout data in order to set
+                // the element style of the viewport in question
+                var currentViewportData = $.extend({
+                    viewportIndex: viewportIndex,
+                    viewport: cornerstoneViewportParams
+                }, layoutProps);
+
+                var customSettings = [];
+                Object.keys(viewport.viewportSettings).forEach(id => {
+                    var setting = HP.CustomViewportSettings[id];
+                    if (!setting) {
+                        return;
+                    }
+
+                    customSettings.push({
+                        id: id,
+                        value: viewport.viewportSettings[id]
+                    });
+                });
+
+                currentViewportData.renderedCallback = function(element) {
+                    //console.log('renderedCallback for ' + element.id);
+                    customSettings.forEach(function(customSetting) {
+                        console.log('Applying custom setting: ' + customSetting.id);
+                        console.log('with value: ' + customSetting.value);
+
+                        var setting = HP.CustomViewportSettings[customSetting.id];
+                        setting.callback(element, customSetting.value);
+                    });
+                };
+
+                let currentMatch = details.bestMatch;
+                let currentPosition = 1;
+                const scoresLength = details.matchingScores.length;
+                while (currentPosition < scoresLength && _.findWhere(viewportData, {
+                    imageId: currentMatch.imageId
+                })) {
+                    currentMatch = details.matchingScores[currentPosition];
+                    currentPosition++;
                 }
 
-                cornerstoneViewportParams[key] = value;
-            });
-
-            // imageViewerViewports occasionally needs relevant layout data in order to set
-            // the element style of the viewport in question
-            var currentViewportData = $.extend({
-                viewportIndex: viewportIndex,
-                viewport: cornerstoneViewportParams
-            }, layoutProps);
-
-            var customSettings = [];
-            Object.keys(viewport.viewportSettings).forEach(id => {
-                var setting = HP.CustomViewportSettings[id];
-                if (!setting) {
-                    return;
+                if (currentMatch && currentMatch.imageId) {
+                    currentViewportData.studyInstanceUid = currentMatch.studyInstanceUid;
+                    currentViewportData.seriesInstanceUid = currentMatch.seriesInstanceUid;
+                    currentViewportData.sopInstanceUid = currentMatch.sopInstanceUid;
+                    currentViewportData.currentImageIdIndex = currentMatch.currentImageIdIndex;
+                    currentViewportData.displaySetInstanceUid = currentMatch.displaySetInstanceUid;
+                    currentViewportData.imageId = currentMatch.imageId;
                 }
 
-                customSettings.push({
-                    id: id,
-                    value: viewport.viewportSettings[id]
-                });
+                if (!currentViewportData.displaySetInstanceUid) {
+                    throw 'No matching display set found?';
+                }
+
+                viewportData.push(currentViewportData);
             });
+            self.LayoutManager.layoutTemplateName = layoutTemplateName;
+            self.LayoutManager.layoutProps = layoutProps;
+            self.LayoutManager.viewportData = viewportData;
 
-            currentViewportData.renderedCallback = function(element) {
-                //console.log('renderedCallback for ' + element.id);
-                customSettings.forEach(function(customSetting) {
-                    console.log('Applying custom setting: ' + customSetting.id);
-                    console.log('with value: ' + customSetting.value);
-
-                    var setting = HP.CustomViewportSettings[customSetting.id];
-                    setting.callback(element, customSetting.value);
-                });
-            };
-
-            let currentMatch = details.bestMatch;
-            let currentPosition = 1;
-            const scoresLength = details.matchingScores.length;
-            while (currentPosition < scoresLength && _.findWhere(viewportData, {
-                imageId: currentMatch.imageId
-            })) {
-                currentMatch = details.matchingScores[currentPosition];
-                currentPosition++;
+            if (viewportIndex !== undefined && viewportData[viewportIndex]) {
+                self.LayoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, viewportData[viewportIndex]);
+            } else {
+                self.LayoutManager.updateViewports();
             }
 
-            if (currentMatch && currentMatch.imageId) {
-                currentViewportData.studyInstanceUid = currentMatch.studyInstanceUid;
-                currentViewportData.seriesInstanceUid = currentMatch.seriesInstanceUid;
-                currentViewportData.sopInstanceUid = currentMatch.sopInstanceUid;
-                currentViewportData.currentImageIdIndex = currentMatch.currentImageIdIndex;
-                currentViewportData.displaySetInstanceUid = currentMatch.displaySetInstanceUid;
-                currentViewportData.imageId = currentMatch.imageId;
-            }
+            if (doneCallback)
+                doneCallback();
+        });
+    }
 
-            if (!currentViewportData.displaySetInstanceUid) {
-                throw 'No matching display set found?';
+    updateMatchedProtocol() {
+        MatchedProtocols.update({}, {
+            $set: {
+                selected: false
             }
-
-            viewportData.push(currentViewportData);
+        }, {
+            multi: true
         });
 
-        this.LayoutManager.layoutTemplateName = layoutTemplateName;
-        this.LayoutManager.layoutProps = layoutProps;
-        this.LayoutManager.viewportData = viewportData;
-
-        if (viewportIndex !== undefined && viewportData[viewportIndex]) {
-            this.LayoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, viewportData[viewportIndex]);
-        } else {
-            this.LayoutManager.updateViewports();
-        }
+        MatchedProtocols.update({
+            id: this.protocol.id
+        }, {
+            $set: {
+                selected: true
+            }
+        });
     }
 
     /**
@@ -676,24 +732,13 @@ HP.ProtocolEngine = class ProtocolEngine {
 
         // Update viewports by default
         if (updateViewports) {
-            this.updateViewports();
+            var self = this;
+            this.updateViewports(null, () => {
+                self.updateMatchedProtocol();
+            });
+        } else {
+            this.updateMatchedProtocol();
         }
-
-        MatchedProtocols.update({}, {
-            $set: {
-                selected: false
-            }
-        }, {
-            multi: true
-        });
-
-        MatchedProtocols.update({
-            id: this.protocol.id
-        }, {
-            $set: {
-                selected: true
-            }
-        });
     }
 
     /**
