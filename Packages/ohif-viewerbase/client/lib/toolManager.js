@@ -6,11 +6,11 @@ let defaultTool = 'wwwc';
 let tools = {};
 
 let toolDefaultStates = {
-    activate: [],
-    deactivate: ['length', 'angle', 'annotate', 'ellipticalRoi', 'rectangleRoi'],
-    enable: [],
-    disable: [],
-    disabledToolButtons: [],
+    activate: new Set([]),
+    deactivate: new Set(['length', 'angle', 'annotate', 'ellipticalRoi', 'rectangleRoi']),
+    enable: new Set([]),
+    disable: new Set([]),
+    disabledToolButtons: new Set([]),
     shadowConfig: {
         shadow: false,
         shadowColor: '#000000',
@@ -178,10 +178,12 @@ toolManager = {
 
         // Enable tools based on their default states
         Object.keys(toolDefaultStates).forEach(function(action) {
-            var relevantTools = toolDefaultStates[action];
+            const toolSet = toolDefaultStates[action];
+            const relevantTools = [...toolSet]; // Convert set to an array
             if (!relevantTools || !relevantTools.length || action === 'disabledToolButtons') {
                 return;
             }
+            
             relevantTools.forEach(function(toolType) {
                 // the currently active tool has already been deactivated and can be skipped
                 if (action === 'deactivate' && toolType === activeTool) {

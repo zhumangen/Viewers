@@ -85,6 +85,7 @@ export const bidirectional = {
     id: 'targets',
     name: 'Targets',
     cornerstoneToolType: 'bidirectional',
+    defaultHotkey: 'T',
     schema: BidirectionalSchema,
     options: {
         showInMeasurementTable: true,

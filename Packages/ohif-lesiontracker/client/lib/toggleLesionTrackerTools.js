@@ -17,10 +17,10 @@ OHIF.lesiontracker.toggleLesionTrackerTools = () => {
 
         // Hide the tools (set them all to disabled)
         const toolDefaultStates = {
-            activate: ['deleteLesionKeyboardTool'], 
-            deactivate: [],
-            enable: [],
-            disable: [ 'bidirectional', 'nonTarget', 'length', 'crTool', 'unTool', 'exTool' ]
+            activate: new Set(['deleteLesionKeyboardTool']),
+            deactivate: new Set([]),
+            enable: new Set([]),
+            disable: new Set([ 'bidirectional', 'nonTarget', 'length', 'crTool', 'unTool', 'exTool' ])
         };
 
         toolManager.setToolDefaultStates(toolDefaultStates);
@@ -46,11 +46,11 @@ OHIF.lesiontracker.toggleLesionTrackerToolsButtons = (isEnabled) => {
     const toolStates = previousStates || toolManager.getToolDefaultStates();
 
     if (isEnabled) {
-        toolStates.disabledToolButtons = [];
+        toolStates.disabledToolButtons = new Set([]);
         OHIF.lesiontracker.toggleLesionTrackerToolsHotKeys(true);
     } else {
-        toolStates.disabledToolButtons = [ 'bidirectional', 'nonTarget', 'crTool', 'unTool', 'exTool',
-            'toggleHUD', 'toggleTrial', 'toolbarSectionEntry', 'toggleMeasurements' ];
+        toolStates.disabledToolButtons = new Set([ 'bidirectional', 'nonTarget', 'crTool', 'unTool', 'exTool',
+            'toggleHUD', 'toggleTrial', 'toolbarSectionEntry', 'toggleMeasurements' ]);
         OHIF.lesiontracker.toggleLesionTrackerToolsHotKeys(false);
     }
 

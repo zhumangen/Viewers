@@ -48,6 +48,7 @@ export const nonTarget = {
     id: 'nonTargets',
     name: 'Non-Targets',
     cornerstoneToolType: 'nonTarget',
+    defaultHotkey: 'N',
     schema: NonTargetSchema,
     displayFunction: displayFunction,
     options: {

@@ -37,18 +37,14 @@ Meteor.startup(function() {
     // Update default state for tools making sure each tool is only inserted once
     let currentDefaultStates = toolManager.getToolDefaultStates();
     let newDefaultStates = {
-        deactivate: ['bidirectional', 'nonTarget', 'length', 'crTool', 'unTool', 'exTool'],
-        activate: ['deleteLesionKeyboardTool']
+        deactivate: new Set(['bidirectional', 'nonTarget', 'length', 'crTool', 'unTool', 'exTool']),
+        activate: new Set(['deleteLesionKeyboardTool'])
     };
 
     for (let state in newDefaultStates) {
-        newDefaultStates[state].forEach(function(tool) {
-            let tools = currentDefaultStates[state];
-            // make sure each tool is only inserted once
-            if (tools && tools.indexOf(tool) < 0) {
-                tools.push(tool);
-            }
-        });
+        let newTools = newDefaultStates[state];
+        let tools = currentDefaultStates[state];
+        currentDefaultStates[state] = tools.union(newTools);
     }
 
     toolManager.setToolDefaultStates(currentDefaultStates);

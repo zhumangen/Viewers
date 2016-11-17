@@ -8,3 +8,4 @@ import './MeasurementManager.js';
 import './setOperations.js';
 import './syncMeasurementAndToolData.js';
 import './toggleLabelButton.js';
+import './setMeasurementToolEnabledState.js';

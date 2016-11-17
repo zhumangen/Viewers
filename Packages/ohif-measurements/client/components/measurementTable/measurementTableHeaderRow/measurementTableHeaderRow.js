@@ -1,3 +1,15 @@
+OHIF.measurements.unmarkedRemaining = (measurementTypeId, measurementApi, timepointApi) => {    
+    const current = timepointApi.current();
+    const prior = timepointApi.prior();
+
+    const currentFilter = { timepointId: current.timepointId };
+    const priorFilter = { timepointId: prior.timepointId };
+
+    const numCurrent = measurementApi.fetch(measurementTypeId, currentFilter).length;
+    const numPrior = measurementApi.fetch(measurementTypeId, priorFilter).length;
+    return Math.max(numPrior - numCurrent, 0);
+}
+
 Template.measurementTableHeaderRow.onCreated(() => {
     const instance = Template.instance();
     instance.maxNumMeasurements = new ReactiveVar();
@@ -75,21 +87,27 @@ Template.measurementTableHeaderRow.helpers({
         }
 
         const timepointApi = instance.data.timepointApi;
-        const current = instance.data.timepointApi.current();
-        const prior = instance.data.timepointApi.prior();
+        if (!timepointApi) {
+            return;
+        }
+
+        const prior = timepointApi.prior();
         if (!prior) {
+            OHIF.measurements.setMeasurementToolEnabledState(measurementType.id, true);
             return true;
         }
 
-        const currentFilter = { timepointId: current.timepointId };
-        const priorFilter = { timepointId: prior.timepointId };
-        const measurementTypeId = measurementType.id;
-
         const measurementApi = instance.data.measurementApi;
-        const numCurrent = measurementApi.fetch(measurementTypeId, currentFilter).length;
-        const numPrior = measurementApi.fetch(measurementTypeId, priorFilter).length;
-        const remaining = Math.max(numPrior - numCurrent, 0);
-        return remaining > 0;
+        const remaining = OHIF.measurements.unmarkedRemaining(measurementType.id, measurementApi, timepointApi);
+        const anyRemaining = remaining > 0;
+
+        if (!anyRemaining) {
+            OHIF.measurements.setMeasurementToolEnabledState(measurementType.id, false);
+        } else {
+            OHIF.measurements.setMeasurementToolEnabledState(measurementType.id, true);
+        }
+
+        return anyRemaining
     }
 });
 

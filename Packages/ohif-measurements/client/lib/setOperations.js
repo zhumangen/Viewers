@@ -6,3 +6,11 @@ Set.prototype.difference = function(setB) {
     }
     return difference;
 }
+
+Set.prototype.union = function(setB) {
+    var union = new Set(this);
+    for (var elem of setB) {
+        union.add(elem);
+    }
+    return union;
+}
