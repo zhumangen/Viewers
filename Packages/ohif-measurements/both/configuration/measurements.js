@@ -162,6 +162,8 @@ class MeasurementApi {
                     $set: {
                         measurementNumber: specificToolMeasurementNumber
                     }
+                }, {
+                    multi: true
                 });
 
                 // Increment the overall measurement number
@@ -180,6 +182,8 @@ class MeasurementApi {
                     $set: {
                         measurementNumberOverall: overallMeasurementNumber
                     }
+                }, {
+                    multi: true
                 });
 
                 // Increment the overall measurement number
@@ -206,7 +210,8 @@ class MeasurementApi {
             const sortedByMeasurementNumber = Object.keys(groupObject).map(summarizeMeasurement(groupObject, toolType));
             sortedByMeasurementNumber.forEach(updateMeasurementNumber(collection, toolType))
 
-            measurements.forEach(measurement => {
+            const updatedMeasurements = collection.find({toolType});
+            updatedMeasurements.forEach(measurement => {
                 OHIF.measurements.syncMeasurementAndToolData(measurement);
             });
 

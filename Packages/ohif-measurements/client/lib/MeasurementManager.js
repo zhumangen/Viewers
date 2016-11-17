@@ -6,25 +6,31 @@ class MeasurementManager {
      * Returns new measurement number given a timepointId
      */
     static getNewMeasurementNumber(timepointId, collection, timepointApi) {
-        // Get all current lesion measurements
-        const numMeasurements = collection.find().count();
+        const timepoint = timepointApi.current();
+        const baseline = timepointApi.baseline();
 
-        // If no measurements exist yet, start at 1
-        if (!numMeasurements) {
-            return 1;
+        if (timepoint.timepointId === baseline.timepointId) {
+            const numMeasurements = collection.find({timepointId}).count();
+            return numMeasurements + 1;
         }
 
-        const timepoint = timepointApi.timepoints.findOne({
-            timepointId: timepointId
-        });
+        const dataAtBaseline = collection.find({timepointId: baseline.timepointId});
+        const numbersWithDataAtBaseline = dataAtBaseline.map(m => m.measurementNumber);
+        const setAtBaseline = new Set(numbersWithDataAtBaseline);
 
-        const numMeasurementsAtTimepoint = collection.find({
-            studyInstanceUid: {
-                $in: timepoint.studyInstanceUids
-            }
-        }).count();
+        const dataAtTimepoint = collection.find({timepointId});
+        const numbersWithDataAtTimepoint = dataAtTimepoint.map(m => m.measurementNumber);
+        const setAtTimepoint = new Set(numbersWithDataAtTimepoint);
 
-        return numMeasurementsAtTimepoint + 1;
+        const differenceSet = setAtBaseline.difference(setAtTimepoint);
+        const difference = [...differenceSet];
+        
+        if (!difference.length) {
+            // This must be a new lesion, so it should get a new number
+            return [...setAtBaseline].length + 1;
+        }
+
+        return difference[0];
     }
 
     /**

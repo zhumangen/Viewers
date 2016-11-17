@@ -19,7 +19,9 @@ function activateTool(measurementData) {
     // When a measurement is selected, it will be activated in Cornerstone's
     // tool data
     const tool = toolData.data.find(data => data._id === measurementData._id);
-    tool.active = true;
+    if (tool) {
+        tool.active = true;    
+    }
 };
 
 

@@ -16,13 +16,17 @@
         }
 
         var enabledElements = cornerstone.getEnabledElementsByImageId(imageId);
+        if (!enabledElements || !enabledElements.length) {
+            return;
+        }
+        
+        var ee = enabledElements[0];
+        var elementForRemoveToolState = ee.element;
+        // The HandleMeasurementRemoved handler should do the rest
+        cornerstoneTools.removeToolState(elementForRemoveToolState, toolType, data);
+
         enabledElements.forEach(function(enabledElement) {
             var element = enabledElement.element;
-
-            // The HandleMeasurementRemoved handler should do the rest
-            cornerstoneTools.removeToolState(element, toolType, data);
-
-            //Update element
             cornerstone.updateImage(element);
         });
     }
