@@ -13,6 +13,7 @@ function getAssociationAssessment() {
         selected: 0,
         associated: 0
     };
+
     // check if timepointApi is available
     const timepointApi = StudyList.timepointApi;
     if (timepointApi) {
@@ -41,6 +42,7 @@ Template.longitudinalStudyListContextMenu.helpers({
         let classList = '';
 
         const assessment = getAssociationAssessment();
+
         if (assessment.selected < 1) {
             classList += disabledClass;
         }
