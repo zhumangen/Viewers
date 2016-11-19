@@ -90,7 +90,6 @@
             },
             longestDiameter: 0,
             shortestDiameter: 0,
-            isDeleted: false,
             toolType: 'bidirectional'
         };
         return measurementData;
