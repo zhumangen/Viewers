@@ -15,20 +15,9 @@
             imageId = enabledElement.image.imageId;
         }
 
-        var enabledElements = cornerstone.getEnabledElementsByImageId(imageId);
-        if (!enabledElements || !enabledElements.length) {
-            return;
-        }
-        
-        var ee = enabledElements[0];
-        var elementForRemoveToolState = ee.element;
         // The HandleMeasurementRemoved handler should do the rest
-        cornerstoneTools.removeToolState(elementForRemoveToolState, toolType, data);
-
-        enabledElements.forEach(function(enabledElement) {
-            var element = enabledElement.element;
-            cornerstone.updateImage(element);
-        });
+        cornerstoneTools.removeToolState(element, toolType, data);
+        cornerstone.updateImage(element);
     }
 
     // TODO = Check if we have the same function already in Cornerstone Tools

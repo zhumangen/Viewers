@@ -31,26 +31,42 @@ Template.measurementTableView.helpers({
             return;
         }
 
-        // Retrieve all the data for this Measurement type (e.g. 'targets')
-        // which was recorded at baseline.
-        const atBaseline = measurementApi.fetch(measurementTypeId, {
-            timepointId: baseline.timepointId
-        });
+        const config = OHIF.measurements.MeasurementApi.getConfiguration();
 
-        // Obtain a list of the Measurement Numbers from the
-        // measurements which have baseline data
-        const numbers = atBaseline.map(m => m.measurementNumber);
+        let data;
+        let groupObject;
+        
+        // If this is the type of tool that is separated into New Measurements,
+        // then we should only display data here that is not 'New'
+        if (measurementTypeId === config.newMeasurementTool.id) {
+            // Retrieve all the data for this Measurement type (e.g. 'targets')
+            // which was recorded at baseline.
+            const atBaseline = measurementApi.fetch(measurementTypeId, {
+                timepointId: baseline.timepointId
+            });
 
-        // Retrieve all the data for this Measurement type which
-        // match the Measurement Numbers obtained above
-        const data = measurementApi.fetch(measurementTypeId, {
-            measurementNumber: {
-                $in: numbers
-            }
-        });
+            // Obtain a list of the Measurement Numbers from the
+            // measurements which have baseline data
+            const numbers = atBaseline.map(m => m.measurementNumber);
 
-        // Group the Measurements by Measurement Number
-        const groupObject = _.groupBy(data, entry => entry.measurementNumber);
+            // Retrieve all the data for this Measurement type which
+            // match the Measurement Numbers obtained above
+            data = measurementApi.fetch(measurementTypeId, {
+                measurementNumber: {
+                    $in: numbers
+                }
+            });
+
+            // Group the Measurements by Measurement Number
+            groupObject = _.groupBy(data, entry => entry.measurementNumber);
+        } else {
+            // If this tool's data is not separated into the New Measurements section
+            // then we should just display all of the data.
+            data = measurementApi.fetch(measurementTypeId);
+
+            // Group the Measurements by Measurement Number
+            groupObject = _.groupBy(data, entry => entry.measurementNumber);
+        }
 
         // Reformat the data for display in the table
         return Object.keys(groupObject).map(key => {

@@ -9,28 +9,42 @@ class MeasurementManager {
         const timepoint = timepointApi.current();
         const baseline = timepointApi.baseline();
 
-        if (timepoint.timepointId === baseline.timepointId) {
-            const numMeasurements = collection.find({timepointId}).count();
-            return numMeasurements + 1;
-        }
-
-        const dataAtBaseline = collection.find({timepointId: baseline.timepointId});
-        const numbersWithDataAtBaseline = dataAtBaseline.map(m => m.measurementNumber);
-        const setAtBaseline = new Set(numbersWithDataAtBaseline);
-
+        // Find all Measurement Numbers that already have data at this timepoint
         const dataAtTimepoint = collection.find({timepointId});
         const numbersWithDataAtTimepoint = dataAtTimepoint.map(m => m.measurementNumber);
         const setAtTimepoint = new Set(numbersWithDataAtTimepoint);
 
-        const differenceSet = setAtBaseline.difference(setAtTimepoint);
-        const difference = [...differenceSet];
-        
-        if (!difference.length) {
-            // This must be a new lesion, so it should get a new number
-            return [...setAtBaseline].length + 1;
+        let data;
+        if (timepoint.timepointId === baseline.timepointId) {
+            // Find all Measurement Numbers that exist for this patient    
+            data = collection.find();
+        } else {
+            // Find all Measurement Numbers that exist for this patient at the prior
+            // timepoint
+            const prior = timepointApi.prior();
+            data = collection.find({timepointId: prior.timepointId});
         }
 
-        return difference[0];
+        const measurementNumbers = data.map(m => m.measurementNumber);
+        const setToCheck = new Set(measurementNumbers);
+
+        // Check which Measurement Numbers exist in the identified set, but not in
+        // the current timepoint
+        const differenceSet = setToCheck.difference(setAtTimepoint);
+
+        // Expand the set into an array
+        const differenceArray = [...differenceSet];
+        
+        // If the array has no length, this must be a New Measurement
+        // so it should get a new number. The New Measurement number
+        // should be the length of the identified set + 1.
+        if (!differenceArray.length) {
+            return [...setToCheck].length + 1;
+        }
+
+        // Since there are values in the array, return the first one
+        // which the User will now be able to measure.
+        return differenceArray[0];
     }
 
     /**
