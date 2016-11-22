@@ -74,27 +74,5 @@ Template.measurementTableRow.events({
             // Repaint the images on all viewports without the removed measurements
             _.each($('.imageViewerViewport'), element => cornerstone.updateImage(element));
         });
-    },
-
-    'keydown .location'(event) {
-        const keyCode = event.which;
-
-        if (keyCode === keys.DELETE ||
-            (keyCode === keys.D && event.ctrlKey === true)) {
-            const currentMeasurement = this;
-            const options = {
-                keyPressAllowed: false,
-                title: 'Remove measurement?',
-                text: 'Are you sure you would like to remove the entire measurement?'
-            };
-
-            showConfirmDialog(() => {
-                Meteor.call('removeMeasurement', currentMeasurement._id, (error, response) => {
-                    if (error) {
-                        OHIF.log.warn(error);
-                    }
-                });
-            }, options);
-        }
     }
 });

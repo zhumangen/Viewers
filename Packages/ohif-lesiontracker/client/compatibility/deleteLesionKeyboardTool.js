@@ -82,7 +82,12 @@
 
             // TODO= Refactor this so the confirmation dialog is an
             // optional settable callback in the tool's configuration
-            showConfirmDialog(function() {
+            const dialogSettings = {
+                title: 'Delete measurements',
+                message: 'Are you sure you want to delete this measurement?'
+            };
+
+            OHIF.ui.showFormDialog('dialogConfirm', dialogSettings).then(formData => {
                 removeMeasurementTimepoint(nearbyToolData.nearbyTool,
                     nearbyToolData.nearbyToolIndex,
                     nearbyToolData.nearbyToolType,

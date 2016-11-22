@@ -67,17 +67,5 @@ Template.measurementTableTimepointCell.events({
         const rowItem = instance.data.rowItem;
         const timepoints = instance.data.timepoints.get();
         OHIF.measurements.jumpToRowItem(rowItem, timepoints);
-    }/*,
-    'keydown .measurementTableTimepointCell'(event, instance) {
-        const keyCode = event.which;
-        if (keyCode === keys.DELETE ||
-            (keyCode === keys.D && e.ctrlKey === true)) {
-            const currentMeasurement = Template.parentData(1).rowItem;
-            const currentTimepointID = this.timepointId;
-
-            showConfirmDialog(function() {
-                OHIF.lesiontracker.clearMeasurementTimepointData(currentMeasurement._id, currentTimepointID);
-            });
-        }
-    }*/
+    }
 });

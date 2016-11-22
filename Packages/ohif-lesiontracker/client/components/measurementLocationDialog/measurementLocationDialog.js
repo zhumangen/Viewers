@@ -91,26 +91,6 @@ Template.measurementLocationDialog.onCreated(() => {
 
 // Note: None of these events work anymore
 Template.measurementLocationDialog.events({
-    'click #removeMeasurement': function() {
-        var measurementData = Template.measurementLocationDialog.measurementData;
-        var doneCallback = Template.measurementLocationDialog.doneCallback;
-        var dialog = Template.measurementLocationDialog.dialog;
-
-        var options = {
-            keyPressAllowed: false,
-            title: 'Remove measurement?',
-            text: 'Are you sure you would like to remove the entire measurement?'
-        };
-
-        showConfirmDialog(function() {
-            if (doneCallback && typeof doneCallback === 'function') {
-                var deleteTool = true;
-                doneCallback(measurementData, deleteTool);
-            }
-        }, options);
-
-        closeHandler(dialog);
-    },
     'click #convertToNonTarget': function() {
         var measurementData = Template.measurementLocationDialog.measurementData;
         var dialog = Template.measurementLocationDialog.dialog;
