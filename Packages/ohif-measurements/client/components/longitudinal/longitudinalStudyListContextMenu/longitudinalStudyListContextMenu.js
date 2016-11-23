@@ -41,7 +41,7 @@ Template.longitudinalStudyListContextMenu.helpers({
         let classList = '';
 
         const assessment = getAssociationAssessment();
-        if (assessment.selected < 1 || assessment.associated > 0) {
+        if (assessment.selected < 1) {
             classList += disabledClass;
         }
 
