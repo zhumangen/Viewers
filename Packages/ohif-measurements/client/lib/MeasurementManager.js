@@ -37,9 +37,10 @@ class MeasurementManager {
         
         // If the array has no length, this must be a New Measurement
         // so it should get a new number. The New Measurement number
-        // should be the length of the identified set + 1.
+        // should be the largest value in the identified set + 1.
         if (!differenceArray.length) {
-            return [...setToCheck].length + 1;
+            const lastNumber = Math.max(...setAtTimepoint);
+            return lastNumber + 1;
         }
 
         // Since there are values in the array, return the first one

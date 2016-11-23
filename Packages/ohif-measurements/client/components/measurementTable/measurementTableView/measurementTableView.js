@@ -10,19 +10,20 @@ OHIF.measurements.getLocation = collection => {
     }
 };
 
+
+
 Template.measurementTableView.helpers({
     getNewMeasurementType(tool) {
         // TODO: Check Conformance criteria here.
         // RECIST should be nonTargets, irRC should be targets
         return {
-            id: tool.id,
-            name: tool.name,
+            id: 'nonTargets',
             cornerstoneToolType: 'nonTarget',
-            measurementTypeId: 'nonTargets'
+            name: tool.name
         };
     },
 
-    groupByMeasurementNumber(measurementTypeId) {
+    groupByMeasurementNumber(measurementType, newMeasurementType) {
         const instance = Template.instance();
         const measurementApi = instance.data.measurementApi;
         const timepointApi = instance.data.timepointApi;
@@ -31,14 +32,14 @@ Template.measurementTableView.helpers({
             return;
         }
 
-        const config = OHIF.measurements.MeasurementApi.getConfiguration();
+        const measurementTypeId = measurementType.id;
 
         let data;
         let groupObject;
         
         // If this is the type of tool that is separated into New Measurements,
         // then we should only display data here that is not 'New'
-        if (measurementTypeId === config.newMeasurementTool.id) {
+        if (measurementTypeId === newMeasurementType.id) {
             // Retrieve all the data for this Measurement type (e.g. 'targets')
             // which was recorded at baseline.
             const atBaseline = measurementApi.fetch(measurementTypeId, {
@@ -83,7 +84,7 @@ Template.measurementTableView.helpers({
         });
     },
 
-    newMeasurements(measurementType) {
+    newMeasurements(newMeasurementType) {
         const instance = Template.instance();
         const measurementApi = instance.data.measurementApi;
         const timepointApi = instance.data.timepointApi;
@@ -103,7 +104,7 @@ Template.measurementTableView.helpers({
 
         // Retrieve all the data for this Measurement type (e.g. 'targets')
         // which was recorded at baseline.
-        const measurementTypeId = measurementType.measurementTypeId;
+        const measurementTypeId = newMeasurementType.id;
         const atBaseline = measurementApi.fetch(measurementTypeId, {
             timepointId: baseline.timepointId
         });

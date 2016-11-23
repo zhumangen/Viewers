@@ -7,7 +7,6 @@ import { validateMeasurements } from './dataValidation';
 console.log('OHIF-LesionTracker: Defining Configuration for Measurements');
 
 const newMeasurementTool = {
-    id: 'newLesions',
     name: 'New Lesions'
 };
 

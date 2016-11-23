@@ -1,9 +1,11 @@
 <template name="measurementTableView">
     <div class="measurementTableView scrollArea">
         {{#let config=measurementConfiguration}}
+        {{#let newMeasurementType=(getNewMeasurementType config.newMeasurementTool)}}
+        
             {{#each measurementType in config.measurementTools}}
                 {{#if measurementType.options.showInMeasurementTable}}
-                    {{#let collection=(groupByMeasurementNumber measurementType.id)}}
+                    {{#let collection=(groupByMeasurementNumber measurementType newMeasurementType)}}
                         {{>measurementTableHeaderRow
                             measurementType=measurementType
                             measurements=collection
@@ -19,12 +21,11 @@
             {{/each}}
 
             {{#if config.newMeasurementTool}}
-                {{#let measurementType=(getNewMeasurementType config.newMeasurementTool)}}
-                {{#let newMeasure=(newMeasurements measurementType)}}
+                {{#let newMeasure=(newMeasurements newMeasurementType)}}
                     {{#if newMeasure.length}}
                         {{#let collection=newMeasure}}
                             {{>measurementTableHeaderRow
-                                measurementType=measurementType
+                                measurementType=newMeasurementType
                                 measurements=collection
                                 currentTimepointId=currentTimepointId
                                 timepointApi=timepointApi
@@ -36,8 +37,9 @@
                         {{/let}}
                     {{/if}}
                 {{/let}}
-                {{/let}}
             {{/if}}
+
+        {{/let}}
         {{/let}}
     </div>
 </template>
