@@ -235,6 +235,7 @@ function loadDisplaySetIntoViewport(data, templateData) {
         // newly rendered element
         var activeTool = toolManager.getActiveTool();
         toolManager.setActiveTool(activeTool, [element]);
+        toolManager.setDefaultEnabledForElement(element);
 
         // Define a function to run whenever the Cornerstone viewport is rendered
         // (e.g. following a change of window or zoom)

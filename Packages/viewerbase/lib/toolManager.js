@@ -122,6 +122,13 @@ toolManager = {
     getToolDefaultStates: function() {
         return toolDefaultStates;
     },
+    setDefaultEnabledForElement: function(element) {
+        var states = this.getToolDefaultStates();
+
+        states.enable.forEach(function (tool) {
+            cornerstoneTools[tool].enable(element);
+        })
+    },
     setActiveToolForElement: function(tool, element) {
         var canvases = $(element).find('canvas');
         if (element.classList.contains('empty') || !canvases.length) {
