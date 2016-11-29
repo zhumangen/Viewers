@@ -223,4 +223,7 @@ Package.onUse(function(api) {
     api.export('clearTools', 'client');
     api.export('resetViewport', 'client');
     api.export('invert', 'client');
+
+    //medken
+    api.addFiles('lib/viewerFunctions.js');
 });

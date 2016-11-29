@@ -200,7 +200,11 @@ function loadDisplaySetIntoViewport(data, templateData) {
         // Hide the viewport instructions (i.e. 'Drag a stack here') and show
         // the viewport overlay data.
         $(element).siblings('.viewportInstructions').hide();
-        $(element).siblings('.imageViewerViewportOverlay').show();
+        if (isHideOverlay()) {
+            $(element).siblings('.imageViewerViewportOverlay').hide();
+        } else {
+            $(element).siblings('.imageViewerViewportOverlay').show();
+        }
 
         // Add stack state managers for the stack tool, CINE tool, and reference lines
         cornerstoneTools.addStackStateManager(element, ['stack', 'playClip', 'referenceLines']);
