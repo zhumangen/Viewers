@@ -174,6 +174,7 @@ function resultDataToStudyMetadata(server, studyInstanceUid, resultData) {
             sliceLocation: DICOMWeb.getNumber(instance['00201041']),
             samplesPerPixel: DICOMWeb.getNumber(instance['00280002']),
             photometricInterpretation: DICOMWeb.getString(instance['00280004']),
+            planarConfiguration: DICOMWeb.getNumber(instance['00280006']),
             rows: DICOMWeb.getNumber(instance['00280010']),
             columns: DICOMWeb.getNumber(instance['00280011']),
             pixelSpacing: DICOMWeb.getString(instance['00280030']),
