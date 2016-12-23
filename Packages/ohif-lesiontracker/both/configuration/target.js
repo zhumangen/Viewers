@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { MeasurementSchemaTypes } from 'meteor/ohif:measurements/both/schema/measurements';
 
 const CornerstoneHandleSchema = MeasurementSchemaTypes.CornerstoneHandleSchema;
@@ -14,11 +14,13 @@ const TargetHandlesSchema = new SimpleSchema({
     },
     perpendicularStart: {
         type: CornerstoneHandleSchema,
-        label: 'Perpendicular Start'
+        label: 'Perpendicular Start',
+        optional: true
     },
     perpendicularEnd: {
         type: CornerstoneHandleSchema,
-        label: 'Perpendicular End'
+        label: 'Perpendicular End',
+        optional: true
     },
     textBox: {
         type: CornerstoneHandleSchema,
@@ -26,7 +28,13 @@ const TargetHandlesSchema = new SimpleSchema({
     },
 });
 
-const TargetSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMeasurement, {
+const TargetSchema = new SimpleSchema({
+    viewerTool: {
+        type: String,
+        label: 'Viewer Tool',
+        defaultValue: 'targets',
+        optional: true
+    },
     handles: {
         type: TargetHandlesSchema,
         label: 'Handles'
@@ -43,20 +51,19 @@ const TargetSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMea
     },
     longestDiameter: {
         type: Number,
-        label: 'Longest Diameter',
-        decimal: true
+        label: 'Longest Diameter'
     },
     shortestDiameter: {
         type: Number,
-        label: 'Shortest Diameter',
-        decimal: true
+        label: 'Shortest Diameter'
     },
     locationUid: {
         type: String,
         label: 'Location UID',
         optional: true // Optional because it is added after initial drawing, via a callback
     }
-}]);
+});
+TargetSchema.extend(MeasurementSchemaTypes.CornerstoneToolMeasurement);
 
 function displayFunction(data) {
     // Check whether this is a Nodal or Extranodal Measurement

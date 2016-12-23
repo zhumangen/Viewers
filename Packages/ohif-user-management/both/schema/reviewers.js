@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const ReviewingUserSchema = new SimpleSchema({
     userId: {
@@ -17,7 +17,10 @@ export const schema = new SimpleSchema({
         label: 'Timepoint ID'
     },
     reviewers: {
-        type: [ ReviewingUserSchema ],
+        type: Array,
         label: 'Reviewing Users'
+    },
+    'reviewers.$': {
+        type: ReviewingUserSchema
     }
 });

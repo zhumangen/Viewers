@@ -29,9 +29,9 @@ const getCurrentSchema = (parentComponent, key) => {
     }
 
     // Merge the sub-schema properties if it's an array
-    if (Array.isArray(currentSchema.type())) {
-        _.extend(currentSchema, schema._schema[key + '.$']);
-    }
+    // if (Array.isArray(currentSchema.type())) {
+    //     _.extend(currentSchema, schema._schema[key + '.$']);
+    // }
 
     // Return the component's schema definitions
     return currentSchema;

@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const serverNameDefinitions = {
     type: String,
@@ -122,9 +122,12 @@ export const DIMSEServer = new SimpleSchema({
         label: 'Request Options'
     },
     peers: {
-        type: [DIMSEPeer],
+        type: Array,
         label: 'Peer List',
         minCount: 1
+    },
+    'peers.$': {
+        type: DIMSEPeer
     }
 });
 
@@ -175,14 +178,20 @@ export const PublicServerConfig = new SimpleSchema({
 
 export const Servers = new SimpleSchema({
     dicomWeb: {
-        type: [DICOMWebServer],
+        type: Array,
         label: 'DICOMWeb Servers',
         optional: true
     },
+    'dicomWeb.$': {
+        type: DICOMWebServer
+    },
     dimse: {
-        type: [DIMSEServer],
+        type: Array,
         label: 'DIMSE Servers',
         optional: true
+    },
+    'dimse.$': {
+        type: DIMSEServer
     }
 });
 

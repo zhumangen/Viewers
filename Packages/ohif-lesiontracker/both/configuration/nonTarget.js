@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { MeasurementSchemaTypes } from 'meteor/ohif:measurements/both/schema/measurements';
 
 const CornerstoneHandleSchema = MeasurementSchemaTypes.CornerstoneHandleSchema;
@@ -18,7 +18,7 @@ const NonTargetHandlesSchema = new SimpleSchema({
     }
 });
 
-const NonTargetSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMeasurement, {
+const NonTargetSchema = new SimpleSchema({
     handles: {
         type: NonTargetHandlesSchema,
         label: 'Handles'
@@ -38,22 +38,21 @@ const NonTargetSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneTool
         label: 'Location UID',
         optional: true // Optional because it is added after initial drawing, via a callback
     }
-}]);
+});
+NonTargetSchema.extend(MeasurementSchemaTypes.CornerstoneToolMeasurement);
 
-function displayFunction(data) {
-    return data.response;
-}
+const displayFunction = data => data.location;
 
 export const nonTarget = {
     id: 'nonTargets',
     name: 'Non-Targets',
     cornerstoneToolType: 'nonTarget',
     schema: NonTargetSchema,
-    displayFunction: displayFunction,
+    displayFunction,
     options: {
         showInMeasurementTable: true,
         measurementTableOptions: {
-            displayFunction: displayFunction
+            displayFunction
         },
         includeInCaseProgress: true,
     }

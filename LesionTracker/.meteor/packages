@@ -26,7 +26,6 @@ clinical:fonts
 clinical:hipaa-audit-log
 clinical:hipaa-logger
 
-aldeed:simple-schema          # Third party package to deal with schemas
 
 # OHIF Packages
 design
@@ -68,4 +67,4 @@ standard-minifier-js@1.2.1
 johdirr:meteor-git-rev
 u2622:persistent-session
 shell-server@0.2.1
-aldeed:collection2
+aldeed:collection2-core@2.0.0

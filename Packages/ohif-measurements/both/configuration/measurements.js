@@ -21,10 +21,21 @@ class MeasurementApi {
 
         configuration.measurementTools.forEach(tool => {
             const measurementTypeId = tool.id;
+            const schemaMatch = {
+                selector: {
+                    viewerTool: measurementTypeId
+                }
+            };
 
-            this[measurementTypeId] = new Mongo.Collection(null);
-            this[measurementTypeId]._debugName = tool.name;
-            this[measurementTypeId].attachSchema(tool.schema);
+            if (tool.memberOf) {
+                this[tool.memberOf] = this[tool.memberOf] || new Mongo.Collection(null);
+                this[tool.memberOf].attachSchema(tool.schema, schemaMatch);
+                this[measurementTypeId] = this[tool.memberOf];
+            } else {
+                this[measurementTypeId] = this[measurementTypeId] || new Mongo.Collection(null);
+                this[measurementTypeId]._debugName = tool.name;
+                this[measurementTypeId].attachSchema(tool.schema, schemaMatch);
+            };
         });
     }
 
@@ -134,7 +145,7 @@ class MeasurementApi {
                 $nin: numbers
             }
         };
-        
+
         return collection.find(filter).fetch();
     }
 
@@ -227,7 +238,7 @@ class MeasurementApi {
 
         // Next, handle New Measurements (i.e. no baseline data)
         // Note that this cannot be combined with the loop above due to the incrementing of the overallMeasurementNumber
-        includedTools.forEach(tool => { 
+        includedTools.forEach(tool => {
             const collection = this[tool.id];
             const toolType = tool.cornerstoneToolType;
             const measurements = hasNoDataAtTimepoint(collection, baselineTimepointId);

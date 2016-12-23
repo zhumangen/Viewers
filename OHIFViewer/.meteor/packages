@@ -33,7 +33,6 @@ random@1.0.10
 ejson@1.0.13
 spacebars@1.0.12
 check@1.2.4
-aldeed:simple-schema          # Third party package to deal with schemas
 ecmascript@0.6.1
 reactive-var@1.0.11
 
@@ -47,3 +46,4 @@ johdirr:meteor-git-rev
 aldeed:template-extension
 peppelg:bootstrap-3-modal
 shell-server@0.2.1
+aldeed:collection2-core@2.0.0

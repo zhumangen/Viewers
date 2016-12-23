@@ -4,7 +4,7 @@ import { measurementTools } from './measurementTools';
 import { retrieveMeasurements, storeMeasurements, retrieveTimepoints, storeTimepoints, removeTimepoint, updateTimepoint, disassociateStudy } from './dataExchange';
 import { validateMeasurements } from './dataValidation';
 
-console.log('OHIF-LesionTracker: Defining Configuration for Measurements');
+OHIF.log.info('OHIF-LesionTracker: Defining Configuration for Measurements');
 
 const newMeasurementTool = {
     id: 'newLesions',

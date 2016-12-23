@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const Measurement = new SimpleSchema({
     userId: {
@@ -54,61 +54,52 @@ const Measurement = new SimpleSchema({
     }
 });
 
-const StudyLevelMeasurement = new SimpleSchema([
-    Measurement,
-    {
-        studyInstanceUid: {
-            type: String,
-            label: 'Study Instance UID'
-        }
+const StudyLevelMeasurement = new SimpleSchema({
+    studyInstanceUid: {
+        type: String,
+        label: 'Study Instance UID'
     }
-]);
+});
+StudyLevelMeasurement.extend(Measurement);
 
-const SeriesLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    {
-        seriesInstanceUid: {
-            type: String,
-            label: 'Series Instance UID'
-        }
+const SeriesLevelMeasurement = new SimpleSchema({
+    seriesInstanceUid: {
+        type: String,
+        label: 'Series Instance UID'
     }
-]);
+});
+SeriesLevelMeasurement.extend(StudyLevelMeasurement);
 
 const CornerstoneVOI = new SimpleSchema({
     windowWidth: {
         type: Number,
         label: 'Window Width',
-        decimal: true,
         optional: true
     },
     windowCenter: {
         type: Number,
         label: 'Window Center',
-        decimal: true,
         optional: true
-    },
+    }
 });
 
 const CornerstoneViewportTranslation = new SimpleSchema({
     x: {
         type: Number,
         label: 'X',
-        decimal: true,
         optional: true
     },
     y: {
         type: Number,
         label: 'Y',
-        decimal: true,
         optional: true
-    },
+    }
 });
 
 const CornerstoneViewport = new SimpleSchema({
     scale: {
         type: Number,
         label: 'Scale',
-        decimal: true,
         optional: true
     },
     translation: {
@@ -144,87 +135,78 @@ const CornerstoneViewport = new SimpleSchema({
     rotation: {
         type: Number,
         label: 'Rotation (degrees)',
-        decimal: true,
         optional: true
     }
-})
+});
 
-const InstanceLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    {
-        sopInstanceUid: {
-            type: String,
-            label: 'SOP Instance UID'
-        },
-        viewport: {
-            type: CornerstoneViewport,
-            label: 'Viewport Parameters',
-            optional: true
-        }
+const InstanceLevelMeasurement = new SimpleSchema({
+    sopInstanceUid: {
+        type: String,
+        label: 'SOP Instance UID'
+    },
+    viewport: {
+        type: CornerstoneViewport,
+        label: 'Viewport Parameters',
+        optional: true
     }
-]);
+});
+InstanceLevelMeasurement.extend(StudyLevelMeasurement);
+InstanceLevelMeasurement.extend(SeriesLevelMeasurement);
 
-const FrameLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    InstanceLevelMeasurement,
-    {
-        frameIndex: {
-            type: Number,
-            min: 0,
-            label: 'Frame index in Instance'
-        },
-        // TODO: In the future we should remove this in favour of searching ViewerStudies and display sets when
-        // re-displaying measurements. Otherwise if a study moves servers the measurements will not be displayed correctly
-        imageId: {
-            type: String,
-            label: 'Cornerstone Image Id'
-        }
+const FrameLevelMeasurement = new SimpleSchema({
+    frameIndex: {
+        type: Number,
+        min: 0,
+        label: 'Frame index in Instance'
+    },
+    // TODO: In the future we should remove this in favour of searching ViewerStudies and display sets when
+    // re-displaying measurements. Otherwise if a study moves servers the measurements will not be displayed correctly
+    imageId: {
+        type: String,
+        label: 'Cornerstone Image Id'
     }
-]);
+});
+FrameLevelMeasurement.extend(StudyLevelMeasurement);
+FrameLevelMeasurement.extend(SeriesLevelMeasurement);
+FrameLevelMeasurement.extend(InstanceLevelMeasurement);
 
-const CornerstoneToolMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    InstanceLevelMeasurement,
-    FrameLevelMeasurement,
-    {
-        toolType: {
-            type: String,
-            label: 'Cornerstone Tool Type',
-            optional: true
-        },
-        visible: {
-            type: Boolean,
-            label: 'Visible',
-            defaultValue: true
-        },
-        active: {
-            type: Boolean,
-            label: 'Active',
-            defaultValue: false
-        },
-        invalidated: {
-            type: Boolean,
-            label: 'Invalidated',
-            defaultValue: false,
-            optional: true
-        }
+const CornerstoneToolMeasurement = new SimpleSchema({
+    toolType: {
+        type: String,
+        label: 'Cornerstone Tool Type',
+        optional: true
+    },
+    visible: {
+        type: Boolean,
+        label: 'Visible',
+        defaultValue: true
+    },
+    active: {
+        type: Boolean,
+        label: 'Active',
+        defaultValue: false
+    },
+    invalidated: {
+        type: Boolean,
+        label: 'Invalidated',
+        defaultValue: false,
+        optional: true
     }
-]);
+});
+CornerstoneToolMeasurement.extend(StudyLevelMeasurement);
+CornerstoneToolMeasurement.extend(SeriesLevelMeasurement);
+CornerstoneToolMeasurement.extend(InstanceLevelMeasurement);
+CornerstoneToolMeasurement.extend(FrameLevelMeasurement);
 
 const CornerstoneHandleSchema = new SimpleSchema({
     x: {
         type: Number,
         label: 'X',
-        decimal: true,
         optional: true // Not actually optional, but sometimes values like x/y position are missing
     },
     y: {
         type: Number,
         label: 'Y',
-        decimal: true,
         optional: true // Not actually optional, but sometimes values like x/y position are missing
     },
     highlight: {

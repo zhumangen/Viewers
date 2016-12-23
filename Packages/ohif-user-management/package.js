@@ -14,8 +14,7 @@ Package.onUse(function(api) {
     api.use('random');
 
     // Schema for Data Models
-    api.use('aldeed:simple-schema');
-    api.use('aldeed:collection2');
+    api.use('aldeed:collection2-core');
 
     // Template overriding
     api.use('aldeed:template-extension@4.0.0');

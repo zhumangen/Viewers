@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { OHIF } from 'meteor/ohif:core';
 import { Session } from 'meteor/session';
 import { _ } from 'meteor/underscore';

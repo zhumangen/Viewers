@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 export const schema = new SimpleSchema({
     patientId: {
@@ -16,9 +16,12 @@ export const schema = new SimpleSchema({
         defaultValue: 'baseline',
     },
     studyInstanceUids: {
-        type: [String],
+        type: Array,
         label: 'Study Instance Uids',
         defaultValue: []
+    },
+    'studyInstanceUids.$': {
+        type: String
     },
     earliestDate: {
         type: Date,
