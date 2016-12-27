@@ -45,6 +45,7 @@ class MeasurementHandlers {
             seriesInstanceUid: seriesInstanceUid,
             sopInstanceUid: sopInstanceUid,
             frameIndex: frameIndex,
+            viewerTool: measurementToolConfiguration.id,
             imageId: imageId // TODO: In the future we should consider removing this
         }, measurementData);
 
@@ -90,7 +91,7 @@ class MeasurementHandlers {
 
             // TODO: Fix this it is a terrible workaround but we have a demo to do
             if (baseline) {
-                measurementApi.sortMeasurements(baseline.timepointId);    
+                measurementApi.sortMeasurements(baseline.timepointId);
             }
         }
     }
@@ -124,7 +125,7 @@ class MeasurementHandlers {
         // If the measurement configuration includes a value for Viewport,
         // we will populate this with the Cornerstone Viewport
         if (measurementToolConfiguration.schema.schema('viewport')) {
-            measurement.viewport = cornerstone.getViewport(eventData.element);    
+            measurement.viewport = cornerstone.getViewport(eventData.element);
         }
 
         // Clean the measurement according to the Schema
