@@ -111,7 +111,8 @@ function loadDisplaySetIntoViewport(data, templateData) {
 
     // Enable Cornerstone for the viewport element
     const options = {
-        renderer: 'webgl'
+        // TODO: It's not working with WADO-RS requests (see getWADORSImageId)
+        // renderer: 'webgl'
     };
 
     // NOTE: This uses the experimental WebGL renderer for Cornerstone!

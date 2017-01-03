@@ -24,6 +24,6 @@ getImageId = function(instance, frame) {
         return imageId;
     } else {
         // TODO= Check multiframe image support with WADO-RS
-        return getWADORSImageId(instance); // WADO-RS Retrieve Frame
+        return getWADORSImageId(instance, frame); // WADO-RS Retrieve Frame
     }
 };

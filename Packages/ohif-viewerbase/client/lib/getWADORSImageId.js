@@ -1,6 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import { OHIF } from 'meteor/ohif:core';
 
+formatWADOREImageUrl = function(wadorsuri, frame) {
+    // We need to sum 1 because WADO-RS frame number is 1-based
+    frame = (frame || 0) + 1;
+
+    // Replaces /frame/1 by /frame/{frame}
+    // TODO: Maybe should be better to export the WADOProxy to be able to use it on client
+    //       Example: WADOProxy.convertURL(baseWadoRsUri + '/frame/' + frame)
+    wadorsuri = wadorsuri.replace(/(%2Fframes%2F)(\d+)/, `$1${frame}`);
+
+    return Meteor.absoluteUrl(wadorsuri);
+}
+
 /**
  * Obtain an imageId for Cornerstone based on the WADO-RS scheme
  *
@@ -8,9 +20,10 @@ import { OHIF } from 'meteor/ohif:core';
  * @returns {string} The imageId to be used by Cornerstone
  */
 
-getWADORSImageId = function(instance) {
+getWADORSImageId = function(instance, frame) {
     var columnPixelSpacing = 1.0;
     var rowPixelSpacing = 1.0;
+
     if (instance.pixelSpacing) {
         var split = instance.pixelSpacing.split('\\');
         rowPixelSpacing = parseFloat(split[0]);
@@ -26,7 +39,7 @@ getWADORSImageId = function(instance) {
     }
 
     var image = {
-        uri: Meteor.absoluteUrl(instance.wadorsuri),
+        uri: formatWADOREImageUrl(instance.wadorsuri, frame),
         //imageId : '',
         //minPixelValue : 0,
         //maxPixelValue : 255,
