@@ -73,6 +73,17 @@ addSpecificMetadata = function(imageId, type, data) {
     metaDataLookup[imageId] = $.extend(metaDataLookup[imageId], metaData);
 };
 
+function getFromImage(image, type, tag, attrName, defaultValue) {
+    let value;
+
+    if(image.data) {
+        value = getFromDataSet(image.data, type, tag);
+    } else {
+        value = image.instance[attrName];
+    }
+
+    return value == null ? defaultValue : value;
+}
 
 function getFromDataSet(dataSet, type, tag) {
     if (!dataSet) {
@@ -85,6 +96,50 @@ function getFromDataSet(dataSet, type, tag) {
     }
 
     return fn.call(dataSet, tag);
+}
+
+getFrameIncrementPointer = function(image) {
+    const dataSet = image.data;
+    let frameInstancePointer = '';
+
+    if (parsingUtils.isValidDataSet(dataSet)) {
+        const frameInstancePointerNames = {
+            'x00181063': 'frameTime',
+            'x00181065': 'frameTimeVector'
+        }
+
+        // (0028,0009) = Frame Increment Pointer
+        const frameInstancePointerTag = parsingUtils.attributeTag(dataSet, 'x00280009');
+        frameInstancePointer = frameInstancePointerNames[frameInstancePointerTag];
+    } else {
+        frameInstancePointer = image.instance['frameIncrementPointer'];
+    }
+
+    return frameInstancePointer || '';
+}
+
+getFrameTimeVector = function(image) {
+    const dataSet = image.data;
+
+    if (parsingUtils.isValidDataSet(dataSet)) {
+        // Frame Increment Pointer points to Frame Time Vector (0018,1065) field
+        return parsingUtils.floatArray(dataSet, 'x00181065');
+    }
+
+    return image.instance['frameTimeVector'];
+}
+
+getFrameTime = function(image) {
+    const dataSet = image.data;
+
+    if (parsingUtils.isValidDataSet(dataSet)) {
+        // Frame Increment Pointer points to Frame Time (0018,1063) field or is not defined (for addtional flexibility).
+        // Yet another value is possible for this field (5200,9230 for Multi-frame Functional Groups)
+        // but that case is currently not supported.
+        return dataSet.floatString('x00181063', -1);
+    }
+
+    return image.instance['frameTime'];
 }
 
 /**
@@ -121,8 +176,8 @@ updateMetaData = function(image) {
     imageMetaData.instance.frameTime = imageMetaData.instance.frameTime || getFromDataSet(image.data, 'string', 'x00181063');
     imageMetaData.instance.frameTimeVector = imageMetaData.instance.frameTimeVector || getFromDataSet(image.data, 'string', 'x00181065');
 
-    if (image.data && !imageMetaData.instance.multiframeMetadata) {
-        imageMetaData.instance.multiframeMetadata = getMultiframeModuleMetaData(image.data);
+    if ((image.data || image.instance) && !imageMetaData.instance.multiframeMetadata) {
+        imageMetaData.instance.multiframeMetadata = getMultiframeModuleMetaData(image);
     }
 
     imageMetaData.imagePlane = imageMetaData.imagePlane || getImagePlane(imageMetaData.instance);
@@ -178,8 +233,7 @@ function getImagePlane(instance) {
  * @param dataSet {Object} An instance of dicomParser.DataSet object where multiframe information can be found.
  * @return {Object} An object containing multiframe image metadata (frameIncrementPointer, frameTime, frameTimeVector, etc).
  */
-getMultiframeModuleMetaData = function(dataSet) {
-
+getMultiframeModuleMetaData = function(image) {
     var numberOfFrames,
         frameIncrementPointer,
         frameTime,
@@ -193,40 +247,33 @@ getMultiframeModuleMetaData = function(dataSet) {
             averageFrameRate: 0 // backwards compatibility only... it might be useless in the future
         };
 
-    if (parsingUtils.isValidDataSet(dataSet)) {
+    numberOfFrames = getFromImage(image, 'intString', 'x00280008', 'numFrames', -1);
 
-        // (0028,0008) = Number of Frames
-        numberOfFrames = dataSet.intString('x00280008', -1);
-        if (numberOfFrames > 0) {
+    if (numberOfFrames > 0) {
 
-            // set multi-frame image indicator
-            imageInfo.isMultiframeImage = true;
-            imageInfo.numberOfFrames = numberOfFrames;
+        // set multi-frame image indicator
+        imageInfo.isMultiframeImage = true;
+        imageInfo.numberOfFrames = numberOfFrames;
 
-            // (0028,0009) = Frame Increment Pointer
-            frameIncrementPointer = parsingUtils.attributeTag(dataSet, 'x00280009') || '';
+        frameIncrementPointer = getFrameIncrementPointer(image);
 
-            if (frameIncrementPointer === 'x00181065') {
-                // Frame Increment Pointer points to Frame Time Vector (0018,1065) field
-                frameTimeVector = parsingUtils.floatArray(dataSet, 'x00181065');
-                if (frameTimeVector instanceof Array && frameTimeVector.length > 0) {
-                    imageInfo.frameIncrementPointer = 'frameTimeVector';
-                    imageInfo.frameTimeVector = frameTimeVector;
-                    frameTime = frameTimeVector.reduce((a, b) => a + b) / frameTimeVector.length;
-                    imageInfo.averageFrameRate = 1000 / frameTime;
-                }
-            } else if (frameIncrementPointer === 'x00181063' || frameIncrementPointer === '') {
-                // Frame Increment Pointer points to Frame Time (0018,1063) field or is not defined (for addtional flexibility).
-                // Yet another value is possible for this field (5200,9230 for Multi-frame Functional Groups)
-                // but that case is currently not supported.
-                frameTime = dataSet.floatString('x00181063', -1);
-                if (frameTime > 0) {
-                    imageInfo.frameIncrementPointer = 'frameTime';
-                    imageInfo.frameTime = frameTime;
-                    imageInfo.averageFrameRate = 1000 / frameTime;
-                }
+        if (frameIncrementPointer === 'frameTimeVector') {
+            frameTimeVector = getFrameTimeVector(image);
+
+            if (frameTimeVector instanceof Array && frameTimeVector.length > 0) {
+                imageInfo.frameIncrementPointer = frameIncrementPointer;
+                imageInfo.frameTimeVector = frameTimeVector;
+                frameTime = frameTimeVector.reduce((a, b) => a + b) / frameTimeVector.length;
+                imageInfo.averageFrameRate = 1000 / frameTime;
             }
+        } else if (frameIncrementPointer === 'frameTime' || frameIncrementPointer === '') {
+            frameTime = getFrameTime(image);
 
+            if (frameTime > 0) {
+                imageInfo.frameIncrementPointer = frameIncrementPointer;
+                imageInfo.frameTime = frameTime;
+                imageInfo.averageFrameRate = 1000 / frameTime;
+            }
         }
 
     }
