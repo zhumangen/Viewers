@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { OHIF } from 'meteor/ohif:core';
 
+const wadorsImageIds = {};
+
 formatWADOREImageUrl = function(wadorsuri, frame) {
     // We need to sum 1 because WADO-RS frame number is 1-based
     frame = (frame || 0) + 1;
@@ -21,8 +23,13 @@ formatWADOREImageUrl = function(wadorsuri, frame) {
  */
 
 getWADORSImageId = function(instance, frame) {
-    var columnPixelSpacing = 1.0;
-    var rowPixelSpacing = 1.0;
+    const uri = formatWADORSImageUrl(instance.wadorsuri, frame);
+    let columnPixelSpacing = 1.0;
+    let rowPixelSpacing = 1.0;
+
+    if(wadorsImageIds[uri]) {
+        return wadorsImageIds[uri];
+    }
 
     if (instance.pixelSpacing) {
         var split = instance.pixelSpacing.split('\\');
@@ -39,7 +46,7 @@ getWADORSImageId = function(instance, frame) {
     }
 
     var image = {
-        uri: formatWADOREImageUrl(instance.wadorsuri, frame),
+        uri: uri,
         //imageId : '',
         //minPixelValue : 0,
         //maxPixelValue : 255,
@@ -69,7 +76,10 @@ getWADORSImageId = function(instance, frame) {
         instance: instance
     };
 
-    var imageId = cornerstoneWADOImageLoader.imageManager.add(image);
+    const imageId = cornerstoneWADOImageLoader.imageManager.add(image);
+
+    // Add the image id to the cache
+    wadorsImageIds[uri] = imageId;
 
     OHIF.log.info('WADO-RS ImageID: ' + imageId);
     return imageId;
