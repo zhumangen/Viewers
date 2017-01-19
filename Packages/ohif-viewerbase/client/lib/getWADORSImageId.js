@@ -3,7 +3,7 @@ import { OHIF } from 'meteor/ohif:core';
 
 const wadorsImageIds = {};
 
-formatWADOREImageUrl = function(wadorsuri, frame) {
+formatWADORSImageUrl = function(wadorsuri, frame) {
     // We need to sum 1 because WADO-RS frame number is 1-based
     frame = (frame || 0) + 1;
 

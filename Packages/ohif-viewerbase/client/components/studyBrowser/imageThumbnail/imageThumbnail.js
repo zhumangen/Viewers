@@ -19,8 +19,7 @@ Template.imageThumbnail.onCreated(() => {
             imageIndex = 0;
         }
 
-        return getImageId(imageInstance, imageIndex);
-        // return getWADORSImageId(imageInstance);
+        return getImageId(imageInstance, imageIndex, true);
     };
 });
 
