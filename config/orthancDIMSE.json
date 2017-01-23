@@ -3,6 +3,8 @@
     "dimse": [{
       "name": "ORTHANC_DIMSE",
       "wadoUriRoot": "http://localhost:8042/wado",
+      "imageRendering": "wadouri",
+      "thumbnailRendering": "wadors",
       "requestOptions": {
         "auth": "orthanc:orthanc",
         "logRequests": true,

@@ -8,6 +8,7 @@
         "wadoRoot": "http://dicom-orthanc.medken.com/dicom-web",
         "qidoSupportsIncludeField": false,
         "imageRendering": "wadouri",
+        "thumbnailRendering": "wadors",
         "requestOptions": {
           "logRequests": false,
           "logResponses": false,

@@ -19,7 +19,7 @@ getImageId = function(instance, frame, thumbnail) {
 
     const renderingAttr = thumbnail ? 'thumbnailRendering' : 'imageRendering';
 
-    if (instance[renderingAttr] === 'wadouri') {
+    if (!instance[renderingAttr] || instance[renderingAttr] === 'wadouri' || !instance.wadorsuri) {
         var imageId = 'dicomweb:' + Meteor.absoluteUrl(instance.wadouri); // WADO-URI;
         if (frame !== undefined) {
             imageId += '&frame=' + frame;
