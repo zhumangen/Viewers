@@ -26,8 +26,8 @@ setActiveViewport = element => {
         // Cornerstone Tools compare DOM elements (check getEnabledElement cornerstone function)
         // so we can't pass a jQuery object as an argument, otherwise it throws an excepetion
         const domElement = jQueryElement.get(0);
-        enablePrefetchOnElement(domElement);
         displayReferenceLines(domElement);
+        OHIF.viewer.StudyPrefetcher.getInstance().prefetch();
         OHIF.viewer.stackImagePositionOffsetSynchronizer.update();
     }
 

@@ -19,11 +19,14 @@ Template.viewerMain.onCreated(() => {
 
 Template.viewerMain.onRendered(() => {
     const instance = Template.instance();
+    const studyPrefetcher = OHIF.viewer.StudyPrefetcher.getInstance();
 
     HP.ProtocolStore.onReady(() => {
         const { studies, currentTimepointId, measurementApi, timepointIds } = instance.data;
         const parentElement = instance.$('#layoutManagerTarget').get(0);
         window.layoutManager = new LayoutManager(parentElement, studies);
+
+        studyPrefetcher.setStudies(studies);
 
         // Default actions for Associated Studies
         if(currentTimepointId) {

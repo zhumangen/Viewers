@@ -200,13 +200,13 @@ Package.onUse(function(api) {
 
     // Library functions
     api.addFiles('client/lib/layoutManager.js', 'client');
+    api.addFiles('client/lib/studyPrefetcher.js', 'client');
     api.addFiles('client/lib/createStacks.js', 'client');
     api.addFiles('client/lib/getImageId.js', 'client');
     api.addFiles('client/lib/getWADORSImageId.js', 'client');
     api.addFiles('client/lib/metaDataProvider.js', 'client');
     api.addFiles('client/lib/sortStudy.js', 'client');
     api.addFiles('client/lib/toolManager.js', 'client');
-    api.addFiles('client/lib/enablePrefetchOnElement.js', 'client');
     api.addFiles('client/lib/displayReferenceLines.js', 'client');
     api.addFiles('client/lib/toggleDialog.js', 'client');
     api.addFiles('client/lib/setActiveViewport.js', 'client');
@@ -230,7 +230,6 @@ Package.onUse(function(api) {
     api.export('resizeViewportElements', 'client');
     api.export('handleResize', 'client');
     api.export('enableHotkeys', 'client');
-    api.export('enablePrefetchOnElement', 'client');
     api.export('displayReferenceLines', 'client');
     api.export('setActiveViewport', 'client');
     api.export('createStacks', 'client');
