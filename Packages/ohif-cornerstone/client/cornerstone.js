@@ -531,11 +531,12 @@ if(typeof cornerstone === 'undefined'){
         // remove images as necessary
         while(cacheSizeInBytes > maximumSizeInBytes) {
             var lastCachedImage = cachedImages[cachedImages.length - 1];
-            cacheSizeInBytes -= lastCachedImage.sizeInBytes;
-            delete imageCache[lastCachedImage.imageId];
+            var imageId = lastCachedImage.imageId;
+
             lastCachedImage.imagePromise.reject();
-            cachedImages.pop();
-            $(cornerstone).trigger('CornerstoneImageCachePromiseRemoved', {imageId: lastCachedImage.imageId});
+            removeImagePromise(imageId);
+
+            $(cornerstone).trigger('CornerstoneImageCachePromiseRemoved', {imageId: imageId});
         }
 
         var cacheInfo = cornerstone.imageCache.getCacheInfo();
@@ -622,19 +623,19 @@ if(typeof cornerstone === 'undefined'){
 
         // If this is using a sharedCacheKey, decrement the cache size only
         // if it is the last imageId in the cache with this sharedCacheKey
-        if(cachedImages.sharedCacheKey) {
-          if(sharedCacheKeys[cachedImages.sharedCacheKey] === 1) {
-            cacheSizeInBytes -= cachedImage.sizeInBytes;
-            delete sharedCacheKeys[cachedImages.sharedCacheKey];
-          } else {
-            sharedCacheKeys[cachedImages.sharedCacheKey]--;
-          }
+        if(cachedImage.sharedCacheKey) {
+            if(sharedCacheKeys[cachedImage.sharedCacheKey] === 1) {
+                cacheSizeInBytes -= cachedImage.sizeInBytes;
+                delete sharedCacheKeys[cachedImage.sharedCacheKey];
+            } else {
+                sharedCacheKeys[cachedImage.sharedCacheKey]--;
+            }
         } else {
-          cacheSizeInBytes -= cachedImage.sizeInBytes;
+            cacheSizeInBytes -= cachedImage.sizeInBytes;
         }
-        delete imageCache[imageId];
 
         decache(cachedImage.imagePromise, cachedImage.imageId);
+        delete imageCache[imageId];
 
         return cachedImage.imagePromise;
     }
@@ -648,23 +649,20 @@ if(typeof cornerstone === 'undefined'){
     }
 
     function decache(imagePromise, imageId) {
-      imagePromise.then(function(image) {
-        if(image.decache) {
-          image.decache();
-        }
-        imagePromise.reject();
-        delete imageCache[imageId];
-      }).always(function() {
-        delete imageCache[imageId];
-      });
+        imagePromise.then(function(image) {
+            if(image.decache) {
+                image.decache();
+            }
+        }).always(function() {
+            delete imageCache[imageId];
+        });
     }
 
     function purgeCache() {
         while (cachedImages.length > 0) {
-          var removedCachedImage = cachedImages.pop();
-          decache(removedCachedImage.imagePromise, removedCachedImage.imageId);
+            var removedCachedImage = cachedImages[0];
+            removeImagePromise(removedCachedImage.imageId);
         }
-        cacheSizeInBytes = 0;
     }
 
     function changeImageIdCacheSize(imageId, newCacheSize) {
