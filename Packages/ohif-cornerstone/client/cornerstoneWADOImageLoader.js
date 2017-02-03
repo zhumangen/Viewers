@@ -4445,10 +4445,31 @@ var JpegImage = (function jpegImage() {
     return deferred.promise();
   }
 
-  function loadImage(imageId) {
-    var deferred = $.Deferred();
+  // The image created by this method will be cached by imageCache.
+  // Images cached by imageManager can't have arrays or functions as properties
+  // because they aren't removed from the cache and they must be as small as possible.
+  function createImageInstance(imageId) {
     var index = imageId.substring(7);
     var image = cornerstoneWADOImageLoader.imageManager.get(index);
+    var newImage = {};
+
+    if(!image) {
+      return;
+    }
+
+    for(var key in image) {
+      if(image.hasOwnProperty(key)) {
+        newImage[key] = image[key];
+      }
+    }
+
+    return newImage;
+  }
+
+  function loadImage(imageId) {
+    var deferred = $.Deferred();
+    var image = createImageInstance(imageId);
+
     if(image === undefined) {
       deferred.reject('unknown imageId');
       return deferred.promise();
