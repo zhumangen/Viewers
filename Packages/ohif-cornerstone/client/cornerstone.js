@@ -533,7 +533,6 @@ if(typeof cornerstone === 'undefined'){
             var lastCachedImage = cachedImages[cachedImages.length - 1];
             var imageId = lastCachedImage.imageId;
 
-            lastCachedImage.imagePromise.reject();
             removeImagePromise(imageId);
 
             $(cornerstone).trigger('CornerstoneImageCachePromiseRemoved', {imageId: imageId});
@@ -619,6 +618,8 @@ if(typeof cornerstone === 'undefined'){
         if (cachedImage === undefined) {
             throw "removeImagePromise: imageId must not be undefined";
         }
+
+        cachedImage.imagePromise.reject();
         cachedImages.splice( cachedImages.indexOf(cachedImage), 1);
 
         // If this is using a sharedCacheKey, decrement the cache size only
