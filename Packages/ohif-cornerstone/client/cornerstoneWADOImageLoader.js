@@ -108,8 +108,9 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
   "use strict";
 
-  function convertRGB(dataSet, decodedImageFrame, rgbaBuffer) {
-    var planarConfiguration = dataSet.uint16('x00280006');
+  function convertRGB(dataSet, decodedImageFrame, rgbaBuffer, metadata) {
+    var planarConfiguration = (dataSet === null && metadata !== void 0 ? metadata.planarConfiguration : dataSet.uint16('x00280006')) || 0;
+
     if(planarConfiguration === 0) {
       cornerstoneWADOImageLoader.convertRGBColorByPixel(decodedImageFrame, rgbaBuffer);
     } else {
@@ -117,8 +118,9 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     }
   }
 
-  function convertYBRFull(dataSet, decodedImageFrame, rgbaBuffer) {
-    var planarConfiguration = dataSet.uint16('x00280006');
+  function convertYBRFull(dataSet, decodedImageFrame, rgbaBuffer, metadata) {
+    var planarConfiguration = (dataSet === null && metadata !== void 0 ? metadata.planarConfiguration : dataSet.uint16('x00280006')) || 0;
+
     if(planarConfiguration === 0) {
       cornerstoneWADOImageLoader.convertYBRFullByPixel(decodedImageFrame, rgbaBuffer);
     } else {
@@ -126,11 +128,20 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     }
   }
 
-  function convertColorSpace(canvas, dataSet, imageFrame) {
+  function convertColorSpace(canvas, dataSet, imageFrame, metadata) {
+
+    var height, width, photometricInterpretation;
+
     // extract the fields we need
-    var height = dataSet.uint16('x00280010');
-    var width = dataSet.uint16('x00280011');
-    var photometricInterpretation = dataSet.string('x00280004');
+    if (dataSet === null && metadata !== void 0) {
+      height = metadata.rows;
+      width = metadata.columns;
+      photometricInterpretation = metadata.photometricInterpretation;
+    } else {
+      height = dataSet.uint16('x00280010');
+      width = dataSet.uint16('x00280011');
+      photometricInterpretation = dataSet.string('x00280004');
+    }
 
     // setup the canvas context
     canvas.height = height;
@@ -143,27 +154,27 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     try {
       if (photometricInterpretation === "RGB" )
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if (photometricInterpretation === "YBR_RCT")
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if (photometricInterpretation === "YBR_ICT")
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if( photometricInterpretation === "PALETTE COLOR" )
       {
-        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet );
+        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet, metadata);
       }
       else if( photometricInterpretation === "YBR_FULL_422" )
       {
-        convertYBRFull(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if(photometricInterpretation === "YBR_FULL" )
       {
-        convertYBRFull(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else
       {
@@ -185,8 +196,29 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
   "use strict";
 
-  function convertPALETTECOLOR( imageFrame, rgbaBuffer, dataSet ) {
-    var len=dataSet.int16('x00281101',0);
+  function convertPALETTECOLOR( imageFrame, rgbaBuffer, dataSet, metadata ) {
+
+    var len, start, bits, numPixels;
+    var buffer, rData, gData, bData;
+
+    if (dataSet === null && metadata !== void 0) {
+      len = metadata.redPaletteColorLookupTableDescriptor[0];
+      start = metadata.redPaletteColorLookupTableDescriptor[1];
+      bits = metadata.redPaletteColorLookupTableDescriptor[2];
+      numPixels = metadata.rows * metadata.columns;
+      rData = new Uint16Array( metadata.redPaletteColorLookupTable.buffer );
+      gData = new Uint16Array( metadata.greenPaletteColorLookupTable.buffer );
+      bData = new Uint16Array( metadata.bluePaletteColorLookupTable.buffer );
+    } else {
+      len = dataSet.int16('x00281101', 0);
+      start = dataSet.int16('x00281101', 1);
+      bits = dataSet.int16('x00281101', 2);
+      numPixels = dataSet.uint16('x00280010') * dataSet.uint16('x00280011');
+      buffer = dataSet.byteArray.buffer;
+      rData = new Uint16Array( buffer, dataSet.elements.x00281201.dataOffset, len );
+      gData = new Uint16Array( buffer, dataSet.elements.x00281202.dataOffset, len );
+      bData = new Uint16Array( buffer, dataSet.elements.x00281203.dataOffset, len );
+    }
 
     // Account for zero-values for the lookup table length
     //
@@ -198,16 +230,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
       len = 65536;
     }
 
-    var start=dataSet.int16('x00281101',1);
-    var bits=dataSet.int16('x00281101',2);
     var shift = (bits===8 ? 0 : 8 );
-
-    var buffer = dataSet.byteArray.buffer;
-    var rData=new Uint16Array( buffer, dataSet.elements.x00281201.dataOffset, len );
-    var gData=new Uint16Array( buffer, dataSet.elements.x00281202.dataOffset, len );
-    var bData=new Uint16Array( buffer, dataSet.elements.x00281203.dataOffset, len );
-
-    var numPixels = dataSet.uint16('x00280010') * dataSet.uint16('x00280011');
     var palIndex=0;
     var rgbaIndex=0;
 
@@ -750,6 +773,33 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 "use strict";
 (function (cornerstoneWADOImageLoader) {
 
+  function decodeJPEGLossless(dataSet, frame) {
+    var bitsAllocated = dataSet.uint16('x00280100');
+    var pixelRepresentation = dataSet.uint16('x00280103');
+    var encodedImageFrame = cornerstoneWADOImageLoader.getEncodedImageFrame(dataSet, frame);
+    var byteOutput = bitsAllocated <= 8 ? 1 : 2;
+    //console.time('jpeglossless');
+    var decoder = new jpeg.lossless.Decoder();
+    var decompressedData = decoder.decode(encodedImageFrame.buffer, encodedImageFrame.byteOffset, encodedImageFrame.length, byteOutput);
+    //console.timeEnd('jpeglossless');
+    if (pixelRepresentation === 0) {
+      if (byteOutput === 2) {
+        return new Uint16Array(decompressedData.buffer);
+      } else {
+        // untested!
+        return new Uint8Array(decompressedData.buffer);
+      }
+    } else {
+      return new Int16Array(decompressedData.buffer);
+    }
+  }
+  // module exports
+  cornerstoneWADOImageLoader.decodeJPEGLossless = decodeJPEGLossless;
+
+}(cornerstoneWADOImageLoader));
+"use strict";
+(function (cornerstoneWADOImageLoader) {
+
 
   var charLS;
 
@@ -860,33 +910,6 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
   // module exports
   cornerstoneWADOImageLoader.decodeJPEGLS = decodeJPEGLS;
-
-}(cornerstoneWADOImageLoader));
-"use strict";
-(function (cornerstoneWADOImageLoader) {
-
-  function decodeJPEGLossless(dataSet, frame) {
-    var bitsAllocated = dataSet.uint16('x00280100');
-    var pixelRepresentation = dataSet.uint16('x00280103');
-    var encodedImageFrame = cornerstoneWADOImageLoader.getEncodedImageFrame(dataSet, frame);
-    var byteOutput = bitsAllocated <= 8 ? 1 : 2;
-    //console.time('jpeglossless');
-    var decoder = new jpeg.lossless.Decoder();
-    var decompressedData = decoder.decode(encodedImageFrame.buffer, encodedImageFrame.byteOffset, encodedImageFrame.length, byteOutput);
-    //console.timeEnd('jpeglossless');
-    if (pixelRepresentation === 0) {
-      if (byteOutput === 2) {
-        return new Uint16Array(decompressedData.buffer);
-      } else {
-        // untested!
-        return new Uint8Array(decompressedData.buffer);
-      }
-    } else {
-      return new Int16Array(decompressedData.buffer);
-    }
-  }
-  // module exports
-  cornerstoneWADOImageLoader.decodeJPEGLossless = decodeJPEGLossless;
 
 }(cornerstoneWADOImageLoader));
 /**
@@ -2715,37 +2738,37 @@ var JpegImage = (function jpegImage() {
 
 
 
-//	Huffman table for fast search: (HuffTab) 8-bit Look up table 2-layer search architecture, 1st-layer represent 256 node (8 bits) if codeword-length > 8
-//	bits, then the entry of 1st-layer = (# of 2nd-layer table) | MSB and it is stored in the 2nd-layer Size of tables in each layer are 256.
-//	HuffTab[*][*][0-256] is always the only 1st-layer table.
+//  Huffman table for fast search: (HuffTab) 8-bit Look up table 2-layer search architecture, 1st-layer represent 256 node (8 bits) if codeword-length > 8
+//  bits, then the entry of 1st-layer = (# of 2nd-layer table) | MSB and it is stored in the 2nd-layer Size of tables in each layer are 256.
+//  HuffTab[*][*][0-256] is always the only 1st-layer table.
 //
-//	An entry can be: (1) (# of 2nd-layer table) | MSB , for code length > 8 in 1st-layer (2) (Code length) << 8 | HuffVal
+//  An entry can be: (1) (# of 2nd-layer table) | MSB , for code length > 8 in 1st-layer (2) (Code length) << 8 | HuffVal
 //
-//	HuffmanValue(table   HuffTab[x][y] (ex) HuffmanValue(HuffTab[1][0],...)
-//	                ):
-//	    return: Huffman Value of table
-//	            0xFF?? if it receives a MARKER
-//	    Parameter:  table   HuffTab[x][y] (ex) HuffmanValue(HuffTab[1][0],...)
-//	                temp    temp storage for remainded bits
-//	                index   index to bit of temp
-//	                in      FILE pointer
-//	    Effect:
-//	        temp  store new remainded bits
-//	        index change to new index
-//	        in    change to new position
-//	    NOTE:
-//	      Initial by   temp=0; index=0;
-//	    NOTE: (explain temp and index)
-//	      temp: is always in the form at calling time or returning time
-//	       |  byte 4  |  byte 3  |  byte 2  |  byte 1  |
-//	       |     0    |     0    | 00000000 | 00000??? |  if not a MARKER
-//	                                               ^index=3 (from 0 to 15)
-//	                                               321
-//	    NOTE (marker and marker_index):
-//	      If get a MARKER from 'in', marker=the low-byte of the MARKER
-//	        and marker_index=9
-//	      If marker_index=9 then index is always > 8, or HuffmanValue()
-//	        will not be called
+//  HuffmanValue(table   HuffTab[x][y] (ex) HuffmanValue(HuffTab[1][0],...)
+//                  ):
+//      return: Huffman Value of table
+//              0xFF?? if it receives a MARKER
+//      Parameter:  table   HuffTab[x][y] (ex) HuffmanValue(HuffTab[1][0],...)
+//                  temp    temp storage for remainded bits
+//                  index   index to bit of temp
+//                  in      FILE pointer
+//      Effect:
+//          temp  store new remainded bits
+//          index change to new index
+//          in    change to new position
+//      NOTE:
+//        Initial by   temp=0; index=0;
+//      NOTE: (explain temp and index)
+//        temp: is always in the form at calling time or returning time
+//         |  byte 4  |  byte 3  |  byte 2  |  byte 1  |
+//         |     0    |     0    | 00000000 | 00000??? |  if not a MARKER
+//                                                 ^index=3 (from 0 to 15)
+//                                                 321
+//      NOTE (marker and marker_index):
+//        If get a MARKER from 'in', marker=the low-byte of the MARKER
+//          and marker_index=9
+//        If marker_index=9 then index is always > 8, or HuffmanValue()
+//          will not be called
   jpeg.lossless.Decoder.prototype.getHuffmanValue = function (table, temp, index) {
     /*jslint bitwise: true */
 
@@ -3302,13 +3325,13 @@ var JpegImage = (function jpegImage() {
 
 
 
-//	Build_HuffTab()
-//	Parameter:  t       table ID
-//	            c       table class ( 0 for DC, 1 for AC )
-//	            L[i]    # of codewords which length is i
-//	            V[i][j] Huffman Value (length=i)
-//	Effect:
-//	    build up HuffTab[t][c] using L and V.
+//  Build_HuffTab()
+//  Parameter:  t       table ID
+//              c       table class ( 0 for DC, 1 for AC )
+//              L[i]    # of codewords which length is i
+//              V[i][j] Huffman Value (length=i)
+//  Effect:
+//      build up HuffTab[t][c] using L and V.
   jpeg.lossless.HuffmanTable.prototype.buildHuffTable = function(tab, L, V) {
     /*jslint bitwise: true */
 
@@ -4233,7 +4256,7 @@ var JpegImage = (function jpegImage() {
           var imageFrameAsArrayBuffer = xhr.response;
           var response = new Uint8Array(xhr.response);
           // First look for the multipart mime header
-          var tokenIndex = cornerstoneWADOImageLoader.internal.findIndexOfString(response, '\n\r\n');
+          var tokenIndex = cornerstoneWADOImageLoader.internal.findIndexOfString(response, '\r\n\r\n');
           if(tokenIndex === -1) {
             deferred.reject('invalid response - no multipart mime header');
           }
@@ -4244,15 +4267,18 @@ var JpegImage = (function jpegImage() {
           if(!boundary) {
             deferred.reject('invalid response - no boundary marker')
           }
-          var offset = tokenIndex + 4; // skip over the \n\r\n
+          var offset = tokenIndex + 4; // skip over the \r\n\r\n
 
           // find the terminal boundary marker
           var endIndex = cornerstoneWADOImageLoader.internal.findIndexOfString(response, boundary, offset);
           if(endIndex === -1) {
             deferred.reject('invalid response - terminating boundary not found');
           }
+
+          // Remove \r\n from the length
+          var length = endIndex - offset - 2;
+
           // return the info for this pixel data
-          var length = endIndex - offset - 1;
           deferred.resolve({
             contentType: findContentType(split),
             arrayBuffer: imageFrameAsArrayBuffer,
@@ -4310,6 +4336,114 @@ var JpegImage = (function jpegImage() {
 
   "use strict";
 
+  var canvas = document.createElement('canvas');
+  var lastImageIdDrawn = '';
+
+  function getRescaleSlopeAndIntercept(image) {
+    // NOTE - we default these to an identity transform since modality LUT
+    // module is not required for all SOP Classes
+    var result = {
+        intercept : 0.0,
+        slope: 1.0
+    };
+
+    if((image.intercept != null) && (image.slope != null)) {
+      result.intercept = image.intercept;
+      result.slope = image.slope;
+    }
+
+    return result;
+  }
+
+  function makeColorImage(image, storedPixelData) {
+
+    var imageDataPromise, deferred = $.Deferred();
+    var rows = image.instance.rows;
+    var columns = image.instance.columns;
+    var rescaleSlopeAndIntercept = getRescaleSlopeAndIntercept(image);
+
+    image.render = cornerstone.renderColorImage;
+    image.color = true;
+    image.minPixelValue = 0;
+    image.maxPixelValue = 255;
+    image.invert = false;
+    image.slope = rescaleSlopeAndIntercept.slope;
+    image.intercept = rescaleSlopeAndIntercept.intercept;
+
+
+    lastImageIdDrawn = void 0;
+
+    try {
+
+      imageDataPromise = cornerstoneWADOImageLoader.convertColorSpace(canvas, null, storedPixelData, image.instance);
+      imageDataPromise.then(function (imageData) {
+
+        function getPixelData() {
+            return imageData.data;
+        }
+
+        function getImageData() {
+            return imageData;
+        }
+
+        function getCanvas() {
+            if(lastImageIdDrawn === image.imageId) {
+                return canvas;
+            }
+
+            canvas.height = rows;
+            canvas.width = columns;
+            var context = canvas.getContext('2d');
+            context.putImageData(imageData, 0, 0 );
+            lastImageIdDrawn = image.imageId;
+            return canvas;
+        }
+
+        image.getPixelData = getPixelData;
+        image.getImageData = getImageData;
+        image.getCanvas = getCanvas;
+        image.rows = rows;
+        image.columns = columns;
+        image.height = rows;
+        image.width = columns;
+
+        if(image.windowCenter === undefined || isNaN(image.windowCenter) ||
+            image.windowWidth === undefined || isNaN(image.windowWidth)) {
+          image.windowWidth = 255;
+          image.windowCenter = 128;
+        }
+
+        deferred.resolve(image);
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+    } catch(error) {
+      deferred.reject(err);
+    }
+
+    return deferred.promise();
+
+  }
+
+  function makeGrayscaleImage(image, storedPixelData) {
+    var deferred = $.Deferred();
+    var minMax = cornerstoneWADOImageLoader.getMinMax(storedPixelData);
+    var rescaleSlopeAndIntercept = getRescaleSlopeAndIntercept(image);
+
+    image.minPixelValue = minMax.min;
+    image.maxPixelValue = minMax.max;
+    image.render = cornerstone.renderGrayscaleImage;
+    image.invert = (image.instance.photometricInterpretation === 'MONOCHROME1');
+    image.slope = rescaleSlopeAndIntercept.slope;
+    image.intercept = rescaleSlopeAndIntercept.intercept;
+    
+    image.getPixelData = function() {
+      return storedPixelData;
+    };
+    deferred.resolve(image);
+    return deferred.promise();
+  }
 
   function loadImage(imageId) {
     var deferred = $.Deferred();
@@ -4325,8 +4459,20 @@ var JpegImage = (function jpegImage() {
     cornerstoneWADOImageLoader.internal.getImageFrame(image.uri, mediaType).then(function(result) {
       //console.log(result);
       // TODO: add support for retrieving compressed pixel data
-      var storedPixelData;
+      var imagePromise, storedPixelData;
       if(image.instance.bitsAllocated === 16) {
+        // if the address is not word-aligned a new buffer needs to be created
+        // in order to comply with underlying hardware constraints.
+        // https://en.wikipedia.org/wiki/Data_structure_alignment
+        if ((result.offset & 1) !== 0) {
+          var unalignedResult = result;
+          var unalignedBuffer = new Uint8Array(unalignedResult.arrayBuffer, unalignedResult.offset, unalignedResult.length);
+          var alignedBuffer = new Uint8Array(unalignedBuffer);
+          result = $.extend({}, unalignedResult);
+          result.offset = 0;
+          result.length = unalignedResult.length;
+          result.arrayBuffer = alignedBuffer.buffer;
+        }
         if(image.instance.pixelRepresentation === 0) {
           storedPixelData = new Uint16Array(result.arrayBuffer, result.offset, result.length / 2);
         } else {
@@ -4336,18 +4482,22 @@ var JpegImage = (function jpegImage() {
         storedPixelData = new Uint8Array(result.arrayBuffer, result.offset, result.length);
       }
 
-      // TODO: handle various color space conversions
-
-      var minMax = cornerstoneWADOImageLoader.getMinMax(storedPixelData);
+      // Set image id...
       image.imageId = imageId;
-      image.minPixelValue = minMax.min;
-      image.maxPixelValue = minMax.max;
-      image.render = cornerstone.renderGrayscaleImage;
-      image.getPixelData = function() {
-        return storedPixelData;
-      };
-      //console.log(image);
-      deferred.resolve(image);
+
+      // TODO: handle various color space conversions
+      if (cornerstoneWADOImageLoader.isColorImage(image.instance.photometricInterpretation)) {
+        imagePromise = makeColorImage(image, storedPixelData);
+      } else {
+        imagePromise = makeGrayscaleImage(image, storedPixelData);
+      }
+
+      imagePromise.then(function (image) {
+        deferred.resolve(image);
+      }, function (error) {
+        deferred.reject(error);
+      });
+
     }).fail(function(reason) {
       deferred.reject(reason);
     });
@@ -4575,7 +4725,7 @@ var JpegImage = (function jpegImage() {
       // https://groups.google.com/forum/#!searchin/comp.protocols.dicom/Modality$20LUT$20XA/comp.protocols.dicom/UBxhOZ2anJ0/D0R_QP8V2wIJ
       var sopClassUid = dataSet.string('x00080016');
       return  sopClassUid !== '1.2.840.10008.5.1.4.1.1.12.1' && // XA
-              sopClassUid !== '1.2.840.10008.5.1.4.1.1.12.2.1	'; // XRF
+              sopClassUid !== '1.2.840.10008.5.1.4.1.1.12.2.1 '; // XRF
     }
 
     function makeGrayscaleImage(imageId, dataSet, frame, sharedCacheKey) {
