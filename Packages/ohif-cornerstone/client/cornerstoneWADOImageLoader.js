@@ -4604,8 +4604,7 @@ var JpegImage = (function jpegImage() {
         var rescaleSlopeAndIntercept = cornerstoneWADOImageLoader.getRescaleSlopeAndIntercept(dataSet);
         var bytesPerPixel = 4;
         var numPixels = rows * columns;
-        //var sizeInBytes = numPixels * bytesPerPixel;
-        var sizeInBytes = dataSet.byteArray.length;
+        var sizeInBytes = numPixels * bytesPerPixel;
         var windowWidthAndCenter = cornerstoneWADOImageLoader.getWindowWidthAndCenter(dataSet);
 
         // clear the lastImageIdDrawn so we update the canvas
@@ -4767,8 +4766,7 @@ var JpegImage = (function jpegImage() {
         }
 
         var numPixels = rows * columns;
-        //var sizeInBytes = numPixels * bytesPerPixel;
-        var sizeInBytes = dataSet.byteArray.length;
+        var sizeInBytes = numPixels * bytesPerPixel;
         var photometricInterpretation = dataSet.string('x00280004');
         var invert = (photometricInterpretation === "MONOCHROME1");
         var windowWidthAndCenter = cornerstoneWADOImageLoader.getWindowWidthAndCenter(dataSet);
