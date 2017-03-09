@@ -36,7 +36,7 @@ export function getImageId(instance, frame, thumbnail) {
     const renderingAttr = thumbnail ? 'thumbnailRendering' : 'imageRendering';
 
     if (!instance[renderingAttr] || instance[renderingAttr] === 'wadouri' || !instance.wadorsuri) {
-        var imageId = 'dicomweb:' + instance.wadouri;
+        var imageId = 'dicomweb:' + OHIF.utils.absoluteUrl(instance.wadouri);
         if (frame !== undefined) {
             imageId += '&frame=' + frame;
         }
