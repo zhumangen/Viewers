@@ -22,7 +22,7 @@ class TimepointApi {
         }
 
         this.timepoints = new Mongo.Collection(null);
-        this.timepoints.attachSchema(TimepointSchema);
+        this.timepoints.attachSchema(TimepointSchema._schema);
         this.timepoints._debugName = 'Timepoints';
     }
 

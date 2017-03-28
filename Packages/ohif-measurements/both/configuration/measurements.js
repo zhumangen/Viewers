@@ -35,13 +35,13 @@ class MeasurementApi {
         configuration.measurementTools.forEach(toolGroup => {
             const groupCollection = new Mongo.Collection(null);
             groupCollection._debugName = toolGroup.name;
-            groupCollection.attachSchema(toolGroup.schema);
+            groupCollection.attachSchema(toolGroup.schema._schema);
             this.toolGroups[toolGroup.id] = groupCollection;
 
             toolGroup.childTools.forEach(tool => {
                 const collection = new Mongo.Collection(null);
                 collection._debugName = tool.name;
-                collection.attachSchema(tool.schema);
+                collection.attachSchema(tool.schema._schema);
                 this.tools[tool.id] = collection;
 
                 const addedHandler = measurement => {

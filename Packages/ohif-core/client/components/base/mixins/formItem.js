@@ -188,7 +188,8 @@ OHIF.mixins.formItem = new OHIF.Mixin({
                 });
 
                 // Get the validation result
-                const validationResult = schema.validateOne(document, key);
+                const keys = [key];
+                const validationResult = schema.validate(document, keys);
 
                 // Notify the form that the validation ran
                 form.validationRan();

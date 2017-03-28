@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { Session } from 'meteor/session';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';

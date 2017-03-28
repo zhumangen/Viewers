@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { MeasurementSchemaTypes } from 'meteor/ohif:measurements/both/schema/measurements';
 
 const CornerstoneHandleSchema = MeasurementSchemaTypes.CornerstoneHandleSchema;
@@ -18,12 +18,14 @@ const LengthHandlesSchema = new SimpleSchema({
     }
 });
 
-const LengthSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMeasurement, {
+const LengthSchema = new SimpleSchema({
     handles: {
         type: LengthHandlesSchema,
         label: 'Handles'
     }
-}]);
+});
+
+LengthSchema.extend(MeasurementSchemaTypes.CornerstoneToolMeasurement._schema);
 
 export const length = {
     id: 'length',

@@ -8,7 +8,6 @@ Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
     api.use('iron:router@1.0.13');
 
     api.use('ohif:core');

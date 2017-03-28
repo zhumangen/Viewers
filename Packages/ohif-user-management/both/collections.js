@@ -4,5 +4,5 @@ import { schema as ReviewerSchema } from 'meteor/ohif:user-management/both/schem
 // Reviewers is used to determine which users already have a
 // Timepoint open
 Reviewers = new Mongo.Collection('reviewers');
-Reviewers.attachSchema(ReviewerSchema);
+Reviewers.attachSchema(ReviewerSchema._schema);
 Reviewers._debugName = 'Reviewers';

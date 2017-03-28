@@ -4,23 +4,29 @@ Package.describe({
     version: '0.0.1'
 });
 
+Npm.depends({
+    'simpl-schema': '0.2.3',
+    'message-box': '0.0.2'
+});
+
 Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
     api.use('jquery');
     api.use('stylus');
     api.use('underscore');
     api.use('templating');
     api.use('reactive-var');
 
+    api.use('twbs:bootstrap', 'client');
+    api.use('peppelg:bootstrap-3-modal', 'client');
+
     // Router dependencies
     api.use('iron:router@1.0.13', 'client');
 
     // Component's library dependencies
     api.use('natestrauser:select2@4.0.1', 'client');
-    api.use('aldeed:simple-schema');
 
     // UI Styles
     api.addFiles([

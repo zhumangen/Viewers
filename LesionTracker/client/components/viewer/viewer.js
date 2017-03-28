@@ -120,13 +120,19 @@ Template.viewer.onCreated(() => {
         OHIF.viewer.StudyMetadataList.insert(studyMetadata);
     });
 
+    if (!currentTimepointId) {
+        Session.set('TimepointsReady', true);
+        Session.set('MeasurementsReady', true);
+        return;
+    }
+
     const patientId = instance.data.studies[0].patientId;
 
     // LT-382: Preventing HP to keep identifying studies in timepoints that might be removed
     instance.data.studies.forEach(study => (delete study.timepointType));
 
     // TODO: Consider combining the retrieval calls into one?
-    const timepointsPromise = timepointApi.retrieveTimepoints({ patientId });
+    const timepointsPromise = timepointApi.retrieveTimepoints({ patientId, timepointId: currentTimepointId});
     timepointsPromise.then(() => {
         const timepoints = timepointApi.all();
 

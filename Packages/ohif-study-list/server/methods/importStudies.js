@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+import { WebApp } from 'meteor/webapp';
 import { OHIF } from 'meteor/ohif:core';
 
 var fs = Npm.require('fs');

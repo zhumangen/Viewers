@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 Template.dialogLogin.onCreated(() => {
     const instance = Template.instance();

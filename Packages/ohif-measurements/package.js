@@ -1,19 +1,20 @@
-Npm.depends({
-    ajv: '4.10.4',
-    jspdf: '1.3.2'
-});
-
 Package.describe({
     name: 'ohif:measurements',
     summary: 'OHIF Measurement Tools',
     version: '0.0.1'
 });
 
+Npm.depends({
+    ajv: '4.10.4',
+    jspdf: '1.3.2',
+    'simpl-schema': '0.2.3'
+});
+
 Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
+    api.use('templating');
     api.use('jquery');
     api.use('stylus');
     api.use('random');
@@ -23,11 +24,10 @@ Package.onUse(function(api) {
     api.use('validatejs');
 
     // Schema for Data Models
-    api.use('aldeed:simple-schema');
-    api.use('aldeed:collection2');
+    api.use('aldeed:collection2-core');
 
     // Template overriding
-    api.use('aldeed:template-extension@4.0.0');
+    api.use('aldeed:template-extension');
 
     // Our custom packages
     api.use('ohif:cornerstone');

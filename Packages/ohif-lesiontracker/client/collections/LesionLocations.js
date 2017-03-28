@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const LocationSchema = new SimpleSchema({
     id: {
@@ -22,7 +22,7 @@ const LocationSchema = new SimpleSchema({
 });
 
 LesionLocations = new Meteor.Collection(null);
-LesionLocations.attachSchema(LocationSchema);
+LesionLocations.attachSchema(LocationSchema._schema);
 LesionLocations._debugName = 'LesionLocations';
 
 var organGroups = [

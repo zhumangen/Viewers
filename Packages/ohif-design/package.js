@@ -8,9 +8,10 @@ Package.onUse(function(api) {
     api.versionsFrom('1.4.2.3');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
     api.use('jquery');
+    api.use('templating');
     api.use('stylus');
+    api.use('reactive-dict');
 
     api.use('ohif:themes');
 

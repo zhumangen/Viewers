@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { MeasurementSchemaTypes } from 'meteor/ohif:measurements/both/schema/measurements';
 
 const CornerstoneHandleSchema = MeasurementSchemaTypes.CornerstoneHandleSchema;
@@ -18,12 +18,14 @@ const EllipseHandlesSchema = new SimpleSchema({
     },
 });
 
-const EllipseSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMeasurement, {
+const EllipseSchema = new SimpleSchema({
     handles: {
         type: EllipseHandlesSchema,
         label: 'Handles'
     }
-}]);
+});
+
+EllipseSchema.extend(MeasurementSchemaTypes.CornerstoneToolMeasurement._schema);
 
 export const ellipse = {
     id: 'ellipse',

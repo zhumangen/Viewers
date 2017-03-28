@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const Measurement = new SimpleSchema({
     additionalData: {
@@ -17,7 +17,7 @@ const Measurement = new SimpleSchema({
         label: 'Patient ID'
     },
     measurementNumber: {
-        type: Number,
+        type: SimpleSchema.Integer,
         label: 'Measurement Number',
         optional: true
     },
@@ -56,37 +56,34 @@ const Measurement = new SimpleSchema({
     }
 });
 
-const StudyLevelMeasurement = new SimpleSchema([
-    Measurement,
-    {
-        studyInstanceUid: {
-            type: String,
-            label: 'Study Instance UID'
-        }
+const StudyLevelMeasurement = new SimpleSchema({
+    studyInstanceUid: {
+        type: String,
+        label: 'Study Instance UID'
     }
-]);
+});
 
-const SeriesLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    {
-        seriesInstanceUid: {
-            type: String,
-            label: 'Series Instance UID'
-        }
+StudyLevelMeasurement.extend(Measurement._schema);
+
+
+const SeriesLevelMeasurement = new SimpleSchema({
+    seriesInstanceUid: {
+        type: String,
+        label: 'Series Instance UID'
     }
-]);
+}._schema);
+
+SeriesLevelMeasurement.extend(StudyLevelMeasurement);
 
 const CornerstoneVOI = new SimpleSchema({
     windowWidth: {
         type: Number,
         label: 'Window Width',
-        decimal: true,
         optional: true
     },
     windowCenter: {
         type: Number,
         label: 'Window Center',
-        decimal: true,
         optional: true
     },
 });
@@ -95,13 +92,11 @@ const CornerstoneViewportTranslation = new SimpleSchema({
     x: {
         type: Number,
         label: 'X',
-        decimal: true,
         optional: true
     },
     y: {
         type: Number,
         label: 'Y',
-        decimal: true,
         optional: true
     },
 });
@@ -110,7 +105,6 @@ const CornerstoneViewport = new SimpleSchema({
     scale: {
         type: Number,
         label: 'Scale',
-        decimal: true,
         optional: true
     },
     translation: {
@@ -146,87 +140,75 @@ const CornerstoneViewport = new SimpleSchema({
     rotation: {
         type: Number,
         label: 'Rotation (degrees)',
-        decimal: true,
         optional: true
     }
 })
 
-const InstanceLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    {
-        sopInstanceUid: {
-            type: String,
-            label: 'SOP Instance UID'
-        },
-        viewport: {
-            type: CornerstoneViewport,
-            label: 'Viewport Parameters',
-            optional: true
-        }
+const InstanceLevelMeasurement = new SimpleSchema({
+    sopInstanceUid: {
+        type: String,
+        label: 'SOP Instance UID'
+    },
+    viewport: {
+        type: CornerstoneViewport,
+        label: 'Viewport Parameters',
+        optional: true
     }
-]);
+});
 
-const FrameLevelMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    InstanceLevelMeasurement,
-    {
-        frameIndex: {
-            type: Number,
-            min: 0,
-            label: 'Frame index in Instance'
-        },
-        // TODO: In the future we should remove this in favour of searching OHIF.viewer.Studies and display sets when
-        // re-displaying measurements. Otherwise if a study moves servers the measurements will not be displayed correctly
-        imageId: {
-            type: String,
-            label: 'Cornerstone Image Id'
-        }
-    }
-]);
+InstanceLevelMeasurement.extend(SeriesLevelMeasurement._schema);
 
-const CornerstoneToolMeasurement = new SimpleSchema([
-    StudyLevelMeasurement,
-    SeriesLevelMeasurement,
-    InstanceLevelMeasurement,
-    FrameLevelMeasurement,
-    {
-        toolType: {
-            type: String,
-            label: 'Cornerstone Tool Type',
-            optional: true
-        },
-        visible: {
-            type: Boolean,
-            label: 'Visible',
-            defaultValue: true
-        },
-        active: {
-            type: Boolean,
-            label: 'Active',
-            defaultValue: false
-        },
-        invalidated: {
-            type: Boolean,
-            label: 'Invalidated',
-            defaultValue: false,
-            optional: true
-        }
+const FrameLevelMeasurement = new SimpleSchema({
+    frameIndex: {
+        type: SimpleSchema.Integer,
+        min: 0,
+        label: 'Frame index in Instance'
+    },
+    // TODO: In the future we should remove this in favour of searching OHIF.viewer.Studies and display sets when
+    // re-displaying measurements. Otherwise if a study moves servers the measurements will not be displayed correctly
+    imageId: {
+        type: String,
+        label: 'Cornerstone Image Id'
     }
-]);
+});
+
+FrameLevelMeasurement.extend(InstanceLevelMeasurement._schema);
+
+const CornerstoneToolMeasurement = new SimpleSchema({
+    toolType: {
+        type: String,
+        label: 'Cornerstone Tool Type',
+        optional: true
+    },
+    visible: {
+        type: Boolean,
+        label: 'Visible',
+        defaultValue: true
+    },
+    active: {
+        type: Boolean,
+        label: 'Active',
+        defaultValue: false
+    },
+    invalidated: {
+        type: Boolean,
+        label: 'Invalidated',
+        defaultValue: false,
+        optional: true
+    }
+});
+
+CornerstoneToolMeasurement.extend(FrameLevelMeasurement._schema);
 
 const CornerstoneHandleSchema = new SimpleSchema({
     x: {
         type: Number,
         label: 'X',
-        decimal: true,
         optional: true // Not actually optional, but sometimes values like x/y position are missing
     },
     y: {
         type: Number,
         label: 'Y',
-        decimal: true,
         optional: true // Not actually optional, but sometimes values like x/y position are missing
     },
     highlight: {
@@ -282,11 +264,11 @@ const CornerstoneHandleSchema = new SimpleSchema({
 });
 
 export const MeasurementSchemaTypes = {
-    Measurement: Measurement,
-    StudyLevelMeasurement: StudyLevelMeasurement,
-    SeriesLevelMeasurement: SeriesLevelMeasurement,
-    InstanceLevelMeasurement: InstanceLevelMeasurement,
-    FrameLevelMeasurement: FrameLevelMeasurement,
-    CornerstoneToolMeasurement: CornerstoneToolMeasurement,
-    CornerstoneHandleSchema: CornerstoneHandleSchema
+    Measurement,
+    StudyLevelMeasurement,
+    SeriesLevelMeasurement,
+    InstanceLevelMeasurement,
+    FrameLevelMeasurement,
+    CornerstoneToolMeasurement,
+    CornerstoneHandleSchema
 };

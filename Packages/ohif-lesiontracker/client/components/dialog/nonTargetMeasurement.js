@@ -1,6 +1,6 @@
 import { Template } from 'meteor/templating';
 import { Blaze } from 'meteor/blaze';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { OHIF } from 'meteor/ohif:core';
 
 Template.dialogNonTargetMeasurement.onCreated(() => {

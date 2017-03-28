@@ -3,7 +3,9 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
 import { OHIF } from 'meteor/ohif:core';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
+
+SimpleSchema.extendOptions(['valuesLabels']);
 
 Meteor.startup(() => {
     const TrialCriteriaTypes = new Meteor.Collection(null);

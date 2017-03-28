@@ -41,7 +41,7 @@ OHIF.mixins.form = new OHIF.Mixin({
                 component.isValidatedAlready = true;
 
                 // Focus the first error field if some validation failed
-                if (component.schema && component.schema._invalidKeys.length) {
+                if (component.schema && component.schema._validationErrors.length) {
                     instance.$('.state-error :input:first').focus();
                 }
 
@@ -84,11 +84,11 @@ OHIF.mixins.form = new OHIF.Mixin({
                 }
 
                 // Check if there were some validation errors
-                if (component.schema._invalidKeys.length) {
+                if (component.schema._validationErrors.length) {
                     const result = [];
 
                     // Iterate over each validation error and add to result
-                    component.schema._invalidKeys.forEach(item => {
+                    component.schema._validationErrors.forEach(item => {
                         const label = component.schema._schema[item.name].label;
                         let message = component.schema.keyErrorMessage(item.name);
                         message = message.replace(label, `<strong>${label}</strong>`);

@@ -8,7 +8,7 @@ Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
+    api.use('templating');
     api.use('jquery');
     api.use('stylus');
     api.use('random');
@@ -16,7 +16,7 @@ Package.onUse(function(api) {
     api.use('validatejs');
 
     // Template overriding
-    api.use('aldeed:template-extension@4.0.0');
+    api.use('aldeed:template-extension');
 
     // Our custom packages
     api.use('ohif:design');

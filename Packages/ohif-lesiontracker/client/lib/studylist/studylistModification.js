@@ -7,7 +7,7 @@ Meteor.startup(function() {
     OHIF.studylist.callbacks.middleClickOnStudy = dblClickOnStudy;
 
     OHIF.studylist.timepointApi = new OHIF.measurements.TimepointApi();
-    OHIF.studylist.timepointApi.retrieveTimepoints({});
+    //OHIF.studylist.timepointApi.retrieveTimepoints({});
 });
 
 /**
@@ -17,7 +17,7 @@ const dblClickOnStudy = data => {
     // Find the relevant timepoint given the clicked-on study
     const timepointApi = OHIF.studylist.timepointApi;
     if (!timepointApi) {
-        OHIF.log.warn('No timepoint api on dbl-clicked study?');
+        Router.go('viewerStudies', { studyInstanceUids: data.studyInstanceUid });
         return;
     }
 

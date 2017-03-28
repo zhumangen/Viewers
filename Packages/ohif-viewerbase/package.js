@@ -8,9 +8,9 @@ Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
     api.use('http');
     api.use('jquery');
+    api.use('templating');
     api.use('stylus');
     api.use('momentjs:moment');
     api.use('validatejs');

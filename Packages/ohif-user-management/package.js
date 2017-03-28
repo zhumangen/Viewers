@@ -1,24 +1,27 @@
 Package.describe({
     name: 'ohif:user-management',
-    summary: 'OHIF Lesion Tracker Tools',
+    summary: 'OHIF User Management',
     version: '0.0.1'
+});
+
+Npm.depends({
+    'simpl-schema': '0.2.3'
 });
 
 Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
     api.use('jquery');
+    api.use('templating');
     api.use('stylus');
     api.use('random');
 
     // Schema for Data Models
-    api.use('aldeed:simple-schema');
-    api.use('aldeed:collection2');
-
+    api.use('aldeed:collection2-core');
+    
     // Template overriding
-    api.use('aldeed:template-extension@4.0.0');
+    api.use('aldeed:template-extension');
 
     // Our custom packages
     api.use('ohif:design');

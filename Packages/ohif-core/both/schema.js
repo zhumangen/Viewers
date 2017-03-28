@@ -1,18 +1,23 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Meteor } from 'meteor/meteor';
+
+import SimpleSchema from 'simpl-schema';
+import MessageBox from 'message-box';
 
 /*
  Extend the available options on schema definitions:
 
-  * valuesLabels: Used in conjunction with allowedValues to define the text
-    label for each value (used on forms)
+ * valuesLabels: Used in conjunction with allowedValues to define the text
+ label for each value (used on forms)
 
-  * textOptional: Used to allow empty strings
+ * textOptional: Used to allow empty strings
 
  */
-SimpleSchema.extendOptions({
-    valuesLabels: Match.Optional([String]),
-    textOptional: Match.Optional(Boolean)
-});
+SimpleSchema.extendOptions(['valuesLabels', 'textOptional']);
+/*SimpleSchema.extendOptions({
+ valuesLabels: Match.Optional([String]),
+ textOptional: Match.Optional(Boolean)
+ });*/
+
 
 // Add default required validation for empty strings which can be bypassed
 // using textOptional=true definition
@@ -27,7 +32,7 @@ SimpleSchema.addValidator(function() {
 });
 
 // Including [label] for some messages
-SimpleSchema.messages({
+MessageBox.defaults({
     maxCount: '[label] can not have more than [maxCount] values',
     minCount: '[label] must have at least [minCount] values',
     notAllowed: '[label] has an invalid value: "[value]"'

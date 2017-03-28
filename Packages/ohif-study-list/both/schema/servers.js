@@ -1,4 +1,7 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
+
+// TODO: Figure out why the definition in ohif:core is not working
+SimpleSchema.extendOptions(['valuesLabels', 'textOptional']);
 
 const serverNameDefinitions = {
     type: String,
@@ -122,10 +125,11 @@ export const DIMSEServer = new SimpleSchema({
         label: 'Request Options'
     },
     peers: {
-        type: [DIMSEPeer],
+        type: Array,
         label: 'Peer List',
         minCount: 1
-    }
+    },
+    'peers.$': DIMSEPeer
 });
 
 export const UISettings = new SimpleSchema({
@@ -204,15 +208,17 @@ export const PublicServerConfig = new SimpleSchema({
 
 export const Servers = new SimpleSchema({
     dicomWeb: {
-        type: [DICOMWebServer],
+        type: Array,
         label: 'DICOMWeb Servers',
         optional: true
     },
+    'dicomWeb.$': DICOMWebServer,
     dimse: {
-        type: [DIMSEServer],
+        type: Array,
         label: 'DIMSE Servers',
         optional: true
-    }
+    },
+    'dimse.$': DIMSEServer
 });
 
 export const ServerConfiguration = new SimpleSchema({

@@ -5,22 +5,25 @@ Package.describe({
 });
 
 Npm.depends({
-    hammerjs: '2.0.6'
+    hammerjs: '2.0.6',
+    'simpl-schema': '0.2.3'
 });
 
 Package.onUse(function(api) {
     api.versionsFrom('1.4');
 
     api.use('ecmascript');
-    api.use('standard-app-packages');
+    api.use('templating');
     api.use('jquery');
+    api.use('session');
     api.use('stylus');
     api.use('http');
     api.use('random');
+    api.use('webapp');
     api.use('silentcicero:jszip');
-    api.use('aldeed:simple-schema');
+
     api.use('accounts-base');
-    api.use('aldeed:collection2');
+    api.use('aldeed:collection2-core');
 
     // Note: MomentJS appears to be required for Bootstrap3 Datepicker, but not a dependency for some reason
     api.use('momentjs:moment');

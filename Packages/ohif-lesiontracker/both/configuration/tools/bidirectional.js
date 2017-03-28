@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { MeasurementSchemaTypes } from 'meteor/ohif:measurements/both/schema/measurements';
 // import { OHIF } from 'meteor/ohif:core';
 
@@ -27,13 +27,13 @@ const BidirectionalHandlesSchema = new SimpleSchema({
     },
 });
 
-const BidirectionalSchema = new SimpleSchema([MeasurementSchemaTypes.CornerstoneToolMeasurement, {
+const BidirectionalSchema = new SimpleSchema({
     handles: {
         type: BidirectionalHandlesSchema,
         label: 'Handles'
     },
     measurementNumber: {
-        type: Number,
+        type: SimpleSchema.Integer,
         label: 'Measurement Number'
     },
     location: {
@@ -48,20 +48,20 @@ const BidirectionalSchema = new SimpleSchema([MeasurementSchemaTypes.Cornerstone
     },
     longestDiameter: {
         type: Number,
-        label: 'Longest Diameter',
-        decimal: true
+        label: 'Longest Diameter'
     },
     shortestDiameter: {
         type: Number,
-        label: 'Shortest Diameter',
-        decimal: true
+        label: 'Shortest Diameter'
     },
     locationUid: {
         type: String,
         label: 'Location UID',
         optional: true // Optional because it is added after initial drawing, via a callback
     }
-}]);
+});
+
+BidirectionalSchema.extend(MeasurementSchemaTypes.CornerstoneToolMeasurement._schema);
 
 const displayFunction = data => {
     // Check whether this is a Nodal or Extranodal Measurement

@@ -1,4 +1,4 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 
 const ResponseSchema = new SimpleSchema({
     text: {
@@ -17,7 +17,7 @@ const ResponseSchema = new SimpleSchema({
 });
 
 LocationResponses = new Meteor.Collection(null);
-LocationResponses.attachSchema(ResponseSchema);
+LocationResponses.attachSchema(ResponseSchema._schema);
 LocationResponses._debugName = 'LocationResponses';
 
 LocationResponses.insert({
