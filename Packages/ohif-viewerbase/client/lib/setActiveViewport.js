@@ -52,7 +52,7 @@ export function setActiveViewport(element) {
         // so we can't pass a jQuery object as an argument, otherwise it throws an excepetion
         const domElement = jQueryElement.get(0);
         displayReferenceLines(domElement);
-        StudyPrefetcher.getInstance().prefetch();
+        //StudyPrefetcher.getInstance().prefetch();
 
         // @TODO Add this to OHIFAfterActivateViewport handler...
         if (OHIF.viewer.stackImagePositionOffsetSynchronizer) {
