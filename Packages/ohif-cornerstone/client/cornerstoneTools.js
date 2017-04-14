@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-04-14 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -3263,7 +3263,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
                     // Calculate the mean & standard deviation from the pixels and the ellipse details
-                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse);
+                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse, image);
 
                     if (modality === 'PT') {
                         // If the image is from a PET scan, use the DICOM tags to
