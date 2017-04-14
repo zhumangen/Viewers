@@ -162,17 +162,19 @@ export class StudyPrefetcher {
 
     getStudy(image) {
         const studyMetadata = cornerstoneTools.metaData.get('study', image.imageId);
-        return _.find(this.studies, study => study.studyInstanceUid === studyMetadata.studyInstanceUid);
+        return _.find(this.studies, study => study.getStudyInstanceUID() === studyMetadata.studyInstanceUid);
     }
 
     getSeries(study, image) {
         const seriesMetadata = cornerstoneTools.metaData.get('series', image.imageId);
-        return _.find(study.seriesList, series => series.seriesInstanceUid === seriesMetadata.seriesInstanceUid);
+
+        // TODO: Add findSeries to StudyMetadata?
+        return _.find(study.getSeries(), series => series.getSeriesInstanceUID() === seriesMetadata.seriesInstanceUid);
     }
 
     getInstance(series, image) {
         const instanceMetadata = cornerstoneTools.metaData.get('instance', image.imageId);
-        return _.find(series.instances, instance => instance.sopInstanceUid === instanceMetadata.sopInstanceUid);
+        return series.findInstance(instance => instance.getSOPInstanceUID() === instanceMetadata.sopInstanceUid);
     }
 
     getActiveDisplaySet(displaySets, instance) {

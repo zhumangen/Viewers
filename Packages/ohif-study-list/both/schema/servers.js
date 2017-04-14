@@ -190,7 +190,7 @@ export const PublicServerConfig = new SimpleSchema({
     demoUserEnabled: {
         type: Boolean,
         label: 'Creates demo user on startup and show TestDrive button',
-        defaultValue: true
+        defaultValue: false
     },
     ui: {
         type: UISettings,
