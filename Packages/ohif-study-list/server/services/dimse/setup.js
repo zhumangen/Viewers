@@ -8,7 +8,7 @@ const setupDIMSE = () => {
     const server = getCurrentServer();
 
     // Stop here if the new server is not of DIMSE type
-    if (server.type !== 'dimse') {
+    if (!server || server.type !== 'dimse') {
         return;
     }
 
