@@ -209,6 +209,9 @@ class MeasurementApi {
 
                     measurements.forEach(measurement => {
                         delete measurement._id;
+                        // TODO: check if this is an appropriate way to handle this issue
+                        measurement.imageId = OHIF.viewer.getImageIdForMeasurement(measurement);
+
                         // @TODO: check if this conditional is ok, because is throwing
                         // an error for temp measurements -> measurement.toolType is undefined
                         if (measurement.toolType && this.tools[measurement.toolType]) {

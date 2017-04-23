@@ -20,7 +20,7 @@ Timepoints.find().observe({
 
 // Drop our collections for testing purposes
 Meteor.startup(() => {
-    if (Meteor.settings.dropCollections) {
+    if (Meteor.settings.dropCollections === true) {
         Timepoints.remove({});
         measurementTools.forEach(tool => {
             MeasurementCollections[tool.id].remove({});

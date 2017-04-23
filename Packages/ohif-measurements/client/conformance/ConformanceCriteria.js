@@ -156,10 +156,10 @@ class ConformanceCriteria {
 
                     const promise = OHIF.studylist.retrieveStudyMetadata(studyInstanceUid);
                     promise.then(study => {
-                        const metadata = cornerstoneTools.metaData.get('instance', imageId);
+                        const metadata = OHIF.viewer.metadataProvider.getMetadata(imageId);
                         data[measurementType].push({
                             measurement,
-                            metadata,
+                            metadata: metadata.instance,
                             timepoint
                         });
                     });

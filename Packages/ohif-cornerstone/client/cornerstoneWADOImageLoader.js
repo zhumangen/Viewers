@@ -416,8 +416,8 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
         sizeInBytes: imageFrame.pixelData.length,
         slope: modalityLutModule.rescaleSlope ? modalityLutModule.rescaleSlope: 1,
         width: imageFrame.columns,
-        windowCenter: voiLutModule.windowCenter ? voiLutModule.windowCenter[0] : undefined,
-        windowWidth: voiLutModule.windowWidth ? voiLutModule.windowWidth[0] : undefined,
+        windowCenter: voiLutModule.windowCenter ? voiLutModule.windowCenter : undefined,
+        windowWidth: voiLutModule.windowWidth ? voiLutModule.windowWidth : undefined,
         decodeTimeInMS : imageFrame.decodeTimeInMS,
         webWorkerTimeInMS: imageFrame.webWorkerTimeInMS
       };

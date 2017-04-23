@@ -5,6 +5,8 @@ import { OHIF } from 'meteor/ohif:core';
 Meteor.startup(function() {
     OHIF.studylist.callbacks.dblClickOnStudy = dblClickOnStudy;
     OHIF.studylist.callbacks.middleClickOnStudy = dblClickOnStudy;
+
+    OHIF.studylist.timepointApi = new OHIF.measurements.TimepointApi();
 });
 
 /**
