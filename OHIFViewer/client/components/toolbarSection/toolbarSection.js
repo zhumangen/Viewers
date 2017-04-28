@@ -1,6 +1,8 @@
-import { OHIF } from 'meteor/ohif:core';
 import { Template } from 'meteor/templating';
 import { $ } from 'meteor/jquery';
+
+import { OHIF } from 'meteor/ohif:core';
+import 'meteor/ohif:viewerbase';
 
 Template.toolbarSection.onCreated(() => {
     const instance = Template.instance();
@@ -19,7 +21,7 @@ Template.toolbarSection.helpers({
             value: instance.data.state,
             options: [{
                 value: 'studies',
-                svgLink: '/packages/viewerbase/assets/icons.svg#icon-studies',
+                svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-studies',
                 svgWidth: 15,
                 svgHeight: 13,
                 bottomLabel: 'Series'
@@ -42,40 +44,99 @@ Template.toolbarSection.helpers({
     },
 
     toolbarButtons() {
+        const extraTools = [];
+
+        extraTools.push({
+            id: 'stackScroll',
+            title: 'Stack Scroll',
+            classes: 'imageViewerTool',
+            iconClasses: 'fa fa-bars'
+        });
+
+        extraTools.push({
+            id: 'magnify',
+            title: 'Magnify',
+            classes: 'imageViewerTool toolbarSectionButton',
+            iconClasses: 'fa fa-circle'
+        });
+
+        extraTools.push({
+            id: 'wwwcRegion',
+            title: 'ROI Window',
+            classes: 'imageViewerTool',
+            iconClasses: 'fa fa-square'
+        });
+
+        extraTools.push({
+            id: 'dragProbe',
+            title: 'Probe',
+            classes: 'imageViewerTool',
+            iconClasses: 'fa fa-dot-circle-o'
+        });
+
+        extraTools.push({
+            id: 'ellipticalRoi',
+            title: 'Ellipse',
+            classes: 'imageViewerTool',
+            iconClasses: 'fa fa-circle-o'
+        });
+
+        extraTools.push({
+            id: 'rectangleRoi',
+            title: 'Rectangle',
+            classes: 'imageViewerTool',
+            iconClasses: 'fa fa-square-o'
+        });
+
+        extraTools.push({
+            id: 'invert',
+            title: 'Invert',
+            classes: 'imageViewerCommand',
+            iconClasses: 'fa fa-adjust'
+        });
+
+        extraTools.push({
+            id: 'clearTools',
+            title: 'Clear',
+            classes: 'imageViewerCommand',
+            iconClasses: 'fa fa-trash'
+        });
+
         var buttonData = [];
+
         buttonData.push({
             id: 'zoom',
             title: 'Zoom',
             classes: 'imageViewerTool',
-            svgLink: '/packages/viewerbase/assets/icons.svg#icon-tools-zoom'
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-zoom'
         });
 
         buttonData.push({
             id: 'wwwc',
             title: 'Levels',
             classes: 'imageViewerTool',
-            svgLink: '/packages/viewerbase/assets/icons.svg#icon-tools-levels'
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-levels'
         });
 
         buttonData.push({
             id: 'pan',
             title: 'Pan',
             classes: 'imageViewerTool',
-            svgLink: '/packages/viewerbase/assets/icons.svg#icon-tools-pan'
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-pan'
         });
 
         buttonData.push({
             id: 'length',
             title: 'Length',
             classes: 'imageViewerTool toolbarSectionButton',
-            svgLink: '/packages/viewerbase/assets/icons.svg#icon-tools-measure-temp'
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-temp'
         });
 
         buttonData.push({
             id: 'annotate',
             title: 'Annotate',
             classes: 'imageViewerTool',
-            svgLink: '/packages/viewerbase/assets/icons.svg#icon-tools-measure-non-target'
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-non-target'
         });
 
         buttonData.push({
@@ -122,7 +183,7 @@ Template.toolbarSection.helpers({
                 title: 'CINE',
                 classes: 'imageViewerCommand',
                 iconClasses: 'fa fa-youtube-play',
-                disableFunction: hasMultipleFrames
+                disableFunction: OHIF.viewerbase.viewportUtils.hasMultipleFrames
             });
         }
 
@@ -133,66 +194,12 @@ Template.toolbarSection.helpers({
             buttonTemplateName: 'layoutButton'
         });
 
-        return buttonData;
-    },
-
-    extraToolbarButtons() {
-        let buttonData = [];
-
         buttonData.push({
-            id: 'stackScroll',
-            title: 'Stack Scroll',
-            classes: 'imageViewerTool',
-            iconClasses: 'fa fa-bars'
-        });
-
-        buttonData.push({
-            id: 'magnify',
-            title: 'Magnify',
-            classes: 'imageViewerTool toolbarSectionButton',
-            iconClasses: 'fa fa-circle'
-        });
-
-        buttonData.push({
-            id: 'wwwcRegion',
-            title: 'ROI Window',
-            classes: 'imageViewerTool',
-            iconClasses: 'fa fa-square'
-        });
-
-        buttonData.push({
-            id: 'dragProbe',
-            title: 'Probe',
-            classes: 'imageViewerTool',
-            iconClasses: 'fa fa-dot-circle-o'
-        });
-
-        buttonData.push({
-            id: 'ellipticalRoi',
-            title: 'Ellipse',
-            classes: 'imageViewerTool',
-            iconClasses: 'fa fa-circle-o'
-        });
-
-        buttonData.push({
-            id: 'rectangleRoi',
-            title: 'Rectangle',
-            classes: 'imageViewerTool',
-            iconClasses: 'fa fa-square-o'
-        });
-
-        buttonData.push({
-            id: 'invert',
-            title: 'Invert',
-            classes: 'imageViewerCommand',
-            iconClasses: 'fa fa-adjust'
-        });
-
-        buttonData.push({
-            id: 'clearTools',
-            title: 'Clear',
-            classes: 'imageViewerCommand',
-            iconClasses: 'fa fa-trash'
+            id: 'toggleMore',
+            title: 'More',
+            classes: 'rp-x-1 rm-l-3',
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-more',
+            subTools: extraTools
         });
 
         return buttonData;
@@ -226,15 +233,15 @@ Template.toolbarSection.onRendered(function() {
     instance.$('#layout').dropdown();
 
     if (OHIF.uiSettings.displayEchoUltrasoundWorkflow) {
-        toggleCineDialog();
+        OHIF.viewerbase.viewportUtils.toggleCineDialog();
     }
 
     // Set disabled/enabled tool buttons that are set in toolManager
-    const states = toolManager.getToolDefaultStates();
+    const states = OHIF.viewerbase.toolManager.getToolDefaultStates();
     const disabledToolButtons = states.disabledToolButtons;
     const allToolbarButtons = $('#toolbar').find('button');
     if (disabledToolButtons && disabledToolButtons.length > 0) {
-        for (var i = 0; i < allToolbarButtons.length; i++) {
+        for (let i = 0; i < allToolbarButtons.length; i++) {
             const toolbarButton = allToolbarButtons[i];
             $(toolbarButton).prop('disabled', false);
 

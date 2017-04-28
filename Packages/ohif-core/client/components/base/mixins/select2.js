@@ -1,6 +1,8 @@
-import { OHIF } from 'meteor/ohif:core';
 import { Template } from 'meteor/templating';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
+import { OHIF } from 'meteor/ohif:core';
 
 /*
  * input: controls a select2 component
@@ -27,10 +29,7 @@ OHIF.mixins.select2 = new OHIF.Mixin({
                 }
 
                 // Check if there is already an empty option on items list
-                const query = {
-                    value: ''
-                };
-                if (!_.findWhere(items, query)) {
+                if (!_.findWhere(items, { value: '' })) {
                     // Clone the current items
                     const newItems = _.clone(items) || [];
                     newItems.unshift({
@@ -65,13 +64,15 @@ OHIF.mixins.select2 = new OHIF.Mixin({
 
             // Attach focus and blur handlers to focusable elements
             $(elements).on('focus', event => {
-                event.stopPropagation();
-                // Show the state message on elements focus
-                component.toggleMessage(true);
+                if (event.target === event.currentTarget) {
+                    // Show the state message on elements focus
+                    component.toggleMessage(true);
+                }
             }).on('blur', event => {
-                event.stopPropagation();
-                // Hide the state message on elements blur
-                component.toggleMessage(false);
+                if (event.target === event.currentTarget) {
+                    // Hide the state message on elements blur
+                    component.toggleMessage(false);
+                }
             });
         },
 
@@ -80,7 +81,9 @@ OHIF.mixins.select2 = new OHIF.Mixin({
             const component = instance.component;
 
             // Destroy the select2 instance to remove unwanted DOM elements
-            component.select2Instance.destroy();
+            if (component.select2Instance) {
+                component.select2Instance.destroy();
+            }
         }
     }
 });

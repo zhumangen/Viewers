@@ -54,17 +54,19 @@ OHIF.mixins.form = new OHIF.Mixin({
             const component = instance.component;
 
             // Set the component main and style elements
-            component.$style = component.$element = instance.$('form:first');
+            component.$style = component.$element = instance.$('form').first();
+
+            // Block page redirecting on submit
+            component.$element[0].onsubmit = () => false;
         },
 
         events: {
-            submit: event => event.preventDefault(),
             'click .validation-error-container a'(event, instance) {
                 // Get the target key
                 const targetKey = $(event.currentTarget).attr('data-target');
 
                 // Focus the first input inside the element with error state
-                instance.$(`.state-error[data-key="${targetKey}"] :input:first`).focus();
+                instance.$(`.state-error[data-key="${targetKey}"]`).find(':input:first').focus();
             }
         },
 

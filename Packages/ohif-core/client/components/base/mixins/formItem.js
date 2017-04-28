@@ -183,7 +183,7 @@ OHIF.mixins.formItem = new OHIF.Mixin({
                 }
 
                 // Create the data document for validation
-                const document = OHIF.blaze.getNestedObject({
+                const document = OHIF.object.getNestedObject({
                     [key]: component.value()
                 });
 
@@ -271,32 +271,22 @@ OHIF.mixins.formItem = new OHIF.Mixin({
 
             focus(event, instance) {
                 const component = instance.component;
-
-                // Stop here if it is an group
-                if (component.isGroup || component.isCustomFocus) {
-                    return;
+                const isGroupOrCustomFocus = component.isGroup || component.isCustomFocus;
+                const isSameTarget = event.target === event.currentTarget;
+                if (!isGroupOrCustomFocus && isSameTarget) {
+                    // Check for state messages and show it
+                    component.toggleMessage(true);
                 }
-
-                // Prevent event bubbling
-                event.stopPropagation();
-
-                // Check for state messages and show it
-                component.toggleMessage(true);
             },
 
             blur(event, instance) {
                 const component = instance.component;
-
-                // Stop here if it is an group
-                if (component.isGroup || component.isCustomFocus) {
-                    return;
+                const isGroupOrCustomFocus = component.isGroup || component.isCustomFocus;
+                const isSameTarget = event.target === event.currentTarget;
+                if (!isGroupOrCustomFocus && isSameTarget) {
+                    // Check for state messages and show it
+                    component.toggleMessage(false);
                 }
-
-                // Prevent event bubbling
-                event.stopPropagation();
-
-                // Hide state messages
-                component.toggleMessage(false);
             }
 
         }

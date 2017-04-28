@@ -1,36 +1,37 @@
-@import "{design}/app"
+@import "{ohif:design}/app"
 
-$expandedHeight = 160px
+body>.header
 
-.logoImage
-  display: inline-block
-  height: 100%
-  float: left
-
-.topBar
-  height: $topBarHeight
-  theme('color', '$textPrimaryColor')
-  theme('background-color', '$primaryBackgroundColor')
-  transition(all 0.5s ease)
-
-  .brandSection
+  .brand
     height: 30px
     display: inline-block
     text-decoration: none
 
-    .logoImage
-      margin: 0 8px
+    .logo-image
+      display: inline-block
+      fill: transparent
+      float: left
+      height: 100%
+      margin: 0 8px 0 0
       width: 30px
 
-    .logoText
+    .logo-text
       display: inline-block
       font-family: $logoFontFamily
+      font-size: 14px
       font-weight: $logoFontWeight
       theme('color', '$textPrimaryColor')
       line-height: 30px
 
-  .studyListLinkSection
-    theme('border-left', '%s solid $uiBorderColor' % $uiBorderThickness)
+  a.header-menu
+    theme('color', '$textPrimaryColor')
+
+    .header-options
+      font-size: 13px
+
+    .menu-toggle
+      display: inline-block
+      height: 18px
 
   .btn
     theme('color', '$textSecondaryColor')
@@ -38,7 +39,6 @@ $expandedHeight = 160px
     font-size: 13px
     font-weight: 500
     line-height: 26px
-    margin-top: 3px
 
     &:hover
       theme('color', '$hoverColor')
@@ -46,34 +46,31 @@ $expandedHeight = 160px
     &:active
       theme('color', '$activeColor')
 
-  &.studyList
-    background-color: rgba(21, 25, 30, 0.7)
-    height: $expandedHeight
+  .studyListLinkSection
+    theme('border-left', '%s solid $uiBorderColor' % $uiBorderThickness)
+    margin: 3px 0 0 10px
+    padding: 0 0 0 10px
 
-    .brandSection
+  &.header-big
+    padding-left: $studyListPadding
+    padding-right: $studyListPadding
+
+    .brand
       height: 100%
       width: 80%
-      padding-left: 50px
-      line-height: $expandedHeight
+      line-height: $topBarExpandedHeight - 10px
 
-      .logoImage
+      .logo-image
+        margin: 0 20px 0 0
         width: 50px
-        margin: 0 20px
 
-      .logoText
+      .logo-text
         font-size: 30px
 
     .studyListLinkSection
-      position: absolute
       border: none
-      top: 5px
-      left: 5px
-
-#worklistTabs
-  height: "calc(100% - %s)" % $topBarHeight
-
-  .tab-pane
-    .viewerContainer
-      .loadingTextDiv
-        theme('color', '$textSecondaryColor')
-        font-size: 30px
+      left: 0
+      margin: 0
+      padding: 0
+      position: absolute
+      top: 0

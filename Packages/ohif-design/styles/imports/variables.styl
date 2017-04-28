@@ -1,0 +1,36 @@
+@import "./theming.styl"
+
+// Sizes
+$topBarHeight = 40px
+$topBarExpandedHeight = 160px
+$toolbarHeight = 78px
+$toolbarDrawerHeight = 62px
+$studiesSidebarMenuWidth = 307px
+$lesionsSidebarMenuWidth = 323px
+$studyListPadding = 8%
+$studyListPaddingMediumScreen = 10px
+
+$helveticaBold = "HelveticaNeue-Bold", "Helvetica Neue Bold", "Helvetica Bold", Helvetica, Arial, "Lucida Grande", sans-serif
+$helveticaLight = "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+
+$inputBackgroundColor = #2c363f
+$inputPlaceholderColor = #888888
+
+// Fonts
+$logoFontFamily = $helveticaBold
+$logoFontWeight = 300
+
+// Transitions
+$transitionDuration = 0.3s
+$transitionEffect = ease
+$sidebarTransition = all $transitionDuration $transitionEffect
+
+
+// Thicknesses
+$viewportBorderThickness = 1px
+$uiBorderThickness = 1px
+
+$screenBaseSize = 32px
+
+calcSize(sizeInPX)
+  unit(sizeInPX / $screenBaseSize, 'rem')

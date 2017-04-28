@@ -1,70 +1,24 @@
-@import "{design}/app"
+@import "{ohif:design}/app"
 
-$expandedHeight = 160px
+body>.header
 
-.logoImage
-  display: inline-block
-  height: 100%
-  float: left
-
-.topBar
-  height: $topBarHeight
-  theme('color', '$textPrimaryColor')
-  theme('background-color', '$primaryBackgroundColor')
-  transition(all 0.5s ease)
-
-  .brandSection
+  .brand
     height: 30px
     display: inline-block
     text-decoration: none
 
-    .logoImage
-      margin: 0 8px
+    .logo-image
+      display: inline-block
+      fill: transparent
+      float: left
+      height: 100%
+      margin: 0 8px 0 0
       width: 30px
 
-    .logoText
+    .logo-text
       display: inline-block
       font-family: $logoFontFamily
+      font-size: 14px
       font-weight: $logoFontWeight
       theme('color', '$textPrimaryColor')
       line-height: 30px
-
-  .btn
-    theme('color', '$textSecondaryColor')
-    cursor: pointer
-    font-size: 13px
-    font-weight: 500
-    line-height: 26px
-    margin-top: 3px
-
-    &:hover
-      theme('color', '$hoverColor')
-
-    &:active
-      theme('color', '$activeColor')
-
-  &.studyList
-    background-color: rgba(21, 25, 30, 0.7)
-    height: $expandedHeight
-
-    .brandSection
-      height: 100%
-      width: 80%
-      padding-left: 50px
-      line-height: $expandedHeight
-
-      .logoImage
-        width: 50px
-        margin: 0 20px
-
-      .logoText
-        font-size: 30px
-
-#worklistTabs
-  height: "calc(100% - %s)" % $topBarHeight
-
-  .tab-pane
-    .viewerContainer
-      .loadingTextDiv
-        theme('color', '$textSecondaryColor')
-        font-size: 30px

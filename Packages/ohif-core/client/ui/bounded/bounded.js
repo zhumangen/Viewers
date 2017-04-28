@@ -1,3 +1,5 @@
+import { $ } from 'meteor/jquery';
+import { _ } from 'meteor/underscore';
 import { OHIF } from 'meteor/ohif:core';
 
 // Allow attaching to jQuery selectors
@@ -36,9 +38,14 @@ class Bounded {
     options(options={}) {
         // Process the given options and store it in the instance
         const { boundingElement, allowResizing } = options;
-        this.boundingElement = boundingElement || window;
+        this.boundingElement = boundingElement;
         this.$boundingElement = $(this.boundingElement);
         this.allowResizing = allowResizing;
+
+        // Check for fixed positioning
+        if (this.$element.css('position') === 'fixed') {
+            this.boundingElement = window;
+        }
 
         // Destroy and initialize again the instance
         this.destroy();
@@ -55,6 +62,22 @@ class Bounded {
 
         // Add the bounded class to the element
         this.$element.addClass('bounded');
+
+        // Handle the positioning on window resize
+        const $window = $(window);
+        const windowResizeHandler = () => {
+            // Check if the element is still in DOM and remove the handler if it is not
+            if (!this.$element.closest(document.documentElement).length) {
+                $window.off('resize', windowResizeHandler);
+            }
+
+            this.$element.trigger('spatialChanged');
+        };
+
+        $window.on('resize', windowResizeHandler);
+
+        // Trigger the bounding check for the first timepoint
+        setTimeout(() => this.$element.trigger('spatialChanged'));
     }
 
     // Destroy this instance, returning the element to its previous state
@@ -70,12 +93,26 @@ class Bounded {
         // Create the result object
         const result = {};
 
+        // Check if the element is the window
+        if (!element || element === window) {
+            const $window = $(window);
+            const width = $window.outerWidth();
+            const height = $window.outerHeight();
+            return {
+                width,
+                height,
+                x0: 0,
+                y0: 0,
+                x1: width,
+                y1: height
+            };
+        }
+
         // Get the jQuery object for the element
-        const el = element === window ? window.document.body : element;
-        const $element = $(el);
+        const $element = $(element);
 
         // Get the element style
-        const style = el.style;
+        const style = element.style;
 
         // Get the integer numbers for element's width
         if (style.width && style.width.indexOf('px') > -1) {
@@ -91,10 +128,13 @@ class Bounded {
             result.height = $element.outerHeight();
         }
 
+        // Get the position property based on the element position CSS attribute
+        const positionProperty = $element.css('position') === 'fixed' ? 'position' : 'offset';
+
         // Get the element's start position
-        const offset = $element.offset();
-        result.x0 = offset.left;
-        result.y0 = offset.top;
+        const position = $element[positionProperty]();
+        result.x0 = position.left;
+        result.y0 = position.top;
 
         // Get the element's end position
         result.x1 = result.x0 + result.width;
@@ -158,4 +198,4 @@ class Bounded {
 
 }
 
-OHIF.Bounded = Bounded;
+OHIF.ui.Bounded = Bounded;

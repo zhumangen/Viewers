@@ -16,7 +16,7 @@ Package.onUse(function(api) {
     api.use('reactive-var');
 
     // Router dependencies
-    api.use('clinical:router@2.0.18', 'client');
+    api.use('iron:router@1.0.13', 'client');
 
     // Component's library dependencies
     api.use('natestrauser:select2@4.0.1', 'client');
@@ -24,7 +24,13 @@ Package.onUse(function(api) {
 
     // UI Styles
     api.addFiles([
-        'client/ui/resizable/resizable.styl'
+        'client/ui/dimensional/dimensional.styl',
+        'client/ui/resizable/resizable.styl',
+        'client/components/bootstrap/dialog/bootstrap.styl',
+        'client/components/bootstrap/dialog/loading.styl',
+        'client/components/bootstrap/dialog/progress.styl',
+        'client/components/bootstrap/dialog/unsavedChangesDialog.styl',
+        'client/components/bootstrap/dropdown/dropdown.styl'
     ], 'client');
 
     api.mainModule('main.js', ['client', 'server']);

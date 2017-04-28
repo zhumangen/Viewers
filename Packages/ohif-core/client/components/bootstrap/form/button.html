@@ -1,8 +1,7 @@
 <template name="button">
     {{#baseComponent (extend this
         base='baseButton'
-        class=(concat 'btn ' this.class)
-        mixins=(concat 'button ' this.mixins)
+        mixins=(concat 'button action ' this.mixins)
     )}}
         {{>UI.contentBlock}}
     {{/baseComponent}}

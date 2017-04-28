@@ -1,4 +1,4 @@
-@import "{design}/app"
+@import "{ohif:design}/app"
 
 .resizable
   transform(scale(1))
@@ -10,6 +10,9 @@
     -khtml-user-select: none
     -moz-user-select: none
     -ms-user-select: none
+
+  &.resizing iframe
+    pointer-events: none
 
   .resize-bound
     content: ''

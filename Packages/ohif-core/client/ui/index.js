@@ -1,3 +1,10 @@
 import './bounded/bounded.js';
+import './dimensional/dimensional.js';
+import './dialog/display.js';
+import './dialog/spatial.js';
+import './dialog/unsavedChangesDialog.js';
 import './draggable/draggable.js';
+import './dropdown/class.js';
+import './dropdown/display.js';
 import './resizable/resizable.js';
+import './unsavedChanges/unsavedChanges.js';

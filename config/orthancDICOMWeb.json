@@ -8,6 +8,7 @@
         "wadoRoot": "http://localhost:8042/dicom-web",
         "qidoSupportsIncludeField": false,
         "imageRendering": "wadouri",
+        "thumbnailRendering": "wadors",
         "requestOptions": {
           "auth": "orthanc:orthanc",
           "logRequests": true,
@@ -18,13 +19,15 @@
     ]
   },
   "defaultServiceType": "dicomWeb",
+  "dropCollections": true,
   "public": {
     "verifyEmail": false,
     "ui": {
         "studyListFunctionsEnabled": true,
         "leftSidebarOpen": false,
         "displaySetNavigationLoopOverSeries": false,
-        "displaySetNavigationMultipleViewports": true
+        "displaySetNavigationMultipleViewports": true,
+        "autoPositionMeasurementsTextCallOuts": "TRLB"
     }
   }
 }

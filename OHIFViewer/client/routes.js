@@ -1,15 +1,5 @@
-Session.setDefault('ViewerData', {});
-
-// Re-add any tab data saved in the Session
-WorklistTabs.remove({});
-Object.keys(ViewerData).forEach(function(contentId) {
-    var tabData = ViewerData[contentId];
-    var data = {
-        title: tabData.title,
-        contentid: tabData.contentid
-    };
-    WorklistTabs.insert(data);
-});
+import { Router } from 'meteor/iron:router';
+import { OHIF } from 'meteor/ohif:core';
 
 Router.configure({
     layoutTemplate: 'layout',
@@ -17,36 +7,16 @@ Router.configure({
 });
 
 Router.onBeforeAction('loading');
-Router.onBeforeAction(function() {
-    this.next();
-});
 
 Router.route('/', function() {
-    this.render('ohifViewer');
-});
+    Router.go('studylist', {}, { replaceState: true });
+}, { name: 'home' });
 
-Router.route('/viewer/:_id', {
-    layoutTemplate: 'layout',
-    name: 'viewer',
-    onBeforeAction: function() {
-        var studyInstanceUid = this.params._id;
-        
-        // Check if this study is already loaded in a tab
-        // If it is, stop here so we don't keep adding tabs on hot-code reloads
-        var tabs = WorklistTabs.find({
-            studyInstanceUid: studyInstanceUid
-        });
+Router.route('/studylist', function() {
+    this.render('ohifViewer', { data: { template: 'studylist' } });
+}, { name: 'studylist' });
 
-        if (tabs.count()) {
-            return;
-        }
-
-        this.render('ohifViewer', {
-            data: function() {
-                return {
-                    studyInstanceUid: studyInstanceUid
-                };
-            }
-        });
-    }
-});
+Router.route('/viewer/:studyInstanceUids', function() {
+    const studyInstanceUids = this.params.studyInstanceUids.split(';');
+    OHIF.viewerbase.renderViewer(this, { studyInstanceUids }, 'ohifViewer');
+}, { name: 'viewerStudies' });

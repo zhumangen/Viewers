@@ -1,3 +1,5 @@
+import { OHIF } from 'meteor/ohif:core';
+
 // Allow attaching to jQuery selectors
 $.fn.resizable = function(options) {
     _.each(this, element => {
@@ -68,8 +70,6 @@ class Resizable {
         this.initResizeHandler = event => {
             const $window = $(window);
 
-            event.stopPropagation();
-
             this.width = this.initialWidth = this.$element.width();
             this.height = this.initialHeight = this.$element.height();
             this.startWidth = this.width;
@@ -133,6 +133,9 @@ class Resizable {
             $window.off('mouseup', this.endResizeHandler);
 
             this.$element.removeClass('resizing');
+
+            // Let the listeners know that this element was resized
+            this.$element.trigger('resize');
         };
     }
 
@@ -174,3 +177,5 @@ class Resizable {
     }
 
 }
+
+OHIF.ui.Resizable = Resizable;

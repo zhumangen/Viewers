@@ -1,0 +1,93 @@
+@import "{ohif:design}/app"
+
+.toolbarSectionButton
+  display: inline-block
+  color: #888888
+  fill: #888888
+  stroke: #888888
+  //theme('color', '$defaultColor')
+  //theme('fill', '$defaultColor')
+  //theme('stroke', '$defaultColor')
+  padding: calcSize(22px)
+  cursor: pointer
+  text-align: center
+  vertical-align: middle
+  min-width: calcSize(84px)
+
+  &.disabled
+    &>.buttonLabel, &>.svgContainer
+      opacity: 0.5
+      cursor: not-allowed
+
+      &:hover
+        &, i
+          theme('color', '$textSecondaryColor')
+
+  .buttonLabel
+    theme('color', '$textSecondaryColor')
+    font-size: 12px
+    font-weight: 500
+    display: none
+
+  .activeButton
+    position: absolute
+    display: block
+
+  .notVisible
+    visibility: hidden
+
+  .svgContainer
+    margin: 0 auto
+    text-align: center
+
+    i
+      theme('color', '$textSecondaryColor')
+      font-size: calcSize(40px)
+      line-height: 30px
+
+  .textContainer
+    margin: 0 auto
+    text-align: center
+
+    span
+      theme('color', '$textSecondaryColor')
+      font-family: $helveticaBold
+      font-size: calcSize(40px)
+      line-height: 30px
+
+  svg
+    background-color: transparent
+    //margin: 2px
+    width: calcSize(40px)
+    height: calcSize(40px)
+
+  &:hover
+    background-color: #444444
+
+    &>.buttonLabel
+      theme('color', '$hoverColor')
+
+      &>i
+        theme('color', '$hoverColor')
+
+    &>.svgContainer>svg
+      theme('fill', '$hoverColor')
+      theme('stroke', '$hoverColor')
+
+    &>.textContainer
+      span
+        theme('color', '$hoverColor')
+
+
+  &:active, &.active
+    background-color: #444444
+
+    &>.buttonLabel, &>.svgContainer
+      theme('color', '$activeColor')
+
+      svg
+        theme('fill', '$activeColor')
+        theme('stroke', '$activeColor')
+
+      i
+        theme('color', '$activeColor')

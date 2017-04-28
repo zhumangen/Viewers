@@ -1,10 +1,12 @@
+import { Template } from 'meteor/templating';
+
 Template.flexboxLayout.events({
-    'transitionend .sidebarMenu'(event) {
+    'transitionend .sidebarMenu'(event, instance) {
         if (!event.target.classList.contains('sidebarMenu')) {
-        	return;
+            return;
         }
 
-    	handleResize();
+        window.ResizeViewportManager.handleResize();
     }
 });
 

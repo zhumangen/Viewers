@@ -11,7 +11,7 @@ $.fn.draggable = function(options) {
  *
  * @param element
  */
-makeDraggable = function(element, options) {
+function makeDraggable(element, options) {
     var container = $(window);
     var diffX,
         diffY,
@@ -43,6 +43,11 @@ makeDraggable = function(element, options) {
         // Prevent dragging dialog by clicking on slider
         // (could be extended for buttons, not sure it's necessary
         if (e.target.type && e.target.type === 'range') {
+            return;
+        }
+
+        // Stop the dragging if the element is being resized
+        if ($(element).hasClass('resizing')) {
             return;
         }
 

@@ -1,11 +1,20 @@
+import { Meteor } from 'meteor/meteor';
+
 /*
  * Defines the base OHIF object
  */
 
-const OHIF = {};
+const OHIF = {
+    log: {},
+    ui: {},
+    utils: {},
+    viewer: {},
+    cornerstone: {}
+};
 
 // Expose the OHIF object to the client if it is on development mode
-if (Meteor.isDevelopment && Meteor.isClient) {
+// @TODO: remove this after applying namespace to this package
+if (Meteor.isClient) {
     window.OHIF = OHIF;
 }
 
