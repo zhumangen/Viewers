@@ -10,4 +10,4 @@ if [ $# -gt 0 ]; then
 fi
 
 echo 'Starting Meteor server...'
-METEOR_PACKAGE_DIRS="../Packages" meteor --settings "$config"
+METEOR_PACKAGE_DIRS="../Packages" meteor --port 3003 --settings "$config"

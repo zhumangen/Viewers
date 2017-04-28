@@ -263,6 +263,13 @@ export const toolManager = {
     getToolDefaultStates() {
         return toolDefaultStates;
     },
+    setDefaultEnabledForElement: function(element) {
+        var states = this.getToolDefaultStates();
+
+        states.enable.forEach(function (tool) {
+            cornerstoneTools[tool].enable(element);
+        })
+    },
     setActiveToolForElement(tool, element) {
         const canvases = $(element).find('canvas');
         if (element.classList.contains('empty') || !canvases.length) {

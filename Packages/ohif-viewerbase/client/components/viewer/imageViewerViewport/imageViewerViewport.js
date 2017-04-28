@@ -15,6 +15,7 @@ import { toolManager } from '../../../lib/toolManager';
 import { updateOrientationMarkers } from '../../../lib/updateOrientationMarkers';
 import { getInstanceClassDefaultViewport } from '../../../lib/instanceClassSpecificViewport';
 import { OHIFError } from '../../../lib/classes/OHIFError';
+import { isHideOverlay } from '../../../lib/viewerFunctions';
 
 const allCornerstoneEvents = 'CornerstoneToolsMouseDown CornerstoneToolsMouseDownActivate ' +
     'CornerstoneToolsMouseClick CornerstoneToolsMouseDrag CornerstoneToolsMouseUp ' +
@@ -235,7 +236,11 @@ const loadDisplaySetIntoViewport = (data, templateData) => {
         // Hide the viewport instructions (i.e. 'Drag a stack here') and show
         // the viewport overlay data.
         $element.siblings('.viewportInstructions').hide();
-        $element.siblings('.imageViewerViewportOverlay').show();
+        if (isHideOverlay()) {
+            $(element).siblings('.imageViewerViewportOverlay').hide();
+        } else {
+            $(element).siblings('.imageViewerViewportOverlay').show();
+        }
 
         // Add stack state managers for the stack tool, CINE tool, and reference lines
         cornerstoneTools.addStackStateManager(element, ['stack', 'playClip', 'referenceLines']);
@@ -279,6 +284,7 @@ const loadDisplaySetIntoViewport = (data, templateData) => {
         // newly rendered element
         const activeTool = toolManager.getActiveTool();
         toolManager.setActiveTool(activeTool, [element]);
+        toolManager.setDefaultEnabledForElement(element);
 
         // Define a function to run whenever the Cornerstone viewport is rendered
         // (e.g. following a change of window or zoom)

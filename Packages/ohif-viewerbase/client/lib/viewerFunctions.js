@@ -1,13 +1,14 @@
-getCurrentViewerData = function() {
+import { OHIF } from 'meteor/ohif:core';
+
+/*getCurrentViewerData = function() {
   const contentId = Session.get('activeContentId');
 
   if (!ViewerData[contentId]) {
     return null;
   }
   return ViewerData[contentId];
-};
+};*/
 
-isHideOverlay = function () {
-  var viewerData = getCurrentViewerData();
-  return !viewerData ? false : !!viewerData.hideOverlay;
-};
+export function isHideOverlay () {
+  return !OHIF.viewer.data ? false : !!OHIF.viewer.data.hideOverlay;
+}

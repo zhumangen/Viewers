@@ -252,8 +252,99 @@ HP.ProtocolEngine = class ProtocolEngine {
         return priors instanceof Array ? priors : [];
     }
 
+    loadUnavailableStudies(viewports, doneCallBack) {
+        let currentStudy = this.studies[0];
+        currentStudy.abstractPriorValue = 0;
+
+        let loadPriors = [];
+        let priorUids = [];
+        let priorStudies;
+
+        viewports.forEach(viewport => {
+            viewport.studyMatchingRules.forEach(rule => {
+                if (rule.attribute === ABSTRACT_PRIOR_VALUE) {
+                    const validatorType = Object.keys(rule.constraint)[0];
+                    const validator = Object.keys(rule.constraint[validatorType])[0];
+
+                    let abstractPriorValue = rule.constraint[validatorType][validator];
+                    abstractPriorValue = parseInt(abstractPriorValue, 10);
+                    // TODO: Restrict or clarify validators for abstractPriorValue?
+
+                    // No need to call it more than once...
+                    if (!priorStudies) {
+                        priorStudies = this.getAvailableStudyPriors(currentStudy.getObjectID());
+                    }
+
+                    // TODO: Revisit this later: What about two studies with the same
+                    // study date?
+
+                    let priorStudy;
+                    if (abstractPriorValue === -1) {
+                        priorStudy = priorStudies[priorStudies.length - 1];
+                    } else {
+                        const studyIndex = Math.max(abstractPriorValue - 1, 0);
+                        priorStudy = priorStudies[studyIndex];
+                    }
+
+                    // Invalid data
+                    if (!(priorStudy instanceof StudyMetadata) && !(priorStudy instanceof StudySummary)) {
+                        return;
+                    }
+
+                    const priorStudyObjectID = priorStudy.getObjectID();
+
+                    // Check if study metadata is already in studies list
+                    if (this.studies.find(study => study.getObjectID() === priorStudyObjectID)) {
+                        return;
+                    }
+
+                    if (priorUids.indexOf(priorStudyObjectID) == -1) {
+                        loadPriors.push({study: priorStudy, priorValue: abstractPriorValue});
+                        priorUids.push(priorStudyObjectID);
+                    }
+                }
+                // TODO: Add relative Date / time
+            });
+        });
+
+        if (loadPriors.length) {
+            let left = loadPriors.length;
+            let self = this;
+            loadPriors.forEach(p => {
+                let priorStudy = p.study;
+                let abstractPriorValue = p.priorValue;
+                this.studyMetadataSource.loadStudy(priorStudy).then(studyMetadata => {
+                    // Set the custom attribute abstractPriorValue for the study metadata
+                    studyMetadata.setCustomAttribute(ABSTRACT_PRIOR_VALUE, abstractPriorValue);
+
+                    // Also add custom attribute
+                    const firstInstance = studyMetadata.getFirstInstance();
+                    if (firstInstance instanceof InstanceMetadata) {
+                        firstInstance.setCustomAttribute(ABSTRACT_PRIOR_VALUE, abstractPriorValue);
+                    }
+
+                    // Insert the new study metadata
+                    self.studies.push(studyMetadata);
+
+                    left--;
+                    if (left < 1) {
+                        doneCallBack();
+                    }
+                }, err => {
+                    OHIF.log.warn(error);
+                    left--;
+                    if (left < 1) {
+                        doneCallBack();
+                    }
+                });
+            });
+        } else {
+            doneCallBack();
+        }
+    }
+
     // Match images given a list of Studies and a Viewport's image matching reqs
-    matchImages(viewport, viewportIndex) {
+    matchImages(viewport) {
         OHIF.log.info('ProtocolEngine::matchImages');
 
         const { studyMatchingRules, seriesMatchingRules, imageMatchingRules: instanceMatchingRules } = viewport;
@@ -272,70 +363,6 @@ HP.ProtocolEngine = class ProtocolEngine {
         if (firstInstance instanceof InstanceMetadata) {
             firstInstance.setCustomAttribute(ABSTRACT_PRIOR_VALUE, 0);
         }
-
-        // Only used if study matching rules has abstract prior values defined...
-        let priorStudies;
-
-        studyMatchingRules.forEach(rule => {
-            if (rule.attribute === ABSTRACT_PRIOR_VALUE) {
-                const validatorType = Object.keys(rule.constraint)[0];
-                const validator = Object.keys(rule.constraint[validatorType])[0];
-
-                let abstractPriorValue = rule.constraint[validatorType][validator];
-                abstractPriorValue = parseInt(abstractPriorValue, 10);
-                // TODO: Restrict or clarify validators for abstractPriorValue?
-
-                // No need to call it more than once...
-                if (!priorStudies) {
-                    priorStudies = this.getAvailableStudyPriors(currentStudy.getObjectID());
-                }
-
-                // TODO: Revisit this later: What about two studies with the same
-                // study date?
-
-                let priorStudy;
-                if (abstractPriorValue === -1) {
-                    priorStudy = priorStudies[priorStudies.length - 1];
-                } else {
-                    const studyIndex = Math.max(abstractPriorValue - 1, 0);
-                    priorStudy = priorStudies[studyIndex];
-                }
-
-                // Invalid data
-                if (!(priorStudy instanceof StudyMetadata) && !(priorStudy instanceof StudySummary)) {
-                    return;
-                }
-
-                const priorStudyObjectID = priorStudy.getObjectID();
-
-                // Check if study metadata is already in studies list
-                if (this.studies.find(study => study.getObjectID() === priorStudyObjectID)) {
-                    return;
-                }
-
-                // Get study metadata if necessary and load study in the viewer (each viewer should provide it's own load study method)
-                this.studyMetadataSource.loadStudy(priorStudy).then(studyMetadata => {
-                    // Set the custom attribute abstractPriorValue for the study metadata
-                    studyMetadata.setCustomAttribute(ABSTRACT_PRIOR_VALUE, abstractPriorValue);
-
-                    // Also add custom attribute 
-                    const firstInstance = studyMetadata.getFirstInstance();
-                    if (firstInstance instanceof InstanceMetadata) {
-                        firstInstance.setCustomAttribute(ABSTRACT_PRIOR_VALUE, abstractPriorValue);
-                    }
-
-                    // Insert the new study metadata
-                    this.studies.push(studyMetadata);
-
-                    // Update the viewport to refresh layout manager with new study
-                    this.updateViewports(viewportIndex);
-                }, error => { 
-                    OHIF.log.warn(error);
-                    throw new OHIFError(`ProtocolEngine::matchImages could not get study metadata for the Study with the following ObjectID: ${priorStudyObjectID}`);
-                });
-            }
-            // TODO: Add relative Date / time
-        });
 
         this.studies.forEach(study => {
             const studyMatchDetails = HPMatcher.match(study.getFirstInstance(), studyMatchingRules);
@@ -448,7 +475,7 @@ HP.ProtocolEngine = class ProtocolEngine {
      *
      * @param viewportIndex
      */
-    updateViewports(viewportIndex) {
+    updateViewports(viewportIndex, doneCallback) {
         OHIF.log.info(`ProtocolEngine::updateViewports viewportIndex: ${viewportIndex}`);
 
         // Make sure we have an active protocol with a non-empty array of display sets
@@ -491,96 +518,119 @@ HP.ProtocolEngine = class ProtocolEngine {
         this.matchDetails = [];
 
         // Loop through each viewport
-        stageModel.viewports.forEach((viewport, viewportIndex) => {
-            const details = this.matchImages(viewport, viewportIndex);
+        this.loadUnavailableStudies(stageModel.viewports, () => {
+            stageModel.viewports.forEach((viewport, viewportIndex) => {
+                const details = this.matchImages(viewport, viewportIndex);
 
-            this.matchDetails[viewportIndex] = details;
+                this.matchDetails[viewportIndex] = details;
 
-            // Convert any YES/NO values into true/false for Cornerstone
-            const cornerstoneViewportParams = {};
+                // Convert any YES/NO values into true/false for Cornerstone
+                const cornerstoneViewportParams = {};
 
-            // Cache viewportSettings keys
-            const viewportSettingsKeys = Object.keys(viewport.viewportSettings);
+                // Cache viewportSettings keys
+                const viewportSettingsKeys = Object.keys(viewport.viewportSettings);
 
-            viewportSettingsKeys.forEach(key => {
-                let value = viewport.viewportSettings[key];
-                if (value === 'YES') {
-                    value = true;
-                } else if (value === 'NO') {
-                    value = false;
+                viewportSettingsKeys.forEach(key => {
+                    let value = viewport.viewportSettings[key];
+                    if (value === 'YES') {
+                        value = true;
+                    } else if (value === 'NO') {
+                        value = false;
+                    }
+
+                    cornerstoneViewportParams[key] = value;
+                });
+
+                // imageViewerViewports occasionally needs relevant layout data in order to set
+                // the element style of the viewport in question
+                const currentViewportData = {
+                    viewportIndex,
+                    viewport: cornerstoneViewportParams,
+                    ...layoutProps
+                };
+
+                const customSettings = [];
+                viewportSettingsKeys.forEach(id => {
+                    const setting = HP.CustomViewportSettings[id];
+                    if (!setting) {
+                        return;
+                    }
+
+                    customSettings.push({
+                        id: id,
+                        value: viewport.viewportSettings[id]
+                    });
+                });
+
+                currentViewportData.renderedCallback = element => {
+                    //console.log('renderedCallback for ' + element.id);
+                    customSettings.forEach(customSetting => {
+                        OHIF.log.info(`ProtocolEngine::currentViewportData.renderedCallback Applying custom setting: ${customSetting.id}`);
+                        OHIF.log.info(`ProtocolEngine::currentViewportData.renderedCallback with value: ${customSetting.value}`);
+
+                        const setting = HP.CustomViewportSettings[customSetting.id];
+                        setting.callback(element, customSetting.value);
+                    });
+                };
+
+                let currentMatch = details.bestMatch;
+                let currentPosition = 1;
+                const scoresLength = details.matchingScores.length;
+                while (currentPosition < scoresLength && _.findWhere(viewportData, {
+                    imageId: currentMatch.imageId
+                })) {
+                    currentMatch = details.matchingScores[currentPosition];
+                    currentPosition++;
                 }
 
-                cornerstoneViewportParams[key] = value;
-            });
-
-            // imageViewerViewports occasionally needs relevant layout data in order to set
-            // the element style of the viewport in question
-            const currentViewportData = {
-                viewportIndex,
-                viewport: cornerstoneViewportParams,
-                ...layoutProps
-            };
-
-            const customSettings = [];
-            viewportSettingsKeys.forEach(id => {
-                const setting = HP.CustomViewportSettings[id];
-                if (!setting) {
-                    return;
+                if (currentMatch && currentMatch.imageId) {
+                    currentViewportData.studyInstanceUid = currentMatch.studyInstanceUid;
+                    currentViewportData.seriesInstanceUid = currentMatch.seriesInstanceUid;
+                    currentViewportData.sopInstanceUid = currentMatch.sopInstanceUid;
+                    currentViewportData.currentImageIdIndex = currentMatch.currentImageIdIndex;
+                    currentViewportData.displaySetInstanceUid = currentMatch.displaySetInstanceUid;
+                    currentViewportData.imageId = currentMatch.imageId;
                 }
 
-                customSettings.push({
-                    id: id,
-                    value: viewport.viewportSettings[id]
-                });
+                // @TODO Why should we throw an exception when a best match is not found? This was aborting the whole process.
+                // if (!currentViewportData.displaySetInstanceUid) {
+                //     throw new OHIFError('ProtocolEngine::updateViewports No matching display set found?');
+                // }
+
+                viewportData.push(currentViewportData);
             });
 
-            currentViewportData.renderedCallback = element => {
-                //console.log('renderedCallback for ' + element.id);
-                customSettings.forEach(customSetting => {
-                    OHIF.log.info(`ProtocolEngine::currentViewportData.renderedCallback Applying custom setting: ${customSetting.id}`);
-                    OHIF.log.info(`ProtocolEngine::currentViewportData.renderedCallback with value: ${customSetting.value}`);
+            this.LayoutManager.layoutTemplateName = layoutTemplateName;
+            this.LayoutManager.layoutProps = layoutProps;
+            this.LayoutManager.viewportData = viewportData;
 
-                    const setting = HP.CustomViewportSettings[customSetting.id];
-                    setting.callback(element, customSetting.value);
-                });
-            };
-
-            let currentMatch = details.bestMatch;
-            let currentPosition = 1;
-            const scoresLength = details.matchingScores.length;
-            while (currentPosition < scoresLength && _.findWhere(viewportData, {
-                imageId: currentMatch.imageId
-            })) {
-                currentMatch = details.matchingScores[currentPosition];
-                currentPosition++;
+            if (viewportIndex !== undefined && viewportData[viewportIndex]) {
+                this.LayoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, viewportData[viewportIndex]);
+            } else {
+                this.LayoutManager.updateViewports();
             }
 
-            if (currentMatch && currentMatch.imageId) {
-                currentViewportData.studyInstanceUid = currentMatch.studyInstanceUid;
-                currentViewportData.seriesInstanceUid = currentMatch.seriesInstanceUid;
-                currentViewportData.sopInstanceUid = currentMatch.sopInstanceUid;
-                currentViewportData.currentImageIdIndex = currentMatch.currentImageIdIndex;
-                currentViewportData.displaySetInstanceUid = currentMatch.displaySetInstanceUid;
-                currentViewportData.imageId = currentMatch.imageId;
+            if (doneCallback)
+                doneCallback();
+        });
+    }
+
+    updateMatchedProtocol() {
+        MatchedProtocols.update({}, {
+            $set: {
+                selected: false
             }
-
-            // @TODO Why should we throw an exception when a best match is not found? This was aborting the whole process.
-            // if (!currentViewportData.displaySetInstanceUid) {
-            //     throw new OHIFError('ProtocolEngine::updateViewports No matching display set found?');
-            // }
-
-            viewportData.push(currentViewportData);
+        }, {
+            multi: true
         });
 
-        this.LayoutManager.layoutTemplateName = layoutTemplateName;
-        this.LayoutManager.layoutProps = layoutProps;
-        this.LayoutManager.viewportData = viewportData;
-
-        if (viewportIndex !== undefined && viewportData[viewportIndex]) {
-            this.LayoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, viewportData[viewportIndex]);
-        } else {
-            this.LayoutManager.updateViewports();
-        }
+        MatchedProtocols.update({
+            id: this.protocol.id
+        }, {
+            $set: {
+                selected: true
+            }
+        });
     }
 
     /**
@@ -608,24 +658,13 @@ HP.ProtocolEngine = class ProtocolEngine {
 
         // Update viewports by default
         if (updateViewports) {
-            this.updateViewports();
+            let self = this;
+            this.updateViewports(null, () => {
+                self.updateMatchedProtocol();
+            });
+        } else {
+            this.updateMatchedProtocol();
         }
-
-        MatchedProtocols.update({}, {
-            $set: {
-                selected: false
-            }
-        }, {
-            multi: true
-        });
-
-        MatchedProtocols.update({
-            id: this.protocol.id
-        }, {
-            $set: {
-                selected: true
-            }
-        });
 
         Session.set('HangingProtocolName', this.protocol.name);
         Session.set('HangingProtocolStage', this.stage);

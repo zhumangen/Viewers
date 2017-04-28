@@ -16,6 +16,7 @@ Package.onUse(function(api) {
         'themes/theme-tigerlily.styl',
         'themes/theme-crickets.styl',
         'themes/theme-honeycomb.styl',
+        'themes/theme-medken.styl',
         'themes/theme-mint.styl',
         'themes/theme-overcast.styl',
         'themes/theme-quartz.styl'
