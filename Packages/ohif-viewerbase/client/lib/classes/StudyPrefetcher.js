@@ -40,30 +40,42 @@ export class StudyPrefetcher {
         }
 
         this.stopPrefetching();
-        this.prefetchActiveViewport();
+        // this.prefetchActiveViewport();
+        this.prefetchViewports();
         this.prefetchDisplaySets();
     }
 
     stopPrefetching() {
-        this.disableViewportPrefetch();
+        // this.disableViewportPrefetch();
+        cornerstoneTools.multiStackPrefetch.disableAll();
         cornerstoneTools.requestPoolManager.clearRequestStack('prefetch');
     }
 
-    prefetchActiveViewport() {
-        const activeViewportElement = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
-        this.enablePrefetchOnElement(activeViewportElement);
-        this.attachActiveViewportListeners(activeViewportElement);
-    }
-
-    disableViewportPrefetch() {
+    prefetchViewports() {
         $('.imageViewerViewport').each(function() {
             if (!$(this).find('canvas').length) {
                 return;
             }
 
-            cornerstoneTools.stackPrefetch.disable(this);
+            cornerstoneTools.multiStackPrefetch.enable(this);
         });
     }
+
+    // prefetchActiveViewport() {
+    //     const activeViewportElement = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+    //     this.enablePrefetchOnElement(activeViewportElement);
+    //     this.attachActiveViewportListeners(activeViewportElement);
+    // }
+
+    // disableViewportPrefetch() {
+    //     $('.imageViewerViewport').each(function() {
+    //         if (!$(this).find('canvas').length) {
+    //             return;
+    //         }
+
+    //         cornerstoneTools.multiStackPrefetch.disable(this);
+    //     });
+    // }
 
     hasStack(element) {
         const stack = cornerstoneTools.getToolState(element, 'stack');
@@ -93,7 +105,7 @@ export class StudyPrefetcher {
                 throw new OHIFError(`Requested stack ${displaySetInstanceUid} was not created`);
             }
 
-            cornerstoneTools.stackPrefetch.enable(element);
+            cornerstoneTools.multiStackPrefetch.enable(element);
         }
     }
 
@@ -101,7 +113,7 @@ export class StudyPrefetcher {
         const newImageHandler = () => {
             // It needs to be called asynchronously because cornerstone does it at the same way.
             // All instance urls to be prefetched will be removed again if we add them before
-            // Cornerstone callback (see stackPrefetch.onImageUpdated).
+            // Cornerstone callback (see multiStackPrefetch.onImageUpdated).
             this.prefetchDisplaySetsAsync();
         };
 

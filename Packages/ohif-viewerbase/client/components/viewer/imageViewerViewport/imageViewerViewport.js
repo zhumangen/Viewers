@@ -15,6 +15,7 @@ import { toolManager } from '../../../lib/toolManager';
 import { updateOrientationMarkers } from '../../../lib/updateOrientationMarkers';
 import { getInstanceClassDefaultViewport } from '../../../lib/instanceClassSpecificViewport';
 import { PlayClipManager } from '../../../lib/classes/PlayClipManager';
+import { StudyPrefetcher } from '../../../lib/classes/StudyPrefetcher';
 import { OHIFError } from '../../../lib/classes/OHIFError';
 
 const allCornerstoneEvents = 'CornerstoneToolsMouseDown CornerstoneToolsMouseDownActivate ' +
@@ -242,6 +243,9 @@ const loadDisplaySetIntoViewport = (data, templateData) => {
         // Clear any old stack data
         cornerstoneTools.clearToolState(element, 'stack');
         cornerstoneTools.addToolState(element, 'stack', stack);
+
+        // Starts prefetching the series
+        StudyPrefetcher.getInstance().prefetch();
 
         // Set the default CINE settings
         const multiframeMetadata = instance.getDataProperty('multiframeMetadata');

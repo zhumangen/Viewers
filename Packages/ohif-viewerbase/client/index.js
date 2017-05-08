@@ -8,6 +8,14 @@ import './collections';
 import './lib/debugReactivity';
 
 /**
+ * Compatibility
+ */
+
+// multiStackPrefetch
+import { multiStackPrefetch } from './compatibility/multiStackPrefetch';
+Viewerbase.multiStackPrefetch = multiStackPrefetch;
+
+/**
  * Exported Functions
  */
 

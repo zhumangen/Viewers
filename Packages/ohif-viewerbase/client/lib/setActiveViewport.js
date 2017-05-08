@@ -3,7 +3,6 @@ import { $ } from 'meteor/jquery';
 import { Random } from 'meteor/random';
 
 import { OHIF } from 'meteor/ohif:core';
-import { StudyPrefetcher } from './classes/StudyPrefetcher';
 import { displayReferenceLines } from './displayReferenceLines';
 
 /**
@@ -52,7 +51,6 @@ export function setActiveViewport(element) {
         // so we can't pass a jQuery object as an argument, otherwise it throws an excepetion
         const domElement = jQueryElement.get(0);
         displayReferenceLines(domElement);
-        StudyPrefetcher.getInstance().prefetch();
 
         // @TODO Add this to OHIFAfterActivateViewport handler...
         if (OHIF.viewer.stackImagePositionOffsetSynchronizer) {
