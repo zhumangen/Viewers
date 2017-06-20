@@ -5,6 +5,7 @@
 # but you can also edit it by hand.
 
 # OHIF Packages
+ohif:polyfill
 ohif:design
 ohif:core
 ohif:header

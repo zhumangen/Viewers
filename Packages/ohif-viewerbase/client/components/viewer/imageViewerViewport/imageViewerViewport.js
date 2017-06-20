@@ -57,11 +57,7 @@ const loadDisplaySetIntoViewport = (data, templateData) => {
     const displaySet = data.displaySet;
 
     // Get stack from Stack Manager
-    let stack = StackManager.findStack(displaySet.displaySetInstanceUid);
-    // Make sure if the stack is already loaded in the stack manager, otherwise create it
-    if (!stack || !stack.imageIds) {
-        stack = StackManager.makeAndAddStack(data.study, displaySet);
-    }
+    let stack = StackManager.findOrCreateStack(data.study, displaySet);
 
     // If is a clip, updates the global FPS for cine dialog
     if (stack.isClip && stack.frameRate > 0) {
@@ -97,8 +93,7 @@ const loadDisplaySetIntoViewport = (data, templateData) => {
 
     // Enable Cornerstone for the viewport element
     const options = {
-        // TODO: It's not working with WADO-RS requests (see getWADORSImageId)
-        // renderer: 'webgl'
+        renderer: 'webgl'
     };
 
     // NOTE: This uses the experimental WebGL renderer for Cornerstone!

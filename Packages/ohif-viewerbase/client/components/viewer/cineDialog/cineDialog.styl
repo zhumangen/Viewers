@@ -4,12 +4,13 @@
   theme('border', '2px solid $uiBorderColor', 0.95)
   theme('background', '$uiGrayDarkest', 0.95)
   theme('color', '$textSecondaryColor')
-  position: absolute
   border-radius: 8px
-  z-index: 1000
-  overflow: hidden
   cursor: move
+  overflow: hidden
   padding: 0
+  position: absolute
+  width: 300px
+  z-index: 1000
 
   h5
     font-size: 20px
@@ -28,7 +29,7 @@
 
     &:active, &.active
       theme('color', '$activeColor')
-      
+
     &[disabled]
       &:hover
         color: inherit
@@ -37,12 +38,15 @@
 
   .cine-navigation, .cine-controls, .cine-options
     cursor: default
-    
+
   .fps-section
     input[type="range"]
       background-color: transparent
       border: 0 none
       outline: 0 none
+
+      &::-ms-tooltip
+        display: none
 
   .double-row-style
     box-sizing: border-box

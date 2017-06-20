@@ -1,11 +1,11 @@
-@import "{ohif:design}/app"
+@require '{ohif:design}/app'
 
 .viewerSection
   display: flex
   flex: 1
   flex-flow: row nowrap
   align-items: stretch
-  height: 'calc(100% - %s)' % ($toolbarHeight + $topBarHeight)
+  height: 'calc(100vh - %s)' % ($toolbarHeight + $topBarHeight)
   width: 100%
 
   .sidebarMenu
@@ -16,7 +16,8 @@
 
     .sidebar-option
       height: 100%
-      position: fixed
+      max-width: inherit
+      position: absolute
       transform(translateX(100%))
       transition($sidebarTransition)
       width: 100%
@@ -38,19 +39,17 @@
 
   .mainContent
     flex: 1
-    order: 2
-    width: 100%
     height: 100%
+    order: 2
     overflow: hidden
     transition($sidebarTransition)
+    width: 100%
 
   .sidebar-right
     flex: 1
-    margin-left: -12px
     margin-right: - $lesionsSidebarMenuWidth
     max-width: $lesionsSidebarMenuWidth
     order: 3
-    padding-left: 6px
     position: relative
     visibility: hidden
 

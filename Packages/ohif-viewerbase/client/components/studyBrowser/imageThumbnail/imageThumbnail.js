@@ -1,11 +1,7 @@
 import { Template } from 'meteor/templating';
 import { Tracker } from 'meteor/tracker';
 import { Session } from 'meteor/session';
-// OHIF Modules
 import { OHIF } from 'meteor/ohif:core';
-// Local Modules
-import { getImageId } from '../../../lib/getImageId.js';
-import { getWADORSImageId } from '../../../lib/getWADORSImageId.js';
 
 Template.imageThumbnail.onCreated(() => {
     const instance = Template.instance();
@@ -17,7 +13,7 @@ Template.imageThumbnail.onCreated(() => {
         let imageIndex = Math.floor(lastIndex / 2);
         let imageInstance;
 
-        if(stack.isMultiFrame) {
+        if (stack.isMultiFrame) {
             imageInstance = stack.images[0];
         } else {
             imageInstance = stack.images[imageIndex];
@@ -79,6 +75,9 @@ Template.imageThumbnail.onRendered(() => {
             instance.data.currentStudy.dep.depend();
         }
 
+        // Depend on external data and re-run this computation when it changes
+        Template.currentData();
+
         // Wait for the new data and refresh the image thumbnail
         Tracker.afterFlush(() => instance.refreshImage());
     });
@@ -98,7 +97,7 @@ Template.imageThumbnail.onDestroyed(() => {
 });
 
 Template.imageThumbnail.helpers({
-    // Executed every time the image loading progress is changed
+    // Executed every time the thumbnail image loading progress is changed
     percentComplete() {
         const instance = Template.instance();
 
@@ -112,5 +111,20 @@ Template.imageThumbnail.helpers({
         if (percentComplete && percentComplete !== 100) {
             return percentComplete + '%';
         }
+    },
+
+    // Return how much the stack has already loaded
+    stackPercentComplete() {
+        const instance = Template.instance();
+        const stack = instance.data.thumbnail.stack;
+        const displaySetInstanceUid = stack.displaySetInstanceUid;
+        const progress = Session.get('DisplaySetProgress:' + displaySetInstanceUid);
+        const percentComplete = progress && progress.percentComplete;
+
+        return percentComplete;
+    },
+
+    showStackLoadingProgressBar() {
+        return OHIF.uiSettings.showStackLoadingProgressBar;
     }
 });

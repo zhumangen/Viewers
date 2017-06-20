@@ -1,4 +1,4 @@
-/*! cornerstone-wado-image-loader - v0.14.2 - 2017-02-22 | (c) 2016 Chris Hafey | https://github.com/chafey/cornerstoneWADOImageLoader */
+/*! cornerstone-wado-image-loader - v0.14.3 - 2017-04-04 | (c) 2016 Chris Hafey | https://github.com/chafey/cornerstoneWADOImageLoader */
 //
 // This is a cornerstone image loader for WADO-URI requests.
 //
@@ -12,7 +12,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
     },
     wadors: {
-      
+
     },
     internal: {
       options : {
@@ -73,7 +73,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     }, function(error) {
       deferred.reject(error);
     });
-    return deferred.promise();
+    return deferred;
   }
 
   function getLoaderForScheme(scheme) {
@@ -323,7 +323,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     }
     else if(imageFrame.photometricInterpretation === "YBR_FULL" )
     {
-      convertRGB(imageFrame, rgbaBuffer);
+      convertYBRFull(imageFrame, rgbaBuffer);
     }
     else
     {
@@ -373,7 +373,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     var deferred = $.Deferred();
     var imageFrame = cornerstoneWADOImageLoader.getImageFrame(imageId);
     var decodePromise = cornerstoneWADOImageLoader.decodeImageFrame(imageFrame, transferSyntax, pixelData, canvas, options);
-    decodePromise.then(function(imageFrame) {      
+    decodePromise.then(function(imageFrame) {
       //var imagePixelModule = metaDataProvider('imagePixelModule', imageId);
       var imagePlaneModule = cornerstone.metaData.get('imagePlaneModule', imageId);
       var voiLutModule = cornerstone.metaData.get('voiLutModule', imageId);
@@ -383,7 +383,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
       // JPEGBaseline (8 bits) is already returning the pixel data in the right format (rgba)
       // because it's using a canvas to load and decode images.
-      if(!cornerstoneWADOImageLoader.isJPEGBaseline8Bit(imageFrame, transferSyntax)) {
+      if(!cornerstoneWADOImageLoader.isJPEGBaseline8BitColor(imageFrame, transferSyntax)) {
         setPixelDataType(imageFrame);
 
         // convert color space
@@ -533,9 +533,12 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     // JPEG Baseline lossy process 1 (8 bit)
     else if (transferSyntax === "1.2.840.10008.1.2.4.50")
     {
-      if(imageFrame.bitsAllocated === 8)
+      // Handle 8-bit JPEG Baseline color images using the browser's built-in
+      // JPEG decoding
+      if(imageFrame.bitsAllocated === 8 &&
+         (imageFrame.samplesPerPixel === 3 || imageFrame.samplesPerPixel === 4))
       {
-        return cornerstoneWADOImageLoader.decodeJPEGBaseline8Bit(imageFrame, pixelData, canvas);
+        return cornerstoneWADOImageLoader.decodeJPEGBaseline8BitColor(imageFrame, pixelData, canvas);
       } else {
         return addDecodeTask(imageFrame, transferSyntax, pixelData, options);
       }
@@ -624,7 +627,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     }
   }
 
-  function decodeJPEGBaseline8Bit(imageFrame, pixelData, canvas) {
+  function decodeJPEGBaseline8BitColor(imageFrame, pixelData, canvas) {
     var start = new Date().getTime();
     var deferred = $.Deferred();
 
@@ -668,18 +671,20 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     return deferred.promise();
   }
 
-  function isJPEGBaseline8Bit(imageFrame, transferSyntax) {
+  function isJPEGBaseline8BitColor(imageFrame, transferSyntax) {
     transferSyntax = transferSyntax || imageFrame.transferSyntax;
 
-    if((imageFrame.bitsAllocated === 8) && (transferSyntax === "1.2.840.10008.1.2.4.50")) {
+    if(imageFrame.bitsAllocated === 8 &&
+       transferSyntax === "1.2.840.10008.1.2.4.50" &&
+       (imageFrame.samplesPerPixel === 3 || imageFrame.samplesPerPixel === 4)) {
       return true;
     }
 
   }
 
   // module exports
-  cornerstoneWADOImageLoader.decodeJPEGBaseline8Bit = decodeJPEGBaseline8Bit;
-  cornerstoneWADOImageLoader.isJPEGBaseline8Bit = isJPEGBaseline8Bit;
+  cornerstoneWADOImageLoader.decodeJPEGBaseline8BitColor = decodeJPEGBaseline8BitColor;
+  cornerstoneWADOImageLoader.isJPEGBaseline8BitColor = isJPEGBaseline8BitColor;
 
 }($, cornerstoneWADOImageLoader));
 /**
@@ -900,7 +905,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
         }
       });
     });
-    return deferred.promise();    
+    return deferred.promise();
 
   };
 }(cornerstoneWADOImageLoader));
@@ -917,9 +922,9 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     var start = new Date().getTime();
 
     var deferred = $.Deferred();
-    
+
     var uri = imageId.substring(7);
-    
+
     // check to make sure we have metadata for this imageId
     var metaData = cornerstoneWADOImageLoader.wadors.metaDataManager.get(imageId);
     if(metaData === undefined) {
@@ -929,7 +934,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
     // TODO: load bulk data items that we might need
 
-    var mediaType = 'multipart/related; type=application/octet-stream'; // 'image/dicom+jp2';
+    var mediaType = 'multipart/related; type="application/octet-stream"'; // 'image/dicom+jp2';
 
     // get the pixel data from the server
     cornerstoneWADOImageLoader.wadors.getPixelData(uri, imageId, mediaType).then(function(result) {
@@ -1161,7 +1166,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
       return {
         radiopharmaceuticalInfo: {
-          radiopharmaceuticalStartTime: dicomParser.parseTM(getValue(radiopharmaceuticalInfo['00181072'])),
+          radiopharmaceuticalStartTime: dicomParser.parseTM(getValue(radiopharmaceuticalInfo['00181072'], 0, '')),
           radionuclideTotalDose: getNumberValue(radiopharmaceuticalInfo['00181074']),
           radionuclideHalfLife: getNumberValue(radiopharmaceuticalInfo['00181075'])
         }
@@ -1268,7 +1273,15 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     var loadDeferred = $.Deferred();
     promise.then(function(dicomPart10AsArrayBuffer/*, xhr*/) {
       var byteArray = new Uint8Array(dicomPart10AsArrayBuffer);
-      var dataSet = dicomParser.parseDicom(byteArray);
+
+      // Reject the promise if parsing the dicom file fails
+      var dataSet;
+      try {
+        dataSet = dicomParser.parseDicom(byteArray);
+      } catch(error) {
+        loadDeferred.reject(error);
+        return;
+      }
 
       loadedDataSets[uri] = {
         dataSet: dataSet,
@@ -1415,6 +1428,12 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
         throw 'frame exceeds size of pixelData';
       }
       return new Uint8Array(dataSet.byteArray.buffer, frameOffset,pixelsPerFrame * 2);
+    } else if (bitsAllocated === 1) {
+      frameOffset = pixelDataOffset + frameIndex * pixelsPerFrame * 0.125;
+      if(frameOffset >= dataSet.byteArray.length) {
+        throw 'frame exceeds size of pixelData';
+      }
+      return cornerstoneWADOImageLoader.wadouri.unpackBinaryFrame(dataSet.byteArray, frameOffset, pixelsPerFrame);
     }
 
     throw 'unsupported pixel format';
@@ -1431,7 +1450,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     var parsedImageId = cornerstoneWADOImageLoader.wadouri.parseImageId(uri);
     var fileIndex = parseInt(parsedImageId.url);
     var file = cornerstoneWADOImageLoader.wadouri.fileManager.get(fileIndex);
-    
+
     // create a deferred object
     var deferred = $.Deferred();
 
@@ -1683,9 +1702,8 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
         seriesInstanceUID: dataSet.string('x0020000e'),
         seriesNumber: dataSet.intString('x00200011'),
         studyInstanceUID: dataSet.string('x0020000d'),
-        seriesInstanceUID: dataSet.string('x0020000e'),
         seriesDate: dicomParser.parseDA(dataSet.string('x00080021')),
-        seriesTime: dicomParser.parseTM(dataSet.string('x00080031'))
+        seriesTime: dicomParser.parseTM(dataSet.string('x00080031') || '')
       };
     }
 
@@ -1746,7 +1764,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
       var firstRadiopharmaceuticalInfoDataSet = radiopharmaceuticalInfo.items[0].dataSet;
       return {
         radiopharmaceuticalInfo: {
-          radiopharmaceuticalStartTime: dicomParser.parseTM(firstRadiopharmaceuticalInfoDataSet.string('x00181072')),
+          radiopharmaceuticalStartTime: dicomParser.parseTM(firstRadiopharmaceuticalInfoDataSet.string('x00181072') || ''),
           radionuclideTotalDose: firstRadiopharmaceuticalInfoDataSet.floatString('x00181074'),
           radionuclideHalfLife: firstRadiopharmaceuticalInfoDataSet.floatString('x00181075')
         }
@@ -1786,8 +1804,42 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
   // module exports
   cornerstoneWADOImageLoader.wadouri.parseImageId = parseImageId;
-  
+
 }(cornerstoneWADOImageLoader));
+/**
+ * Function to deal with unpacking a binary frame
+ */
+(function ($, cornerstone, cornerstoneWADOImageLoader) {
+
+  "use strict";
+
+  function isBitSet(byte, bitPos) {
+    return byte & (1 << bitPos);
+  }
+
+  function unpackBinaryFrame(byteArray, frameOffset, pixelsPerFrame) {
+    // Create a new pixel array given the image size
+    var pixelData = new Uint8Array(pixelsPerFrame);
+
+    for (var i = 0; i < pixelsPerFrame; i++) {
+      // Compute byte position
+      var bytePos = Math.floor(i / 8);
+
+      // Get the current byte
+      var byte = byteArray[bytePos + frameOffset];
+
+      // Bit position (0-7) within byte
+      var bitPos = (i % 8);
+
+      // Check whether bit at bitpos is set
+      pixelData[i] = isBitSet(byte, bitPos) ? 1 : 0;
+    }
+
+    return pixelData;
+  }
+
+  cornerstoneWADOImageLoader.wadouri.unpackBinaryFrame = unpackBinaryFrame;
+}($, cornerstone, cornerstoneWADOImageLoader));
 (function ($, cornerstoneWADOImageLoader) {
 
   "use strict";
@@ -2091,7 +2143,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
 
   function xhrRequest(url, imageId, headers) {
     headers = headers || {};
-    
+
     var deferred = $.Deferred();
 
     // Make the request for the DICOM P10 SOP Instance
@@ -2102,7 +2154,7 @@ if(typeof cornerstoneWADOImageLoader === 'undefined'){
     Object.keys(headers).forEach(function (key) {
       xhr.setRequestHeader(key, headers[key]);
     });
-    
+
     // handle response data
     xhr.onreadystatechange = function () {
       // TODO: consider sending out progress messages here as we receive the pixel data

@@ -7,23 +7,26 @@ $imageSliderBorder = none
 // Note that these are backwards due to the magic needed to make a cross-browser vertical slider
 $imageSliderWidth = 12px
 $imageSliderHeight = 39px
-$imageSliderCursor = grab
 
 .imageControls
-  position: absolute
-  top: 0
-  right: 0
   height: 100%
   padding: 5px
+  position: absolute
+  right: 0
+  top: 0
 
-  #scrollbar
-    height: calc(100% - 20px);
+  .scrollbar
+    height: calc(100% - 20px)
     margin-top: 5px
-    width: 31px
+    position: relative
+    width: 12px
 
-    #imageSlider
+    .imageSlider
+      height: $imageSliderWidth
+      left: 12px
+      padding: 0
       position: absolute
-      left: 20px
+      top: 0
 
       vendorize(transform, rotate(90deg))
       vendorize(transform-origin, top left)
@@ -42,28 +45,28 @@ $imageSliderCursor = grab
 
       // --- Style the range track --- //
       &::-webkit-slider-runnable-track
-        height: 5px
+        background-color: $imageSliderTrackColor
         border: none
         cursor: pointer
-        background-color: $imageSliderTrackColor
+        height: 5px
         z-index: 6
 
       &::-moz-range-track
-        height: 2px
+        background-color: $imageSliderTrackColor
         border: none
         cursor: pointer
-        background-color: $imageSliderTrackColor
+        height: 2px
         z-index: 6
 
       &::-ms-track
-        width: 100%
-        height: 2px
-        border: none
-        cursor: pointer
         animate: 0.2s
         background: transparent
+        border: none
         border-width: 15px 0
         color: $imageSliderTrackColor
+        cursor: pointer
+        height: $imageSliderWidth
+        width: 100%
 
       // Hide any fill IE tries to add
       &::-ms-fill-lower
@@ -76,40 +79,45 @@ $imageSliderCursor = grab
       &::-webkit-slider-thumb
         -webkit-appearance: none !important
         theme('background-color', '$imageSliderColor')
-        border-radius: $imageSliderBorderRadius
         border: $imageSliderBorder
+        border-radius: $imageSliderBorderRadius
+        cursor: -webkit-grab
         height: $imageSliderWidth
+        margin-top: -4px
         width: $imageSliderHeight
-        cursor: $imageSliderCursor
-        margin-top: -7px
 
         &:active
           theme('background-color', '$activeColor')
+          cursor: -webkit-grabbing
 
       &::-moz-range-thumb
         theme('background-color', '$imageSliderColor')
-        border-radius: $imageSliderBorderRadius
         border: $imageSliderBorder
+        border-radius: $imageSliderBorderRadius
+        cursor: -moz-grab
         height: $imageSliderWidth
         width: $imageSliderHeight
-        cursor: $imageSliderCursor
         z-index: 7
 
         &:active
           theme('background-color', '$activeColor')
+          cursor: -moz-grabbing
 
       &::-ms-thumb
         theme('background-color', '$imageSliderColor')
-        border-radius: $imageSliderBorderRadius
         border: $imageSliderBorder
+        border-radius: $imageSliderBorderRadius
+        cursor: ns-resize
         height: $imageSliderWidth
         width: $imageSliderHeight
-        cursor: $imageSliderCursor
 
         &:active
           theme('background-color', '$activeColor')
 
+      &::-ms-tooltip
+        display: none
+
 // Set left position in IE, border-width attribute breaks left position of imageSlider
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none)
-  #imageSlider
+  .imageSlider
     left: 50px
