@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# How to run this script:
-# npm install -g documentation (If it is not installed)
-# ./generateDocs.sh
+# This script is used to generate docs in the given format for each js file in the given path separately
 
-docsDir="docs"
+# How to run:
+# 1. npm install -g documentation (if not installed)
+# 2. Install additional npm modules (if required based on project)
+#   2.1. npm install babel-preset-env (if not installed for cornerstone)
+# 3. ./generateDocs.sh
+
+docsDir="docs/jsDocs"
 
 mkdir -p $docsDir
-rm -rf $docsDir/*
 
 document() {
     mkdir -p $docsDir/$1
@@ -25,24 +28,27 @@ document() {
             continue
         fi
 
-        # Skip if it is a file and not js file
-        if [ -f $fileOrDirToDoc ] && [ "$fileOrDirToDoc" != *.js ]
+        # Skip if it is public
+        if [[ "$fileOrDirToDoc" == *public* ]]
         then
             continue
         fi
 
-        # Skip if it is a directory and does not contain any js file even in its sub directories
-        if [ -d $fileOrDirToDoc ] && [ `find $fileOrDirToDoc -name *.js | wc -l` -le 0 ]
+        if [ -d $fileOrDirToDoc ] && [ `find $fileOrDirToDoc -name '*.js' | wc -l` -gt 0 ]
         then
+            document $fileOrDirToDoc $2
             continue
         fi
 
-        echo "Documenting in $2... " $fileOrDirToDoc
-        documentation build $fileOrDirToDoc/**/*.js -f $2 -o $docsDir/$fileOrDirToDoc.$2
+        if [ -f $fileOrDirToDoc ] && [[ "$fileOrDirToDoc" == *.js ]]
+        then
+            echo "Documenting in $2... " $fileOrDirToDoc
+            documentation build $fileOrDirToDoc -f $2 --shallow -o $docsDir/$fileOrDirToDoc.$2
+        fi
     done
 }
 
-# Generate documentation for all project folders in markdown
-document Packages md
+# Generate documentation in markdown
 document OHIFViewer md
 document LesionTracker md
+document Packages md
