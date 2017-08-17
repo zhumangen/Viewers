@@ -7,11 +7,9 @@ import { Template } from 'meteor/templating';
  */
 
 // Stop here if it's not development environment
-if (!Meteor.isDevelopment) {
-    return;
+if (Meteor.isDevelopment) {
+    // Debug some value on console
+    Template.registerHelper('debug', (...values) => {
+        console.debug(...values);
+    });
 }
-
-// Debug some value on console
-Template.registerHelper('debug', (...values) => {
-    console.debug(...values);
-});
