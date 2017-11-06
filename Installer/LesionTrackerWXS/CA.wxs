@@ -5,12 +5,15 @@
 	</Fragment>
 	
 	<Fragment>
-		<CustomAction Id="CASetConfigureMongoDBProps" 
-					  Property="CAConfigureMongoDB" 
-					  Value="[INSTALLDIR]" 
-					  Execute="immediate" 
+		<CustomAction Id="CAConfigureOrthanc" 
+					  BinaryKey="CABinary" 
+					  JScriptCall="ConfigureOrthanc" 
+					  Impersonate="no" 
+					  Execute="commit" 
 					  Return="check" />
+	</Fragment>
 	
+	<Fragment>
 		<CustomAction Id="CAConfigureMongoDB" 
 					  BinaryKey="CABinary" 
 					  JScriptCall="ConfigureMongoDB" 
