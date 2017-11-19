@@ -76,6 +76,9 @@ import { getInstanceClassDefaultViewport, setInstanceClassDefaultViewportFunctio
 Viewerbase.getInstanceClassDefaultViewport = getInstanceClassDefaultViewport;
 Viewerbase.setInstanceClassDefaultViewportFunction = setInstanceClassDefaultViewportFunction;
 
+import { setMammogramViewportAlignment } from './lib/setMammogramViewportAlignment';
+Viewerbase.setMammogramViewportAlignment = setMammogramViewportAlignment;
+
 // displayReferenceLines
 import { displayReferenceLines } from './lib/displayReferenceLines';
 Viewerbase.displayReferenceLines = displayReferenceLines;
