@@ -3,12 +3,18 @@
 REM Create LesionTracker Installer
 REM 1. Install Node.js
 REM 2. Install Meteor
-REM 3. Run 'npm install -g windows-build-tools' in Node.js command prompt
-REM 4. Put all prerequisites under 'Prerequisites' folder
-REM 5. Run this script
+REM 3. OPTIONAL: Install Windows 10 SDK for signing (https://go.microsoft.com/fwlink/?LinkID=698771)
+REM 4. Run 'npm install -g windows-build-tools' in Node.js command prompt
+REM 5. Put all prerequisites under 'Prerequisites' folder
+REM 6. Run this script
 
 set VERSIONNUMBER="1.0.0"
 set SRCDIR="C:\Workspace\Viewers\LesionTracker"
+
+set SIGNTOOL="C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
+set SIGNPFXFILE=""
+set SIGNPASS=""
+set ISSIGN=false
 
 REM Build Meteor Server
 cd %SRCDIR%
@@ -48,6 +54,19 @@ call "%WIX%\bin\heat.exe" dir build -dr INSTALLDIR -cg MainComponentGroup -var v
 call "%WIX%\bin\candle.exe" -dSourceDir="build" -dVersionNumber="%VERSIONNUMBER%" LesionTrackerWXS\*.wxs -o output\LTSingle\ -arch x64 -ext WiXUtilExtension
 call "%WIX%\bin\light.exe" -o output\LTSingle\LTInstaller-Single-%VERSIONNUMBER%.msi output\LTSingle\*.wixobj -cultures:en-US -ext WixUIExtension.dll -ext WiXUtilExtension
 
+if "%ISSIGN%"=="true" (
+	REM Sign Lesion Tracker Installer (Single)
+	call %SIGNTOOL% sign /f %SIGNPFXFILE% /p %SIGNPASS% /d "LesionTracker" /t http://timestamp.verisign.com/scripts/timstamp.dll /v output\LTSingle\LTInstaller-Single-%VERSIONNUMBER%.msi
+)
+
 REM Create Leasion Tracker Bundle Installer with prerequisites (Complete)
 call "%WIX%\bin\candle.exe" -dSourceDir="build" -dPreqDir="Prerequisites" -dLTInstallerPath="output\LTSingle\LTInstaller-Single-%VERSIONNUMBER%.msi" BundleWXS\*.wxs -o output\LTComplete\ -ext WiXUtilExtension -ext WixBalExtension
 call "%WIX%\bin\light.exe" -o output\LTComplete\LTInstaller-Complete-%VERSIONNUMBER%.exe output\LTComplete\*.wixobj -cultures:en-US -ext WixUIExtension.dll -ext WiXUtilExtension -ext WixBalExtension
+
+if "%ISSIGN%"=="true" (
+	REM Sign Leasion Tracker Bundle Installer with prerequisites (Complete)
+	call "%WIX%\bin\insignia.exe" -ib output\LTComplete\LTInstaller-Complete-%VERSIONNUMBER%.exe -o output\LTComplete\engine.exe
+	call %SIGNTOOL% sign /f %SIGNPFXFILE% /p %SIGNPASS% /d "LesionTracker" /t http://timestamp.verisign.com/scripts/timstamp.dll /v output\LTComplete\engine.exe
+	call "%WIX%\bin\insignia.exe" -ab output\LTComplete\engine.exe output\LTComplete\LTInstaller-Complete-%VERSIONNUMBER%.exe -o output\LTComplete\LTInstaller-Complete-%VERSIONNUMBER%.exe
+	call %SIGNTOOL% sign /f %SIGNPFXFILE% /p %SIGNPASS% /d "LesionTracker" /t http://timestamp.verisign.com/scripts/timstamp.dll /v output\LTComplete\LTInstaller-Complete-%VERSIONNUMBER%.exe
+)
