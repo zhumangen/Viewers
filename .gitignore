@@ -10,3 +10,7 @@ Packages/active-entry/helloworld/
 LesionTracker/tests/nightwatch/reports/
 package-lock.json
 docs/_book
+.hg/
+dist/
+.hgignore
+LesionMarker/
