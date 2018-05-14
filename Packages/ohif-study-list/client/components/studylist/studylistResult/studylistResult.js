@@ -5,6 +5,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { moment } from 'meteor/momentjs:moment';
 import { OHIF } from 'meteor/ohif:core';
+import { JF } from 'meteor/jf:core';
 
 Session.setDefault('showLoadingText', true);
 Session.setDefault('serverError', false);
@@ -39,16 +40,58 @@ Template.studylistResult.helpers({
         if (!studies) {
             return;
         }
+        
+        const TbRatings = JF.tbrating.collections.tbRatings;
+        const userId = Meteor.userId();
+        const statusFilter = instance.statusFilter.get();
+        let filteredStudies = [];
+        let index = 0;
+        for (let i = 0; i < studies.length; ++i) {
+            let study = studies[i];
+            const qry = {
+                studyUid: study.studyInstanceUid
+            };
+            const recs = TbRatings.find(qry).fetch();
+            let length = 0;
+            for (let i = 0; i < recs.length; ++i) {
+                recs[i].results.forEach( res => {
+                    if (res.userId === userId) {
+                        length++;
+                    }
+                });
+            }
+            study.markedImages = length;
+            
+            let isOk = false;
+            if (statusFilter > 0) {
+                if (statusFilter == 1) {
+                    if (length == 0) isOk = true;
+                } else if (statusFilter == 2) {
+                    if (length > 0 && length < study.numberOfStudyRelatedInstances)
+                        isOk = true;
+                } else if (statusFilter == 3) {
+                    if (length == study.numberOfStudyRelatedInstances)
+                        isOk = true;
+                }
+            } else {
+                isOk = true;
+            }
+            
+            if (isOk) {
+                study.number = ++index;
+                filteredStudies.push(study);
+            }
+        }
 
         // Update record count
-        instance.paginationData.recordCount.set(studies.length);
+        instance.paginationData.recordCount.set(filteredStudies.length);
 
         // Limit studies
-        return studies.slice(offset, limit);
+        return filteredStudies.slice(offset, limit);
     },
 
     numberOfStudies() {
-        return OHIF.studylist.collections.Studies.find().count();
+        return Template.instance().paginationData.recordCount.get();
     },
 
     sortingColumnsIcons() {
@@ -71,10 +114,6 @@ Template.studylistResult.helpers({
     }
 });
 
-let studyDateFrom;
-let studyDateTo;
-let filter;
-
 /**
  * Transforms an input string into a search filter for
  * the StudyList Search call
@@ -83,8 +122,13 @@ let filter;
  * @returns {*}
  */
 function getFilter(filter) {
-    if (filter && filter.length && filter.substr(filter.length - 1) !== '*') {
-        filter += '*';
+    if (filter && filter.length) {
+        if (filter.substr(filter.length - 1) !== '*') {
+            filter += '*';
+        }
+        if (filter[0] !== '*') {
+            filter = '*' + filter;
+        }
     }
 
     return filter;
@@ -135,30 +179,35 @@ function search() {
 
     // Hiding error message
     Session.set('serverError', false);
-
+    
+    const filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+    
     // Create the filters to be used for the StudyList Search
-    filter = {
-        patientName: getFilter($('input#patientName').val()),
-        patientId: getFilter($('input#patientId').val()),
-        accessionNumber: getFilter($('input#accessionNumber').val()),
-        studyDescription: getFilter($('input#studyDescription').val()),
-        studyDateFrom,
-        studyDateTo,
-        modalitiesInStudy: $('input#modality').val() ? $('input#modality').val() : ''
+    let filter = {
+        patientName: getFilter(filterOptions.patNameFilter),
+        patientId: getFilter(filterOptions.patIdFilter),
+        accessionNumber: getFilter(filterOptions.accNumFilter),
+        studyDescription: getFilter(filterOptions.studyDescFilter),
+        modalitiesInStudy: filterOptions.modalityFilter
+    };
+    if (filterOptions.studyDateFilter !== '') {
+        const dates = filterOptions.studyDateFilter.replace(/ /g, '').split('-');
+        filter.studyDateFrom = dates[0];
+        filter.studyDateTo = dates[1];
     };
 
     // Make sure that modality has a reasonable value, since it is occasionally
     // returned as 'undefined'
     const modality = replaceUndefinedColumnValue($('input#modality').val());
 
-    // Clear all current studies
-    OHIF.studylist.collections.Studies.remove({});
-
     Meteor.call('StudyListSearch', filter, (error, studies) => {
         OHIF.log.info('StudyListSearch');
         // Hide loading text
 
         Session.set('showLoadingText', false);
+        
+        // Clear all current studies
+        OHIF.studylist.collections.Studies.remove({});
 
         if (error) {
             Session.set('serverError', true);
@@ -181,13 +230,15 @@ function search() {
             OHIF.log.warn('No studies found');
             return;
         }
+        
+        
 
         // Loop through all identified studies
         studies.forEach(study => {
             // Search the rest of the parameters that aren't done via the server call
-            if (isIndexOf(study.modalities, modality) &&
+            if (isIndexOf(study.modalities, modality)/* &&
                 (new Date(studyDateFrom).setHours(0, 0, 0, 0) <= convertStringToStudyDate(study.studyDate) || !studyDateFrom || studyDateFrom === '') &&
-                (convertStringToStudyDate(study.studyDate) <= new Date(studyDateTo).setHours(0, 0, 0, 0) || !studyDateTo || studyDateTo === '')) {
+                (convertStringToStudyDate(study.studyDate) <= new Date(studyDateTo).setHours(0, 0, 0, 0) || !studyDateTo || studyDateTo === '')*/) {
 
                 // Convert numberOfStudyRelatedInstance string into integer
                 study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
@@ -214,6 +265,22 @@ Template.studylistResult.onCreated(() => {
     const instance = Template.instance();
     instance.sortOption = new ReactiveVar();
     instance.sortingColumns = new ReactiveDict();
+    instance.statusFilter = new ReactiveVar(0);
+    
+    if (!sessionStorage.getItem('filterOptions')) {
+        const filterOptions = {
+            statusFilter: 0,
+            patNameFilter: '',
+            patIdFilter: '',
+            accNumFilter: '',
+            studyDateFilter: '',
+            modalityFilter: '',
+            studyDescFilter: '',
+            firstInit: true
+        };
+        
+        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+    }
 
     // Pagination parameters
 
@@ -250,6 +317,17 @@ Template.studylistResult.onCreated(() => {
 
 Template.studylistResult.onRendered(() => {
     const instance = Template.instance();
+    const filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+    console.log('on rendered ', filterOptions);
+    
+    instance.statusFilter.set(filterOptions.statusFilter);
+    instance.$('#status-selector').val(filterOptions.statusFilter);
+    instance.$('#patientName').val(filterOptions.patNameFilter?filterOptions.patNameFilter:'');
+    instance.$('#patientId').val(filterOptions.patIdFilter?filterOptions.patIdFilter:'');
+    instance.$('#accessionNumber').val(filterOptions.accNumFilter?filterOptions.accNumFilter:'');
+    instance.$('#studyDate').val(filterOptions.studyDateFilter?filterOptions.studyDateFilter:'');
+    instance.$('#modality').val(filterOptions.modalityFilter?filterOptions.modalityFilter:'');
+    instance.$('#studyDescription').val(filterOptions.studyDescFilter?filterOptions.studyDescFiter:'');
 
     // Initialize daterangepicker
     const today = moment();
@@ -263,25 +341,36 @@ Template.studylistResult.onRendered(() => {
         startDate = moment().subtract(dateFilterNumDays - 1, 'days');
         endDate = today;
     }
+    
+    const validDate = filterOptions.studyDateFilter !== '';
+    if(validDate){
+        const dates = filterOptions.studyDateFilter.replace(/ /g, '').split('-');
+        startDate = moment(dates[0]);
+        endDate = moment(dates[1]);
+    }
 
+    const autoUpdate = validDate/* || filterOptions.firstInit */;
     instance.datePicker = $studyDate.daterangepicker({
         maxDate: today,
-        autoUpdateInput: true,
+        autoUpdateInput: autoUpdate,
         startDate: startDate,
         endDate: endDate,
         ranges: {
             Today: [today, today],
             'Last 7 Days': [lastWeek, today],
             'Last 30 Days': [lastMonth, today]
+        },
+        locale: {
+            applyLabel: '确定',
+            cancelLabel: '清除'
         }
     }).data('daterangepicker');
+    
+    filterOptions.firstInit = false;
+    sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+    
+    if (!autoUpdate) search();
 
-    if (startDate && endDate) {
-        instance.datePicker.updateInputText();
-    } else {
-        // Retrieve all studies
-        search();
-    }
 });
 
 Template.studylistResult.onDestroyed(() => {
@@ -300,8 +389,32 @@ function resetSortingColumns(instance, sortingColumn) {
 }
 
 Template.studylistResult.events({
+    'change #status-selector'(e) {
+        const val = $(e.currentTarget).val();
+        Template.instance().statusFilter.set(val);
+        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+        filterOptions.statusFilter = val;
+        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+    },
+    
     'keydown input'(event) {
-        if (event.which === 13) { //  Enter
+        if (event.which === 13) { //  Enter  
+            const val = $(event.currentTarget).val();
+            const id = $(event.currentTarget)[0].id;
+            let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+            if (id === 'patientName') {
+                filterOptions.patNameFilter = val;
+            } else if (id === 'patientId') {
+                filterOptions.patIdFilter = val;
+            } else if (id === 'accessionNumber') {
+                filterOptions.accNumFilter = val;
+            } else if (id === 'modality') {
+                filterOptions.modalityFilter = val;
+            } else if (id === 'studyDescription') {
+                filterOptions.studyDescFilter = val;
+            }
+            sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+            console.log('enter ', filterOptions);
             search();
         }
     },
@@ -310,20 +423,26 @@ Template.studylistResult.events({
         search();
     },
 
-    'change #studyDate'(event) {
+    'change #studyDate'(event) {       
         let dateRange = $(event.currentTarget).val();
+        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+        filterOptions.studyDateFilter = dateRange;
+        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
 
-        // Remove all space chars
-        dateRange = dateRange.replace(/ /g, '');
-
-        // Split dateRange into subdates
-        const dates = dateRange.split('-');
-        studyDateFrom = dates[0];
-        studyDateTo = dates[1];
-
-        if (dateRange !== '') {
-            search();
-        }
+        setTimeout(()=>search(), 100);
+        
+    },
+    
+    'show.daterangepicker #studyDate'(event) {
+        Template.instance().datePicker.autoUpdateInput = true;
+    },
+    
+    'cancel.daterangepicker #studyDate'(event) {
+        $(event.currentTarget).val('');
+        let dateRange = $(event.currentTarget).val();
+        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
+        filterOptions.studyDateFilter = dateRange;
+        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
     },
 
     'click div.sortingCell'(event, instance) {
@@ -348,3 +467,4 @@ Template.studylistResult.events({
         Session.set('sortOption', sortOption);
     }
 });
+

@@ -307,6 +307,7 @@ export const toolManager = {
 
     setToolDefaultStates(states) {
         toolDefaultStates = states;
+        console.log(states);
     },
 
     getToolDefaultStates() {

@@ -1,0 +1,17 @@
+<template name="caseProgress">
+    {{#form (extend class='caseProgress' api=instance.api)}}
+        {{#if instance.isFollowUp.get}}
+            {{>radialProgressBar isLocked=isLocked progressPercent=progressPercent progressText=progressText}}
+            {{#if isLocked}}
+                <div class="caseProgressStatus">
+                    <h5>Locked</h5>
+                </div>
+            {{/if}}
+        {{/if}}
+        <div class="caseProgressStatus">
+            {{#button id='save' class='btn p-x-2' action='save' disabled=(isFinishDisabled)}}保存{{/button}}
+            {{#button id='commit' class='btn p-x-2' action='commit' disabled=(isFinishDisabled)}}提交{{/button}}
+            {{#button id='abandon' class='btn p-x-2' action='abandon' disabled=(isFinishDisabled)}}放弃{{/button}}
+        </div>
+    {{/form}}
+</template>

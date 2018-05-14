@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Blaze } from 'meteor/blaze';
 import Hammer from 'hammerjs';
@@ -95,6 +96,35 @@ function handleCtrlClick($studyRow, data) {
     const handler = data.selected ? doUnselectRow : doSelectRow;
     handler($studyRow, data);
 }
+
+Template.studylistStudy.helpers({
+    numberOf() {
+        return Template.instance().data.number;
+    },
+    status() {
+        const instance = Template.instance();
+        const length = instance.data.markedImages;
+        if (length === 0) {
+            return '待完成';
+        } else if (length < instance.data.numberOfStudyRelatedInstances) {
+            return '标注中';
+        } else {
+            return '已完成';
+        }
+    },
+
+    statusStyle() {
+        const instance = Template.instance();
+        const length = instance.data.markedImages;
+        if (length === 0) {
+            return 'uncompleted';
+        } else if (length < instance.data.numberOfStudyRelatedInstances) {
+            return 'completing';
+        } else {
+            return 'completed';
+        }       
+    }
+});
 
 Template.studylistStudy.onRendered(() => {
     const instance = Template.instance();

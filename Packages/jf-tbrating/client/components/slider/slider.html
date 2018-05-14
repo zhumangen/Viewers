@@ -1,0 +1,44 @@
+<template name='slider'>
+	<div class="btns">
+        <button type="button" id="normal" class="btn btn-success">
+            正常
+            {{#if isNormal}}
+                <span class="glyphicon glyphicon-ok"></span>
+            {{/if}}
+        </button>
+		<button type="button" id="tuberculosis" class="btn btn-success">
+            结核
+            {{#if isTb}}
+                <span class="glyphicon glyphicon-ok"></span>
+            {{/if}}
+        </button>
+        <!-- <label class="radio-inline">
+          	<input type="radio" name="tb"  value="3" {{disableRadios}}> 高度
+        </label>
+        <label class="radio-inline">
+          	<input type="radio" name="tb"  value="2" {{disableRadios}}> 中度
+        </label>
+        <label class="radio-inline">
+          	<input type="radio" name="tb" value="1" {{disableRadios}}> 轻度
+        </label>
+        <label class="radio-inline">
+          	<input type="radio" name="tb"  value="0" {{disableRadios}}> 不符
+        </label> -->
+        <div class="radio radio-inline">
+        	<input type="radio" name="tb"  id='high' value="3">
+        	<label for="high">高度</label>
+        </div>
+        <div class="radio radio-inline">
+        	<input type="radio" name="tb"  id='middle' value="2">
+        	<label for="middle">中度</label>
+        </div>
+        <div class="radio radio-inline">
+        	<input type="radio" name="tb"  id='low' value="1">
+        	<label for="low">低度</label>
+        </div>
+        <div class="radio radio-inline">
+        	<input type="radio" name="tb"  id='dismatch' value="0">
+        	<label for="dismatch">不符</label>
+        </div>
+	</div>
+</template>

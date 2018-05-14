@@ -13,4 +13,6 @@ docs/_book
 .hg/
 dist/
 .hgignore
+.hgtags
 LesionMarker/
+TbRating/

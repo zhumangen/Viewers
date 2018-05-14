@@ -8,11 +8,16 @@ import { OHIF } from 'meteor/ohif:core';
  */
 
 export const getImageIdForImagePath = (imagePath, thumbnail=false) => {
+    let imageId;
     const [studyInstanceUid, seriesInstanceUid, sopInstanceUid, frameIndex] = imagePath.split('_');
     const study = OHIF.viewer.Studies.findBy({ studyInstanceUid });
     const studyMetadata = OHIF.viewerbase.getStudyMetadata(study);
-    const series = studyMetadata.getSeriesByUID(seriesInstanceUid);
-    const instance = series.getInstanceByUID(sopInstanceUid);
-    const imageId = OHIF.viewerbase.getImageId(instance, frameIndex, thumbnail);
+    if (studyMetadata) {
+        const series = studyMetadata.getSeriesByUID(seriesInstanceUid);
+        if (series) {
+            const instance = series.getInstanceByUID(sopInstanceUid);
+            imageId = OHIF.viewerbase.getImageId(instance, frameIndex, thumbnail);
+        }
+    }
     return imageId;
 };

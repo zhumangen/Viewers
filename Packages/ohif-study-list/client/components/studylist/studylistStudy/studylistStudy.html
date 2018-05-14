@@ -1,5 +1,11 @@
 <template name="studylistStudy">
     <tr class="studylistStudy noselect {{#if this.selected}}active{{/if}}">
+        <td class="numberOf">
+            {{numberOf}}
+        </td>
+        <td class="statusColumn">
+            {{status}}
+        </td>
         <td class="patientName">
             {{formatPN patientName}}
         </td>
@@ -17,6 +23,9 @@
         </td>
         <td class="studyDescription">
             {{studyDescription}}
+        </td>
+        <td class="imgCount">
+            {{numberOfStudyRelatedInstances}}
         </td>
     </tr>
 </template>

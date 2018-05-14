@@ -49,7 +49,7 @@ OHIF.studies.loadStudy = studyInstanceUid => new Promise((resolve, reject) => {
         // Add the studyInstanceUid to the loaded state dictionary
         OHIF.studies.loadingDict.set(studyInstanceUid, 'loaded');
 
-        resolve(study);
+        resolve(new OHIF.metadata.StudyMetadata(study, study.studyInstanceUid));
     }).catch((...args) => {
         OHIF.studies.loadingDict.set(studyInstanceUid, 'failed');
         reject(args);

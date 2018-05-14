@@ -6,13 +6,14 @@ const visiblePages = 10;
 
 Template.paginationArea.onCreated(function() {
     const instance = Template.instance();
+    const defaultValue = instance.data.rowsPerPage.get();
 
     // Create the rowsPerPage schema
     instance.schema = new SimpleSchema({
         rowsPerPage: {
             type: Number,
             allowedValues: [25, 50, 100],
-            defaultValue: 25
+            defaultValue: defaultValue
         }
     });
 });
@@ -25,24 +26,45 @@ Template.paginationArea.onRendered(() => {
     instance.autorun(() => {
         const recordCount = instance.data.recordCount.get();
         const rowsPerPage = instance.data.rowsPerPage.get();
-
+       
         // Destroy plugin if exists
         if (instance.$paginationControl.data().twbsPagination) {
             instance.$paginationControl.twbsPagination('destroy');
         }
+    
+        if (recordCount && rowsPerPage) {         
+            const totalPages = Math.ceil(recordCount / rowsPerPage); 
 
-        if (recordCount && rowsPerPage) {
-            const totalPages = Math.ceil(recordCount / rowsPerPage);
+            if(sessionStorage.getItem("currentPage") > totalPages){
+                sessionStorage.setItem("currentPage", totalPages);
+            }       
+
+            // 默认开始页 为上次的 页码
+            let startPage = sessionStorage.getItem("currentPage");            
+            if(startPage){
+                startPage = startPage;
+            }else {
+                startPage = 1;
+            }
 
             // Initialize plugin
             instance.$paginationControl.twbsPagination({
                 totalPages,
                 visiblePages,
+                startPage,
+                first: '首页',  
+                prev: '上页',  
+                next: '下页',  
+                last: '末页',
                 onPageClick: (event, page) => {
                     // Update currentPage
                     // Decrease page by 1 to set currentPage
                     // Since reactive table current page index starts by 0
-                    instance.data.currentPage.set(page - 1);
+                    instance.data.currentPage.set(page - 1);                   
+                   
+                    // save currentPage
+                    sessionStorage.setItem("currentPage", page);                   
+                    
                 }
             });
         }
@@ -71,8 +93,6 @@ Template.paginationArea.helpers({
 Template.paginationArea.events({
     'change [data-key=rowsPerPage]'(event, instance) {
         const rowsPerPage = $(event.currentTarget).data('component').value();
-
-        // Update rowsPerPage
         instance.data.rowsPerPage.set(parseInt(rowsPerPage, 10));
     }
 });

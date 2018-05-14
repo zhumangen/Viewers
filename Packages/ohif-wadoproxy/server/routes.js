@@ -9,7 +9,7 @@ const http = require('http');
 const https = require('https');
 const now = require('performance-now');
 
-const doAuth = Meteor.users.find().count() ? true : false;
+const doAuth = /*Meteor.users.find().count() ? true : */false;
 
 const authenticateUser = request => {
     // Only allow logged-in users to access this route
