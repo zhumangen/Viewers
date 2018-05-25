@@ -12,6 +12,14 @@ const Measurement = new SimpleSchema({
         type: String,
         label: 'User ID'
     },
+    permission: {
+        type: Number,
+        label: 'User Permission'
+    },
+    status: {
+        type: Number,
+        label: 'Measurement status'
+    },
     patientId: {
         type: String,
         label: 'Patient ID'

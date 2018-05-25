@@ -46,12 +46,14 @@ export class ModalityCriterion extends BaseCriterion {
     }
 
     evaluate(data) {
+        let message;
+        const measurements = [];
+        
+        /*
         const measurementTypes = this.options.measurementTypes || ['targets'];
         const modalitiesSet = new Set(this.options.modalities);
         const validationMethod = this.options.method;
-        const measurements = [];
         const invalidModalities = [];
-        let message;
 
         measurementTypes.forEach(measurementType => {
             const items = data[measurementType];
@@ -75,6 +77,7 @@ export class ModalityCriterion extends BaseCriterion {
 
             message = `The ${modalityText} ${uniqueModalitiesText} should not be used as a method of measurement`;
         }
+        */
 
         return this.generateResponse(message, measurements);
     }

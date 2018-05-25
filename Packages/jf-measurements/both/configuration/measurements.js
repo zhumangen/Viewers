@@ -34,13 +34,13 @@ class MeasurementApi {
         configuration.measurementTools.forEach(toolGroup => {
             const groupCollection = new Mongo.Collection(null);
             groupCollection._debugName = toolGroup.name;
-            groupCollection.attachSchema(toolGroup.schema);
+            // groupCollection.attachSchema(toolGroup.schema);
             this.toolGroups[toolGroup.id] = groupCollection;
 
             toolGroup.childTools.forEach(tool => {
                 const collection = new Mongo.Collection(null);
                 collection._debugName = tool.name;
-                collection.attachSchema(tool.schema);
+                // collection.attachSchema(tool.schema);
                 this.tools[tool.id] = collection;
 
                 const addedHandler = measurement => {
@@ -115,7 +115,6 @@ class MeasurementApi {
 
         return new Promise((resolve, reject) => {
             retrievalFn(options).then(measurementData => {
-
                 OHIF.log.info('Measurement data retrieval');
 
                 const toolsGroupsMap = MeasurementApi.getToolsGroupsMap();
@@ -128,7 +127,10 @@ class MeasurementApi {
                         const { toolType } = measurement;
                         if (toolType && this.tools[toolType]) {
                             delete measurement._id;
-                            measurement.userId = Session.get('userInfo').userId;
+                            measurement.userId = options.userId;
+                            measurement.userName = options.userName;
+                            measurement.permission = options.permission;
+                            measurement.status = 0;
                             const toolGroup = toolsGroupsMap[toolType];
                             if (!measurementsGroups[toolGroup]) {
                                 measurementsGroups[toolGroup] = [];
@@ -159,37 +161,56 @@ class MeasurementApi {
         });
     }
 
-    storeMeasurements() {
+    storeMeasurements(options) {
         const storeFn = configuration.dataExchange.store;
         if (!_.isFunction(storeFn)) {
             return;
         }
 
         let measurementData = {};
-        configuration.measurementTools.forEach(toolGroup => {
-            toolGroup.childTools.forEach(tool => {
-                if (!measurementData[toolGroup.id]) {
-                    measurementData[toolGroup.id] = [];
-                }
-
-                measurementData[toolGroup.id] = measurementData[toolGroup.id].concat(this.tools[tool.id].find().fetch());
-            });
-        });
-
-        const userId = Session.get('userInfo').userId;
-        OHIF.log.info('Saving Measurements for user id: ', userId);
         
+        if (!options.abandoned) {
+            configuration.measurementTools.forEach(toolGroup => {
+                toolGroup.childTools.forEach(tool => {
+                    if (!measurementData[toolGroup.id]) {
+                        measurementData[toolGroup.id] = [];
+                    }
+
+                    measurementData[toolGroup.id] = measurementData[toolGroup.id].concat(this.tools[tool.id].find().fetch());
+                });
+            });
+        }
+
         return new Promise((resolve, reject) => {
-            storeFn(measurementData, { userId }).then((measurementData) => {
+            storeFn(measurementData, options).then((measurementData) => {
                 OHIF.log.info('Measurement storage completed');
                 
                 let measurements = [];
-                configuration.measurementTools.forEach(toolGroup => {
-                    measurements = measurements.concat(measurementData[toolGroup.id]);
-                });
+                if (!options.abandoned) {
+                    configuration.measurementTools.forEach(toolGroup => {
+                        measurements = measurements.concat(measurementData[toolGroup.id]);
+                    });
+                }
                 resolve(measurements);
             }).catch(error => {
                 OHIF.log.error('Measurement storage error: ', error);
+                reject(error);
+            });
+        });
+    }
+    
+    changeStatus(options) {
+        const changeFn = configuration.dataExchange.changeStatus;
+        if (!_.isFunction(changeFn)) {
+            return;
+        }
+        
+        return new Promise((resolve, reject) => {
+            changeFn(options).then(result => {
+                OHIF.log.info('Change measurements status completed');
+                resolve(result);
+            }).catch(error => {
+                OHIF.log.error('Change measurements status failed: ', error);
                 reject(error);
             });
         });
@@ -202,6 +223,9 @@ class MeasurementApi {
         }
         
         return new Promise((resolve, reject) => {
+            for (let i = 0; i < measurementData.length; ++i) {
+                measurementData[i].status = options.status;
+            }
             storeFn(options, measurementData).then(result => {
                 OHIF.log.info('Submit measurements completed');
                 resolve(result);

@@ -20,9 +20,14 @@ export default function ({ instance, eventData, tool }) {
     OHIF.log.info('CornerstoneToolsMeasurementAdded');
 
     const imageAttributes = getImageAttributes(eventData.element);
+    const userInfo = Session.get('userInfo');
+    
     const measurement = _.extend({}, measurementData, imageAttributes, {
         measurementNumber: measurementData.measurementNumber,
-        userId: Session.get('userInfo').userId
+        userId: userInfo.userId,
+        userName: userInfo.userName,
+        permission: userInfo.permission,
+        status: 0
     });
 
     // Get the related timepoint by the measurement number and use its location if defined
@@ -43,7 +48,7 @@ export default function ({ instance, eventData, tool }) {
     }
 
     // Clean the measurement according to the Schema
-    Collection._c2._simpleSchema.clean(measurement);
+    // Collection._c2._simpleSchema.clean(measurement);
 
     // Insert the new measurement into the collection
     measurementData._id = Collection.insert(measurement);

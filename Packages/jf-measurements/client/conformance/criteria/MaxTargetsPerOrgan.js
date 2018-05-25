@@ -31,9 +31,11 @@ export class MaxTargetsPerOrganCriterion extends BaseCriterion {
     }
 
     evaluate(data) {
+        let message;
+        let measurements = [];
+        /*
         const { options } = this;
         const targetsPerOrgan = {};
-        let measurements = [];
 
         const newTargetNumbers = this.getNewTargetNumbers(data);
         _.each(data.targets, target => {
@@ -54,12 +56,12 @@ export class MaxTargetsPerOrganCriterion extends BaseCriterion {
                 measurements.push(measurement);
             }
         });
-
-        let message;
+        
         if (measurements.length) {
             const increment = options.newTarget ? 'new ' : '';
             message = options.message || `Each organ should not have more than ${options.limit} ${increment}targets.`;
         }
+        */
 
         return this.generateResponse(message, measurements);
     }

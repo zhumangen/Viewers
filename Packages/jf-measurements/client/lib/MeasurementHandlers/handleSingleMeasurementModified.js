@@ -31,9 +31,11 @@ export default function ({ instance, eventData, tool, toolGroupId, toolGroup }) 
 
     // If the measurement configuration includes a value for Viewport,
     // we will populate this with the Cornerstone Viewport
-    if (Collection._c2._simpleSchema.schema('viewport')) {
-        measurement.viewport = cornerstone.getViewport(eventData.element);
-    }
+    ///if (Collection._c2._simpleSchema.schema('viewport')) {
+        let viewport = cornerstone.getViewport(eventData.element);
+        delete viewport.voiLUT;
+        measurement.viewport = viewport;
+    ///}
 
     // Update the measurement in the collection
     Collection.update(measurementId, { $set: measurement });

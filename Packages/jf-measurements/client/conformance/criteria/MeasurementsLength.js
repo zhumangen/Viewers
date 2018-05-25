@@ -96,6 +96,7 @@ export class MeasurementsLengthCriterion extends BaseCriterion {
     evaluate(data) {
         let message;
         let measurements = [];
+        /*
         const { options } = this;
         const longMultiplier = options.longAxisSliceThicknessMultiplier;
         const shortMultiplier = options.shortAxisSliceThicknessMultiplier;
@@ -142,7 +143,7 @@ export class MeasurementsLengthCriterion extends BaseCriterion {
         if (measurements.length) {
             message = options.message;
         }
-
+        */
         return this.generateResponse(message, measurements);
     }
 

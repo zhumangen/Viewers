@@ -18,6 +18,7 @@ export class TargetTypeCriterion extends BaseCriterion {
         const measurements = [];
         let message;
 
+        /*
         items.forEach(item => {
             const measurement = item.measurement;
 
@@ -29,6 +30,7 @@ export class TargetTypeCriterion extends BaseCriterion {
         if (measurements.length) {
             message = 'Target lesions must have measurements (cannot be assessed as CR, UN/NE, EX)';
         }
+        */
 
         return this.generateResponse(message, measurements);
     }

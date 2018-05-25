@@ -2,6 +2,9 @@ import { measurementTools } from './measurementTools';
 import { OHIF } from 'meteor/ohif:core';
 import { HTTP } from 'meteor/http';
 
+// const apiHost = 'http://192.168.10.50:8080';
+const apiHost = 'http://47.100.41.69:9090';
+
 export const retrieveMeasurements = (options) => {
     OHIF.log.info('retrieveMeasurements');
 
@@ -38,13 +41,28 @@ export const storeMeasurements = (measurementData, filter) => {
     });
 };
 
+export const changeStatus = options => {
+    OHIF.log.info('changeStatus');
+    
+    return new Promise((resolve, reject) => {
+        Meteor.call('changeStatus', options, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
+
 export const submitMeasurements = (options, measurementData) => {
     OHIF.log.info('Submit measurement data to main server.');
     
     return new Promise((resolve, reject) => {
         let headers = { token: options.token, version: options.version };
-        let data = { jsonValue: measurementData };
-        HTTP.call('POST', 'http://192.168.10.50:8080/v2/rmis/sysop/labelJson', { headers, data }, (error, result) => {
+        let data = { jsonValue: measurementData, labelAccnum: options.labelAccnum };
+        // console.log('measurementData length: ', JSON.stringify(measurementData).length);
+        HTTP.call('POST', apiHost+'/v2/rmis/sysop/labelJson', { headers, data }, (error, result) => {
             if (error) {
                 reject(error);
             } else {
@@ -64,7 +82,7 @@ export const retrieveLesions = (options) => {
     return new Promise((resolve, reject) => {
         let headers = { token: options.token, version: options.version };
         let data = { othervalue2: 'CHEST' };
-        HTTP.call('POST', 'http://192.168.10.50:8080/v2/rmis/sysop/dictDtl/one', { headers, data }, (error, result) => {
+        HTTP.call('POST', apiHost+'/v2/rmis/sysop/dictDtl/one', { headers, data }, (error, result) => {
             if (error) {
                 reject(error);
             } else {
@@ -86,7 +104,7 @@ export const submitResult = (options) => {
     OHIF.log.info('Submit result to main server');
 
     return new Promise((resolve, reject) => {
-        let api = 'http://192.168.10.50:8080/v2/rmis/sysop/labelInfolist/';
+        let api = apiHost+'/v2/rmis/sysop/labelInfolist/';
         api += options.labelAccnum + '/' + options.actionCode;
         let headers = { token: options.token, version: options.version };
         HTTP.call('POST', api, { headers }, (error, result) => {
@@ -108,7 +126,7 @@ export const queryUserInfo = (options) => {
 
     return new Promise((resolve, reject) => {
         let headers = { token: options.token, version: options.version };
-        HTTP.call('GET', 'http://192.168.10.50:8080/v2/rmis/sysop/sysoperator/', { headers }, (error, result) => {
+        HTTP.call('GET', apiHost+'/v2/rmis/sysop/sysoperator/', { headers }, (error, result) => {
             if (error) {
                 reject(error);
             } else {
@@ -117,9 +135,15 @@ export const queryUserInfo = (options) => {
                     const sysOper = result.data.data.sysOperator;
                     user.userId = sysOper.id;
                     user.userName = sysOper.name;
-                    user.reviewer = 0;
-                    if (sysOper.adminCode === '3703' || sysOper.adminCode === '3704' || sysOper.adminCode === '3705') {
-                        user.reviewer = 1;
+                    user.permission = 0;
+                    if (sysOper.adminCode === '3706') {
+                        user.permission = 1;
+                    }if (sysOper.adminCode === '3705') {
+                        user.permission = 2;
+                    }if (sysOper.adminCode === '3704') {
+                        user.permission = 3;
+                    }if (sysOper.adminCode === '3703') {
+                        user.permission = 4;
                     }
                     resolve(user);
                 } else {

@@ -14,16 +14,12 @@ Template.caseProgress.onCreated(() => {
     instance.isFollowUp = new ReactiveVar(false);
     instance.path = 'viewer.studyViewer.measurements';
     instance.saveObserver = new Tracker.Dependency();
-    instance.isCompleted = new ReactiveVar(false);
     instance.saveOnly = true;
+    instance.noChanges = new ReactiveVar(true);
+    instance.options = Object.assign({}, Session.get('queryParams'), Session.get('userInfo'));
 
     instance.api = {
         save() {
-            // Display the error messages
-            const errorHandler = data => {
-                OHIF.ui.showDialog('dialogInfo', Object.assign({ class: 'themed' }, data));
-            };
-            
             // Clear signaled unsaved changes...
             const successHandler = (measurementData) => {
                 OHIF.ui.unsavedChanges.clear(`${instance.path}.*`);
@@ -31,20 +27,24 @@ Template.caseProgress.onCreated(() => {
                 
                 if (!instance.saveOnly) {
                     // save measurements to main server.
-                    let options = Session.get('queryParams');
-                    Object.assign(options, Session.get('userInfo'));
-                    const promise = instance.data.measurementApi.submitMeasurements(options, measurementData);
+                    const promise = instance.data.measurementApi.submitMeasurements(instance.options, measurementData);
                     promise.then(() => {
-                        Object.assign(options, { actionCode: '0' });
+                        const options = Object.assign({}, instance.options, { actionCode: '0' });
                         const promise = instance.data.measurementApi.submitResult(options);
                         promise.then(() => {
-                            instance.isCompleted.set(true);
-                        }).catch(errorHandler);
+                            const promise = instance.data.measurementApi.changeStatus(options);
+                            promise.catch(instance.errorHandler);
+                            OHIF.ui.showDialog('dialogLoading', {
+                                promise,
+                                text: 'changing measurements status.'
+                            });
+                            instance.isLocked.set(true);
+                        }).catch(instance.errorHandler);
                         OHIF.ui.showDialog('dialogLoading', {
                             promise,
                             text: 'Committing data to main server.'
                         });
-                    }).catch(errorHandler);
+                    }).catch(instance.errorHandler);
                     OHIF.ui.showDialog('dialogLoading', {
                         promise,
                         text: 'Saving measurement data to main server.'
@@ -52,15 +52,33 @@ Template.caseProgress.onCreated(() => {
                 }
             };
 
-            const promise = instance.data.measurementApi.storeMeasurements();
-            promise.then(successHandler).catch(errorHandler);
+            const promise = instance.data.measurementApi.storeMeasurements(instance.options);
+            promise.then(successHandler).catch(instance.errorHandler);
             OHIF.ui.showDialog('dialogLoading', {
                 promise,
                 text: 'Saving measurement data'
             });
 
             return promise;
+        },
+        abandon() {
+            const options = Object.assign({}, instance.options, { abandoned: true });
+            const promise = instance.data.measurementApi.storeMeasurements(options);
+            promise.then(() => {
+                const options = Object.assign({}, instance.options, { actionCode: '1' });
+                instance.data.measurementApi.submitResult(options).then(() => {
+                    instance.isLocked.set(true);
+                }).catch(instance.errorHandler);
+            }).catch(instance.errorHandler);
+            OHIF.ui.showDialog('dialogLoading', {
+                promise,
+                text: 'Saving measurement data'
+            });
         }
+    };
+    
+    instance.errorHandler = data => {
+        OHIF.ui.showDialog('dialogInfo', Object.assign({ class: 'themed' }, data));
     };
 
     instance.unsavedChangesHandler = () => {
@@ -100,6 +118,8 @@ Template.caseProgress.onRendered(() => {
     } else {
         instance.isLocked.set(false);
     }
+    
+    instance.isLocked.set(instance.options.status === 0);
 
     // Stop here if no current or prior timepoint was found
     if (!current || !prior || !current.timepointId) {
@@ -192,7 +212,8 @@ Template.caseProgress.helpers({
     },
 
     isLocked() {
-        return Template.instance().isLocked.get();
+        const instance = Template.instance();
+        return instance.isLocked.get();
     },
 
     progressComplete() {
@@ -212,10 +233,10 @@ Template.caseProgress.helpers({
         OHIF.ui.unsavedChanges.depend();
         instance.saveObserver.depend();
         Session.get('LayoutManagerUpdated');
-        if(instance.isCompleted.get()) {
-            return true;
-        }       
-        return OHIF.ui.unsavedChanges.probe('viewer.*') === 0;        
+        
+        instance.noChanges.set(OHIF.ui.unsavedChanges.probe('viewer.*') === 0);
+     
+        return instance.isLocked.get() || instance.noChanges.get();        
     }
 });
 
@@ -227,13 +248,5 @@ Template.caseProgress.events({
     'click #commit'(event, instance){
         instance.saveOnly = false;
         instance.api.save();
-    },
-
-    'click #abandon'(event, instance){
-        const params = Session.get('queryParams');
-        const options = Object.assign({}, params, { actionCode: '1' });
-        instance.data.measurementApi.submitResult(options).then(() => {
-            instance.isCompleted.set(true);
-        });
     }
 });

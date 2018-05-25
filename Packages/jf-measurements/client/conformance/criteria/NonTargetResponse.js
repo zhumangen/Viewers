@@ -18,6 +18,7 @@ export class NonTargetResponseCriterion extends BaseCriterion {
         const measurements = [];
         let message;
 
+        /*
         items.forEach(item => {
             const measurement = item.measurement;
             const response = (measurement.response || '').toLowerCase();
@@ -30,6 +31,7 @@ export class NonTargetResponseCriterion extends BaseCriterion {
         if (measurements.length) {
             message = 'Non-targets can only be assessed as "present"';
         }
+        */
 
         return this.generateResponse(message, measurements);
     }

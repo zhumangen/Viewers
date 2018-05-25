@@ -51,6 +51,8 @@ export class MaxTargetsCriterion extends BaseCriterion {
     }
 
     evaluate(data) {
+        let message;
+        /*
         const { options } = this;
 
         const newTargetNumbers = this.getNewTargetNumbers(data);
@@ -63,14 +65,14 @@ export class MaxTargetsCriterion extends BaseCriterion {
             if (options.locationNotIn && options.locationNotIn.indexOf(location) > -1) return;
             measurementNumbers.push(measurementNumber);
         });
-
-        let message;
+        
         if (measurementNumbers.length > options.limit) {
             const increment = options.newTarget ? 'new ' : '';
             const plural = options.limit === 1 ? '' : 's';
             const amount = options.limit === 0 ? '' : `more than ${options.limit}`;
             message = options.message || `The study should not have ${amount} ${increment}target${plural}.`;
         }
+        */
 
         return this.generateResponse(message);
     }

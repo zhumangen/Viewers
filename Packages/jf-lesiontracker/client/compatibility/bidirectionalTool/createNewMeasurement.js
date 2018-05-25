@@ -34,7 +34,8 @@ export default function(mouseEventData) {
             })
         },
         longestDiameter: 0,
-        shortestDiameter: 0
+        shortestDiameter: 0,
+        createdAt: new Date()
     };
 
     return measurementData;
