@@ -23,6 +23,11 @@ Meteor.startup(function() {
         mouse: cornerstoneTools.deleteLesionKeyboardTool,
         touch: cornerstoneTools.deleteLesionKeyboardTool
     });
+    
+    toolManager.addTool('targetEllipse', {
+        mouse: cornerstoneTools.targetEllipse,
+        touch: cornerstoneTools.targetEllipseTouch
+    });
 
     toolManager.addTool('targetCR', {
         mouse: cornerstoneTools.targetCR,
@@ -38,7 +43,7 @@ Meteor.startup(function() {
     let currentDefaultStates = toolManager.getToolDefaultStates();
     let newDefaultStates = {
         enable: [ 'scaleOverlayTool' ],
-        deactivate: ['bidirectional', 'nonTarget', 'length', 'targetCR', 'targetUN'],
+        deactivate: ['bidirectional', 'nonTarget', 'length', 'targetEllipse', 'targetCR', 'targetUN'],
         activate: ['deleteLesionKeyboardTool']
     };
 

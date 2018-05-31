@@ -234,7 +234,8 @@ function createNewMeasurement(mouseEventData) {
         patientId: patientId,
         response: '',
         isTarget: false,
-        toolType: 'nonTarget'
+        toolType: 'nonTarget',
+        createdAt: new Date()
     };
 
     return measurementData;

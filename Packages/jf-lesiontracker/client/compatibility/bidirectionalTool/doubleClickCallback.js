@@ -4,7 +4,7 @@ import pointNearTool from './pointNearTool';
 
 export default function (event) {
     const eventData = event.detail;
-    const { element } = eventData.element;
+    const { element } = eventData;
 
     function doneCallback(data, deleteTool) {
         if (deleteTool === true) {

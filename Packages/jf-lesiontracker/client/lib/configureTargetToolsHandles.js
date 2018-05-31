@@ -47,6 +47,7 @@ JF.lesiontracker.configureTargetToolsHandles = () => {
     appendConfig('bidirectional');
 
     // Append the callback configuration to CR and UN tools
+    appendConfig('targetEllipse');
     appendConfig('targetCR');
     appendConfig('targetUN');
 };

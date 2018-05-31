@@ -198,7 +198,8 @@ function createQualitativeTargetTool(toolType, responseText='') {
             patientId: patientId,
             response: response,
             isTarget: true,
-            toolType: toolType
+            toolType: toolType,
+            createdAt: new Date()
         };
 
         return measurementData;
