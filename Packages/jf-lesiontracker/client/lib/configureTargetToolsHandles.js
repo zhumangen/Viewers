@@ -48,6 +48,7 @@ JF.lesiontracker.configureTargetToolsHandles = () => {
 
     // Append the callback configuration to CR and UN tools
     appendConfig('targetEllipse');
+    appendConfig('targetProbe');
     appendConfig('targetCR');
     appendConfig('targetUN');
 };

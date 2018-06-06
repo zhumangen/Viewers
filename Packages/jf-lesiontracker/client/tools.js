@@ -28,6 +28,11 @@ Meteor.startup(function() {
         mouse: cornerstoneTools.targetEllipse,
         touch: cornerstoneTools.targetEllipseTouch
     });
+    
+    toolManager.addTool('targetProbe', {
+        mouse: cornerstoneTools.targetProbe,
+        touch: cornerstoneTools.targetProbeTouch
+    });
 
     toolManager.addTool('targetCR', {
         mouse: cornerstoneTools.targetCR,
