@@ -20,6 +20,9 @@ Template.measurementTableRow.onCreated(() => {
 });
 
 Template.measurementTableRow.helpers({
+    isVisible() {
+        return Template.instance().data.rowItem.entries[0].visible?true:false;
+    },
     hasWarnings() {
         return !!Template.instance().getWarningMessages().length;
     }
@@ -98,5 +101,13 @@ Template.measurementTableRow.events({
             // Notify that viewer suffered changes
             JF.measurements.triggerTimepointUnsavedChanges('deleted');
         });
+    },
+
+    'click #visible-check'(event, instance){
+        event.stopPropagation()
+        const measurement = instance.data.rowItem.entries[0];
+        measurement.visible = $(event.currentTarget).is(':checked');
+        instance.data.measurementApi.updateMeasurement(measurement);
+        _.each($('.imageViewerViewport'), element => cornerstone.updateImage(element));
     }
 });

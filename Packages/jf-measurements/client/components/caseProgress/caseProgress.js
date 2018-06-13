@@ -33,7 +33,9 @@ Template.caseProgress.onCreated(() => {
                         const promise = instance.data.measurementApi.submitResult(options);
                         promise.then(() => {
                             const promise = instance.data.measurementApi.changeStatus(options);
-                            promise.catch(instance.errorHandler);
+                            promise.then(() => {
+                                instance.data.measurementApi.retrieveUserName(options);
+                            }).catch(instance.errorHandler);
                             OHIF.ui.showDialog('dialogLoading', {
                                 promise,
                                 text: 'changing measurements status.'
@@ -62,18 +64,32 @@ Template.caseProgress.onCreated(() => {
             return promise;
         },
         abandon() {
-            const options = Object.assign({}, instance.options, { abandoned: true });
-            const promise = instance.data.measurementApi.storeMeasurements(options);
-            promise.then(() => {
-                const options = Object.assign({}, instance.options, { actionCode: '1' });
-                instance.data.measurementApi.submitResult(options).then(() => {
-                    instance.isLocked.set(true);
+            const dialogSettings = {
+                class: 'themed',
+                title: '放弃标注',
+                message: '是否放弃标注?',
+                position: {
+                    x: event.clientX,
+                    y: event.clientY
+                },
+                cancelLabel: '取消',
+                confirmLabel: '确定'
+            };
+            OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {                
+                const options = Object.assign({}, instance.options, { abandoned: true });
+                const promise = instance.data.measurementApi.storeMeasurements(options);
+                promise.then(() => {
+                    const options = Object.assign({}, instance.options, { actionCode: '1' });
+                    instance.data.measurementApi.submitResult(options).then(() => {
+                        instance.isLocked.set(true);
+                    }).catch(instance.errorHandler);
                 }).catch(instance.errorHandler);
-            }).catch(instance.errorHandler);
-            OHIF.ui.showDialog('dialogLoading', {
-                promise,
-                text: 'Saving measurement data'
+                OHIF.ui.showDialog('dialogLoading', {
+                    promise,
+                    text: 'Saving measurement data'
+                });
             });
+            
         }
     };
     
@@ -246,7 +262,21 @@ Template.caseProgress.events({
     },
     
     'click #commit'(event, instance){
-        instance.saveOnly = false;
-        instance.api.save();
+        const dialogSettings = {
+            class: 'themed',
+            title: '提交标注',
+            message: '是否提交标注?',
+            position: {
+                x: event.clientX,
+                y: event.clientY
+            },
+            cancelLabel: '取消',
+            confirmLabel: '确定'
+        };
+        OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {            
+            instance.saveOnly = false;
+            instance.api.save();
+        });
+        
     }
 });

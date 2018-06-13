@@ -274,103 +274,99 @@ function onImageRendered(e) {
     let color;
     const lineWidth = cornerstoneTools.toolStyle.getToolWidth();
     const config = cornerstoneTools.nonTarget.getConfiguration();
-    const mApi = OHIF.viewer.measurementApi;
 
     for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
-        
-        const collection = mApi.tools[data.toolType];
-        const measurement = collection.findOne({_id: data._id});
-        if (!measurement) continue;
-        data.measurementNumber = measurement.measurementNumber;
 
-        context.save();
+        if (data.visible) {
+            context.save();
 
-        // configurable shadow from CornerstoneTools
-        if (config && config.shadow) {
-            context.shadowColor = config.shadowColor || '#000000';
-            context.shadowOffsetX = config.shadowOffsetX || 1;
-            context.shadowOffsetY = config.shadowOffsetY || 1;
+            // configurable shadow from CornerstoneTools
+            if (config && config.shadow) {
+                context.shadowColor = config.shadowColor || '#000000';
+                context.shadowOffsetX = config.shadowOffsetX || 1;
+                context.shadowOffsetY = config.shadowOffsetY || 1;
+            }
+
+            if (data.active) {
+                color = cornerstoneTools.toolColors.getActiveColor();
+            } else {
+                color = cornerstoneTools.toolColors.getToolColor();
+            }
+
+            // Draw the arrow
+            const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+            const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+            const canvasTextLocation = cornerstone.pixelToCanvas(element, data.handles.textBox);
+
+            cornerstoneTools.drawArrow(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
+
+            if (config.drawHandles) {
+                cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            } else if (config.drawHandlesOnHover && data.handles.start.active) {
+                cornerstoneTools.drawHandles(context, eventData, [ data.handles.start ], color);
+            } else if (config.drawHandlesOnHover && data.handles.end.active) {
+                cornerstoneTools.drawHandles(context, eventData, [ data.handles.end ], color);
+            }
+
+            // Draw the text
+            if (data.measurementNumber) {
+                const textLine = `标签 ${data.measurementNumber}`;
+                const boundingBox = cornerstoneTools.drawTextBox(context, textLine, canvasTextLocation.x, canvasTextLocation.y, color, config.textBox);
+                data.handles.textBox.boundingBox = boundingBox;
+
+                // OHIF.cornerstone.repositionTextBox(eventData, data, config.textBox);
+
+                // Draw linked line as dashed
+                const link = {
+                    start: {},
+                    end: {}
+                };
+
+                const midpointCanvas = {
+                    x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                    y: (handleStartCanvas.y + handleEndCanvas.y) / 2,
+                };
+
+                const points = [ handleStartCanvas, handleEndCanvas, midpointCanvas ];
+
+                link.end.x = canvasTextLocation.x;
+                link.end.y = canvasTextLocation.y;
+
+                link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
+
+                const boundingBoxPoints = [ {
+                        // Top middle point of bounding box
+                        x: boundingBox.left + boundingBox.width / 2,
+                        y: boundingBox.top
+                    }, {
+                        // Left middle point of bounding box
+                        x: boundingBox.left,
+                        y: boundingBox.top + boundingBox.height / 2
+                    }, {
+                        // Bottom middle point of bounding box
+                        x: boundingBox.left + boundingBox.width / 2,
+                        y: boundingBox.top + boundingBox.height
+                    }, {
+                        // Right middle point of bounding box
+                        x: boundingBox.left + boundingBox.width,
+                        y: boundingBox.top + boundingBox.height / 2
+                    },
+                ];
+
+                link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+                context.beginPath();
+                context.strokeStyle = color;
+                context.lineWidth = lineWidth;
+                context.setLineDash([ 2, 3 ]);
+
+                context.moveTo(link.start.x, link.start.y);
+                context.lineTo(link.end.x, link.end.y);
+                context.stroke();
+            }
+
+            context.restore();
         }
-
-        if (data.active) {
-            color = cornerstoneTools.toolColors.getActiveColor();
-        } else {
-            color = cornerstoneTools.toolColors.getToolColor();
-        }
-
-        // Draw the arrow
-        const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-        const canvasTextLocation = cornerstone.pixelToCanvas(element, data.handles.textBox);
-
-        cornerstoneTools.drawArrow(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
-
-        if (config.drawHandles) {
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-        } else if (config.drawHandlesOnHover && data.handles.start.active) {
-            cornerstoneTools.drawHandles(context, eventData, [ data.handles.start ], color);
-        } else if (config.drawHandlesOnHover && data.handles.end.active) {
-            cornerstoneTools.drawHandles(context, eventData, [ data.handles.end ], color);
-        }
-
-        // Draw the text
-        if (data.measurementNumber) {
-            const textLine = `标签 ${data.measurementNumber}`;
-            const boundingBox = cornerstoneTools.drawTextBox(context, textLine, canvasTextLocation.x, canvasTextLocation.y, color, config.textBox);
-            data.handles.textBox.boundingBox = boundingBox;
-
-            OHIF.cornerstone.repositionTextBox(eventData, data, config.textBox);
-
-            // Draw linked line as dashed
-            const link = {
-                start: {},
-                end: {}
-            };
-
-            const midpointCanvas = {
-                x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
-                y: (handleStartCanvas.y + handleEndCanvas.y) / 2,
-            };
-
-            const points = [ handleStartCanvas, handleEndCanvas, midpointCanvas ];
-
-            link.end.x = canvasTextLocation.x;
-            link.end.y = canvasTextLocation.y;
-
-            link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
-
-            const boundingBoxPoints = [ {
-                    // Top middle point of bounding box
-                    x: boundingBox.left + boundingBox.width / 2,
-                    y: boundingBox.top
-                }, {
-                    // Left middle point of bounding box
-                    x: boundingBox.left,
-                    y: boundingBox.top + boundingBox.height / 2
-                }, {
-                    // Bottom middle point of bounding box
-                    x: boundingBox.left + boundingBox.width / 2,
-                    y: boundingBox.top + boundingBox.height
-                }, {
-                    // Right middle point of bounding box
-                    x: boundingBox.left + boundingBox.width,
-                    y: boundingBox.top + boundingBox.height / 2
-                },
-            ];
-
-            link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
-            context.beginPath();
-            context.strokeStyle = color;
-            context.lineWidth = lineWidth;
-            context.setLineDash([ 2, 3 ]);
-
-            context.moveTo(link.start.x, link.start.y);
-            context.lineTo(link.end.x, link.end.y);
-            context.stroke();
-        }
-
-        context.restore();
     }
 }
 

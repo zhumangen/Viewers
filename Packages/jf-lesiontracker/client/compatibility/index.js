@@ -5,3 +5,4 @@ import './deleteLesionKeyboardTool.js';
 import './qualitativeTargetTools.js';
 import './ellipseTargetTool.js';
 import './probeTargetTool.js';
+import './pencilTool';

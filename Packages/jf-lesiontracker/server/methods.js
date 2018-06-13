@@ -140,12 +140,42 @@ Meteor.methods({
         return measurementData;
     },
     
+    retrieveUserName(options) {
+        OHIF.log.info('Retrieving user name');
+        
+        check(options, Match.Where(arg => {
+            check(arg.studyInstanceUid, NonEmptyString);
+            check(arg.seriesInstanceUids, NonEmptyStringArray);
+            check(arg.status, NonNegativeNumber);
+            return true;
+        }));
+        
+        let userName;
+        const filter = {
+            studyInstanceUid: options.studyInstanceUid,
+            status: options.status
+        }
+        filter.$or = [];
+        options.seriesInstanceUids.forEach(seriesInstanceUid => filter.$or.push({seriesInstanceUid}));
+        
+        let measurements = [];
+        measurementTools.forEach(tool => {
+            measurements = measurements.concat(MeasurementCollections[tool.id].find(filter).fetch());
+        });
+        
+        if (measurements.length > 0) {
+            userName = measurements[0].userName;
+        }
+        
+        return userName;
+    },
+    
     retrieveLesions(options) {
         OHIF.log.info('Retrieving Lesions from the Server');
         
         check(options, Match.Where(arg => {
-            check(options.token, NonEmptyString);
-            check(options.version, NonEmptyString);
+            check(arg.token, NonEmptyString);
+            check(arg.version, NonEmptyString);
             return true;
         }));
 

@@ -3,6 +3,7 @@ import { Tracker } from 'meteor/tracker';
 import { _ } from 'meteor/underscore';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
+import { Session } from 'meteor/session';
 import { cornerstoneTools } from 'meteor/ohif:cornerstone';
 
 let configuration = {};
@@ -87,9 +88,17 @@ class MeasurementApi {
                         $inc: { measurementNumber: -1 }
                     };
                     const options = { multi: true };
-                        
+                    
+                    const entries = groupCollection.find(filter).fetch();
                     groupCollection.update(filter, operator, options);
-                    collection.update(filter, operator, options);
+                    
+                    // Synchronize the updated measurements with Cornerstone Tools
+                    // toolData to make sure the displayed measurements show 'Target X' correctly
+                    const toolTypes = _.uniq(entries.map(entry => entry.toolId));
+                    toolTypes.forEach(toolType => {
+                        const collection = this.tools[toolType];
+                        collection.update(filter, operator, options);
+                    });
 
                     // Synchronize the new tool data
                     this.syncMeasurementsAndToolData();
@@ -157,6 +166,27 @@ class MeasurementApi {
                 });
 
                 resolve();
+            });
+        });
+    }
+    
+    retrieveUserName(options) {
+        const retrievalFn = configuration.dataExchange.retrieveUserName;
+        if (!_.isFunction(retrievalFn)) {
+            return;
+        }
+
+        return new Promise((resolve, reject) => {
+            retrievalFn(options).then(userName => {
+                if (options.status === 1) {
+                    Session.set('reporter', userName);
+                } else if (options.status === 2) {
+                    Session.set('reviewer', userName);
+                }
+                resolve(userName);
+            }).catch(error => {
+                OHIF.log.error('Retrieve user name failed: ', error);
+                reject(error);
             });
         });
     }
@@ -323,6 +353,12 @@ class MeasurementApi {
             });
         });
     }
+    
+    updateMeasurement(measurement) {
+        // const collection = this.tools[measurement.toolType];
+        // collection.update({_id: measurement._id}, measurement);
+        JF.measurements.syncMeasurementAndToolData(measurement);
+    }
 
     deleteMeasurements(measurementTypeId, filter) {
         const groupCollection = this.toolGroups[measurementTypeId];
@@ -383,7 +419,7 @@ class MeasurementApi {
         });
 
         cornerstoneTools.globalImageIdSpecificToolStateManager.restoreToolState(toolState);
-
+        /*
         // Synchronize the updated measurements with Cornerstone Tools
         // toolData to make sure the displayed measurements show 'Target X' correctly
         const syncFilter = _.clone(filter);
@@ -399,6 +435,7 @@ class MeasurementApi {
                 JF.measurements.syncMeasurementAndToolData(measurement);
             });
         });
+        */
     }
 
     getMeasurementById(measurementId) {

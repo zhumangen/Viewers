@@ -13,12 +13,20 @@ export const retrieveMeasurements = (options) => {
             if (error) {
                 reject(error);
             } else {
-                console.log(response);
+                resolve(response);
+            }
+        });
+    });
+};
 
-                /*measurementTools.forEach(tool => {
-                    console.log('Retrieving tool: ' + tool.id);
-                });*/
-
+export const retrieveUserName = options => {
+    OHIF.log.info('retrieveUserName');
+    
+    return new Promise((resolve, reject) => {
+        Meteor.call('retrieveUserName', options, (error, response) => {
+            if (error) {
+                reject(error);
+            } else {
                 resolve(response);
             }
         });

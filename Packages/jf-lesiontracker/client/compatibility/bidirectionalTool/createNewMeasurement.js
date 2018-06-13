@@ -18,6 +18,7 @@ export default function(mouseEventData) {
     const measurementData = {
         toolType,
         isCreating: true,
+        invalidated: true,
         visible: true,
         active: true,
         handles: {
@@ -35,6 +36,7 @@ export default function(mouseEventData) {
         },
         longestDiameter: 0,
         shortestDiameter: 0,
+        density: 0,
         createdAt: new Date()
     };
 

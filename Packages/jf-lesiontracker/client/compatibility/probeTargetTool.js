@@ -217,132 +217,131 @@ function onImageRendered (e) {
 
   // If we have tool data for this element - iterate over each set and draw it
   for (let i = 0; i < toolData.data.length; i++) {
-
-    context.save();
     const data = toolData.data[i];
-    
-    if (data.active) {
-      color = cornerstoneTools.toolColors.getActiveColor();
-    } else {
-      color = cornerstoneTools.toolColors.getToolColor();
-    }
-    
-    // Draw the handles
-    let handles = [];
-    handles.push(data.handles.end);
-    cornerstoneTools.drawHandles(context, eventData, handles, color);
-    
-    if (data.measurementNumber) {
-        const x = Math.round(data.handles.end.x);
-        const y = Math.round(data.handles.end.y);
-        let storedPixels;
-        let value = '';
-        let textLines = [`标注 ${data.measurementNumber}`];
+    if (data.visible) {
+        context.save();
 
-        if (x < 0 || y < 0 || x >= image.columns || y >= image.rows) {
-          return;
-        }
-
-        if (image.color) {
-          storedPixels = getRGBPixels(element, x, y, 1, 1);
-          value = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+        if (data.active) {
+          color = cornerstoneTools.toolColors.getActiveColor();
         } else {
-          storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
-          const sp = storedPixels[0];
-          const mo = sp * image.slope + image.intercept;
-          value = `MO: ${parseFloat(mo.toFixed(3))}`;
+          color = cornerstoneTools.toolColors.getToolColor();
         }
         
-        textLines.push(value);
-        data.value = value;
+        // Draw the handles
+      cornerstoneTools.drawHandles(context, eventData, { end: data.handles.end }, color);
         
-        // If the textbox has not been moved by the user, it should be displayed on the right-most
-        // Side of the tool.
-        if (!data.handles.textBox.hasMoved) {
-          // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-          // Note that this calculates it in image coordinates
-          data.handles.textBox.x = data.handles.end.x + 3;
-          data.handles.textBox.y = data.handles.end.y - 3;
-        }
-        
-        const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
+        if (data.measurementNumber) {
+            const x = Math.round(data.handles.end.x);
+            const y = Math.round(data.handles.end.y);
+            let storedPixels;
+            let value = '';
+            let textLines = [`标注 ${data.measurementNumber}`];
 
-        context.font = font;
-        context.fillStyle = color;
+            if (x < 0 || y < 0 || x >= image.columns || y >= image.rows) {
+              return;
+            }
 
-        const boundingBox = cornerstoneTools.drawTextBox(context, textLines, textCoords.x, textCoords.y, color);
-        
-        // Store the bounding box data in the handle for mouse-dragging and highlighting
-        data.handles.textBox.boundingBox = boundingBox;
-        
-        OHIF.cornerstone.repositionTextBox(eventData, data);
-          
-        if (data.handles.textBox.hasMoved) {
-            // Draw linked line as dashed
-            const end = cornerstone.pixelToCanvas(element, data.handles.end);
-          const link = {
-            start: {},
-            end: textCoords
-          };
+            if (image.color) {
+              storedPixels = getRGBPixels(element, x, y, 1, 1);
+              value = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+            } else {
+              storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
+              const sp = storedPixels[0];
+              const mo = sp * image.slope + image.intercept;
+              value = `MO: ${parseFloat(mo.toFixed(3))}`;
+            }
             
-            // First we calculate the ellipse points (top, left, right, and bottom)
-          const ellipsePoints = [{
-            // Top middle point of ellipse
-            x: end.x,
-            y: end.y + 5
-          }, {
-            // Left middle point of ellipse
-            x: end.x - 5,
-            y: end.y
-          }, {
-            // Bottom middle point of ellipse
-            x: end.x,
-            y: end.y + 5
-          }, {
-            // Right middle point of ellipse
-            x: end.x + 5,
-            y: end.y
-          }];
-          
-          // We obtain the link starting point by finding the closest point on the ellipse to the
-          // Center of the textbox
-          link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+            textLines.push(value);
+            data.value = value;
+            
+            // If the textbox has not been moved by the user, it should be displayed on the right-most
+            // Side of the tool.
+            if (!data.handles.textBox.hasMoved) {
+              // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+              // Note that this calculates it in image coordinates
+              data.handles.textBox.x = data.handles.end.x + 3;
+              data.handles.textBox.y = data.handles.end.y - 3;
+            }
+            
+            const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
 
-          // Next we calculate the corners of the textbox bounding box
-          const boundingBoxPoints = [{
-            // Top middle point of bounding box
-            x: boundingBox.left + boundingBox.width / 2,
-            y: boundingBox.top
-          }, {
-            // Left middle point of bounding box
-            x: boundingBox.left,
-            y: boundingBox.top + boundingBox.height / 2
-          }, {
-            // Bottom middle point of bounding box
-            x: boundingBox.left + boundingBox.width / 2,
-            y: boundingBox.top + boundingBox.height
-          }, {
-            // Right middle point of bounding box
-            x: boundingBox.left + boundingBox.width,
-            y: boundingBox.top + boundingBox.height / 2
-          }];
+            context.font = font;
+            context.fillStyle = color;
 
-          // Now we recalculate the link endpoint by identifying which corner of the bounding box
-          // Is closest to the start point we just calculated.
-          link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+            const boundingBox = cornerstoneTools.drawTextBox(context, textLines, textCoords.x, textCoords.y, color);
+            
+            // Store the bounding box data in the handle for mouse-dragging and highlighting
+            data.handles.textBox.boundingBox = boundingBox;
+            
+            // OHIF.cornerstone.repositionTextBox(eventData, data);
+              
+            if (data.handles.textBox.hasMoved) {
+                // Draw linked line as dashed
+                const end = cornerstone.pixelToCanvas(element, data.handles.end);
+              const link = {
+                start: {},
+                end: textCoords
+              };
+                
+                // First we calculate the ellipse points (top, left, right, and bottom)
+              const ellipsePoints = [{
+                // Top middle point of ellipse
+                x: end.x,
+                y: end.y + 5
+              }, {
+                // Left middle point of ellipse
+                x: end.x - 5,
+                y: end.y
+              }, {
+                // Bottom middle point of ellipse
+                x: end.x,
+                y: end.y + 5
+              }, {
+                // Right middle point of ellipse
+                x: end.x + 5,
+                y: end.y
+              }];
+              
+              // We obtain the link starting point by finding the closest point on the ellipse to the
+              // Center of the textbox
+              link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
 
-          // Finally we draw the dashed linking line
-          context.beginPath();
-          context.strokeStyle = color;
-          context.lineWidth = lineWidth;
-          context.setLineDash([2, 3]);
-          context.moveTo(link.start.x, link.start.y);
-          context.lineTo(link.end.x, link.end.y);
-          context.stroke();
+              // Next we calculate the corners of the textbox bounding box
+              const boundingBoxPoints = [{
+                // Top middle point of bounding box
+                x: boundingBox.left + boundingBox.width / 2,
+                y: boundingBox.top
+              }, {
+                // Left middle point of bounding box
+                x: boundingBox.left,
+                y: boundingBox.top + boundingBox.height / 2
+              }, {
+                // Bottom middle point of bounding box
+                x: boundingBox.left + boundingBox.width / 2,
+                y: boundingBox.top + boundingBox.height
+              }, {
+                // Right middle point of bounding box
+                x: boundingBox.left + boundingBox.width,
+                y: boundingBox.top + boundingBox.height / 2
+              }];
+
+              // Now we recalculate the link endpoint by identifying which corner of the bounding box
+              // Is closest to the start point we just calculated.
+              link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+
+              // Finally we draw the dashed linking line
+              context.beginPath();
+              context.strokeStyle = color;
+              context.lineWidth = lineWidth;
+              context.setLineDash([2, 3]);
+              context.moveTo(link.start.x, link.start.y);
+              context.lineTo(link.end.x, link.end.y);
+              context.stroke();
+            }
         }
+        
+        context.restore();
     }
-    
-    context.restore();
   }
 }
 // /////// END IMAGE RENDERING ///////

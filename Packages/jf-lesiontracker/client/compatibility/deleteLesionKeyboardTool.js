@@ -12,6 +12,7 @@ const toolTypes = [
     'bidirectional',
     'targetEllipse',
     'targetProbe',
+    'targetPencil',
     'targetCR',
     'targetUN',
     'nonTarget',
