@@ -1,0 +1,24 @@
+<template name="app">
+    {{#header brandHref='http://jfhealthcare.com' headerClasses=instance.headerClasses}}
+        {{#section 'brand'}}
+            <div class="logo-image"><img type="image/png" src="/images/logo.png"/></div>
+            <div class="logo-text">肺结核标注平台</div>
+        {{/section}}
+        {{#section 'headerAfterBrand'}}
+            {{#if studyListToggleText}}
+                <a href="#" class="btn studyListLinkSection pull-left js-toggle-studyList" id="{{dasherize studyListToggleText}}-btn">
+                    {{studyListToggleText}}
+                </a>
+            {{/if}}
+        {{/section}}
+        {{#section 'headerMenu'}}
+            <span class="user-name pull-left m-r-1">{{userName}}</span>
+            <div class="menu-toggle pull-right">
+                <i class="fa fa-cog"></i>
+                <span class="caret-down"></span>
+            </div>
+        {{/section}}
+    {{/header}}
+
+    {{>Template.dynamic template=(choose this.template 'studylist') data=this}}
+</template>

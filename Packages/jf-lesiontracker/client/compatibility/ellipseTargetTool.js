@@ -355,19 +355,22 @@ function onImageRendered (e) {
         // Draw the text
         if (data.measurementNumber) {
             // Draw the textbox
-            let suffix = ' mm';
-            if (!rowPixelSpacing || !colPixelSpacing) {
-                suffix = ' pixels';
-            }
-            
+            let suffix = ' pixels';
             const width = Math.abs(data.handles.start.x - data.handles.end.x);
             const height = Math.abs(data.handles.start.y - data.handles.end.y);
+            if (rowPixelSpacing && colPixelSpacing) {
+                suffix = ' mm';
+                width *= colPixelSpacing;
+                height *= rowPixelSpacing;
+            }
+
             data.longestDiameter = (width>height?width:height).toFixed(1);
             data.shortestDiameter = (width>height?height:width).toFixed(1);
 
             const lengthText = ' L ' + data.longestDiameter + suffix;
             const widthText = ' W ' + data.shortestDiameter + suffix;
             const densityText = '  密度：' + density.toFixed(2);
+            
             
             const textLines = [`标注 ${data.measurementNumber}`, densityText];
             

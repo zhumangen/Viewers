@@ -1,0 +1,44 @@
+@import "{ohif:design}/app"
+
+.toolbarSection
+  theme('border-bottom', '%s solid $uiBorderColor' % $uiBorderThickness)
+  flex: 0 0 auto
+  height: $toolbarHeight
+  padding-top: 6px
+  position: relative
+  transition(height 300ms ease)
+  width: 100%
+
+  &.expanded
+    height: $toolbarHeight + $toolbarDrawerHeight
+
+  .toolbarSectionEntry
+    theme('color', '$defaultColor')
+    /* cursor: pointer */
+    display: inline-block
+    theme('fill', '$defaultColor')
+    margin-top: 3px
+    min-width: 30px
+    theme('stroke', '$defaultColor')
+    text-align: center 
+
+  #save
+    &.roundedButton
+      cursor: pointer
+      color: #91b9cd
+      background-color: #16202b
+      border: 2px solid #3c5d80
+      border-radius: 25px  
+
+      &:hover        
+        theme('background-color', '$boxBackgroundColor')  
+
+    &.active
+      border-color: #00a4d9
+      background-color: #20a5d6
+
+
+
+
+
+

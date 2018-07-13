@@ -1,0 +1,47 @@
+<template name="app">
+    {{#header brandHref='http://www.jfhealthcare.com' headerClasses=instance.headerClasses}}
+        {{#section 'brand'}}
+            <div class="logo-image"><img type="image/png" src="/images/logo-transparent.png"/></div>
+            <div class="logo-text">九峰标注工作站 - 2.2</div>
+            <!--
+            <svg class="logo-image">
+                <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-ohif-logo"}}></use>
+            </svg>
+            <div class="logo-text">Open Health Imaging Foundation</div>
+            -->
+        {{/section}}
+
+        {{#section 'headerAfterBrand'}}
+            {{#if hasReporter}}
+                <div class="physician-info">
+                    <div class="physician-type">标注人：
+                        <span class="physician-name">{{ getReporter }}</span>
+                    </div>
+                    {{#if hasReviewer}}
+                        <div class="physician-type">审核人：
+                            <span class="physician-name">{{ getReviewer }}</span>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/if}}
+            
+            <!--
+            {{#if studyListToggleText}}
+                <a href="#" class="btn studyListLinkSection pull-left js-toggle-studyList" id="{{dasherize studyListToggleText}}-btn">
+                    {{studyListToggleText}}
+                </a>
+            {{/if}}
+            -->
+        {{/section}}
+        
+        {{#section 'headerMenu'}}
+            <span class="user-name pull-left m-r-1">{{userName}}</span>
+            <div class="menu-toggle pull-right">
+                <i class="fa fa-cog"></i>
+                <span class="caret-down"></span>
+            </div>
+        {{/section}}
+    {{/header}}
+
+    {{>Template.dynamic template=(choose this.template 'studylist') data=this}}
+</template>

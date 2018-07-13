@@ -376,6 +376,7 @@ Template.selectTree.helpers({
         }
 
         // Return the items sorted for tree columns
+        /*
         if (instance.data.threeColumns) {
             const begin = items.splice(0, Math.ceil(items.length / 2));
             const sortedItems = [];
@@ -387,7 +388,7 @@ Template.selectTree.helpers({
             });
             items = sortedItems;
         }
-
+        */
         // Return the tree items
         return items;
     }

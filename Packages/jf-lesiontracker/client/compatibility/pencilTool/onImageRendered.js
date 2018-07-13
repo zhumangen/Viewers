@@ -76,10 +76,10 @@ export default function onImageRendered (e) {
           };
           
           data.points.forEach(p => {
-              ellipse.left = ellipse.left>p.x?p.x:ellipse.left;
-              ellipse.top = ellipse.top>p.y?p.y:ellipse.top;
-              ellipse.right = ellipse.right>p.x?ellipse.right:p.x;
-              ellipse.bottom = ellipse.bottom>p.y?ellipse.bottom:p.y;
+              ellipse.left = Math.min(ellipse.left, p.x);
+              ellipse.top = Math.min(ellipse.top, p.y);
+              ellipse.right = Math.max(ellipse.right, p.x);
+              ellipse.bottom = Math.max(ellipse.bottom, p.y);
           });
           
           ellipse.left = Math.max(ellipse.left, 0);
@@ -88,8 +88,14 @@ export default function onImageRendered (e) {
           ellipse.bottom = Math.min(ellipse.bottom, image.height);
           ellipse.width = ellipse.right - ellipse.left;
           ellipse.height = ellipse.bottom - ellipse.top;
-          data.longestDiameter = Math.max(ellipse.width, ellipse.height).toFixed(1);
-          data.shortestDiameter = Math.min(ellipse.width, ellipse.height).toFixed(1);
+          const width = ellipse.width;
+          const height = ellipse.height;
+          if (colPixelSpacing && rowPixelSpacing) {
+              width *= colPixelSpacing;
+              height *= rowPixelSpacing;
+          }
+          data.longestDiameter = Math.max(width, height).toFixed(1);
+          data.shortestDiameter = Math.min(width, height).toFixed(1);
           
         let density;
         if (data.invalidated === false) {

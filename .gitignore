@@ -1,5 +1,4 @@
 .idea/
-.meteor/local
 .meteor/meteorite
 .meteor/dev_bundle
 */.meteor/dev_bundle
@@ -8,11 +7,8 @@ node_modules
 npm-debug.log
 Packages/active-entry/helloworld/
 LesionTracker/tests/nightwatch/reports/
-package-lock.json
 docs/_book
 .hg/
 dist/
 .hgignore
 .hgtags
-LesionMarker/
-TbRating/
