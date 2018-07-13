@@ -25,6 +25,24 @@ Template.measurementTableRow.helpers({
     },
     hasWarnings() {
         return !!Template.instance().getWarningMessages().length;
+    },
+    displayHeader() {
+        const instance = Template.instance();
+        const entry = instance.data.rowItem.entries[0];
+        const config = JF.measurements.MeasurementApi.getConfiguration();
+        const groupId = instance.data.measurementApi.toolsGroupsMap[entry.toolType];
+        const group = _.findWhere(config.measurementTools, { id: groupId });
+        const { headerDisplay } = group.options.measurementTable;
+        return headerDisplay(entry);
+    },
+    nonTargetTool() {
+        const instance = Template.instance();
+        const entry = instance.data.rowItem.entries[0];
+        const config = JF.measurements.MeasurementApi.getConfiguration();
+        const groupId = instance.data.measurementApi.toolsGroupsMap[entry.toolType];
+        const group = _.findWhere(config.measurementTools, { id: groupId });
+        const tool = _.findWhere(group.childTools, { id: entry.toolType });
+        return tool.options.caseProgress.nonTarget;
     }
 });
 

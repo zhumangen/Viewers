@@ -46,8 +46,8 @@ Template.measurementTableTimepointCell.helpers({
             OHIF.log.warn('Something went wrong?');
         }
 
-        const { displayFunction } = tool.options.measurementTable;
-        return displayFunction(data);
+        const { detailDisplay } = toolGroup.options.measurementTable;
+        return detailDisplay(data);
     },
 
     isLoading() {

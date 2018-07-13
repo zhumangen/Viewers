@@ -5,6 +5,7 @@ import handleSingleMeasurementModified from './handleSingleMeasurementModified';
 import handleChildMeasurementModified from './handleChildMeasurementModified';
 import handleSingleMeasurementRemoved from './handleSingleMeasurementRemoved';
 import handleChildMeasurementRemoved from './handleChildMeasurementRemoved';
+import getImageAttributes from './getImageAttributes';
 
 const MeasurementHandlers = {
     handleSingleMeasurementAdded,
@@ -13,6 +14,7 @@ const MeasurementHandlers = {
     handleChildMeasurementModified,
     handleSingleMeasurementRemoved,
     handleChildMeasurementRemoved,
+    getImageAttributes,
 
     onAdded(event, instance) {
         const eventData = event.detail;

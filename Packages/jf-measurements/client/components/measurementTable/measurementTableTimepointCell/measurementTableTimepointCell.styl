@@ -13,14 +13,18 @@
     right: 5px
     top: 3px
 
-  span
-    display: block
-
   &.loading .loading-spinner
     display: block
 
-  &, span
+  &
     theme('color', '$textPrimaryColor')
 
-  &:hover, span:hover
+  &:hover
     theme('color', '$activeColor')
+    
+  .prop-node
+    .prop-name
+      theme('color', '$textSecondaryColor')
+      
+    &:hover
+      theme('color', '$activeColor')

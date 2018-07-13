@@ -1,0 +1,31 @@
+<template name="selectTreeView">
+    {{#each item in this.items}}
+        {{#if (and item (isArray item.items))}}
+            <div class="tree-node {{concat 'tree-node-' this.index}}" data-index="{{this.index}}">
+                <div class="node-name"><i class="fa fa-caret-down"></i>{{item.name.zh}}</div>
+                {{>selectTreeView items=item.items index=(sum this.index 1)}}
+            </div>
+        {{/if}}
+    {{/each}}
+    {{#if allLeaves }}
+        <div class="tree-leaves">
+            {{#each item in this.items}}
+                {{>inputCheckbox
+                    id=item.code
+                    name=this.key
+                    itemData=item
+                    value=item.code
+                    label=item.name.zh
+                    labelClass='tree-leaf'
+                    checked=item.checked
+                }}
+            {{/each}}
+        </div>
+    {{/if}}
+</template>
+
+<template name="selectTreeRoot">
+    <div class="tree-root">
+        {{>selectTreeView items=this.items index=1}}
+    </div>
+</template>

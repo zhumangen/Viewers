@@ -201,7 +201,9 @@ Template.toolbarSection.helpers({
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-link',
             disableFunction: Viewerbase.viewportUtils.isStackScrollLinkingDisabled
         });
-
+        
+        buttonData = buttonData.concat(targetSubTools);
+/*
         buttonData.push({
             id: 'toggleTarget',
             title: '标注',
@@ -210,15 +212,7 @@ Template.toolbarSection.helpers({
             disabled: isToolDisabled,
             subTools: targetSubTools
         });
-/*
-        buttonData.push({
-            id: 'bidirectional',
-            title: '标注',
-            classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target',
-            disabled: isToolDisabled
-        });
-*/        
+   
         buttonData.push({
             id: 'nonTarget',
             title: '标签',
@@ -226,7 +220,7 @@ Template.toolbarSection.helpers({
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-non-target',
             disabled: isToolDisabled
         });
-
+*/
         buttonData.push({
             id: 'toggleMore',
             title: '更多',

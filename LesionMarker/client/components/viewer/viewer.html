@@ -2,7 +2,8 @@
     <div class="viewerDialogs">
         {{#if and Template.subscriptionsReady dataSourcesReady}}
             {{>confirmDeleteDialog}}
-            {{>measurementTableHUD (clone this)}}
+            <!--{{>measurementTableHUD (clone this)}}-->
+            {{>selectForm measurementApi=this.measurementApi}}
             {{>cineDialog}}
         {{/if}}
     </div>

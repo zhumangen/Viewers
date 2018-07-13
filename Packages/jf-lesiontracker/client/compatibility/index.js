@@ -6,3 +6,5 @@ import './qualitativeTargetTools.js';
 import './ellipseTargetTool.js';
 import './probeTargetTool.js';
 import './pencilTool';
+import './tissueTool';
+import './labelTool';

@@ -48,6 +48,8 @@ jf:core
 
 # Necessary for Lesion Trakcer
 jf:lesiontracker
+jf:select-form
+jf:report-sidebar
 ohif:user
 ohif:user-management
 ohif:select-tree

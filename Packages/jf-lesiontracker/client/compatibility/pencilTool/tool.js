@@ -44,6 +44,6 @@ toolInterface.touch = cornerstoneTools.touchTool({
   mouseDownCallback
 });
 
-cornerstoneTools.targetPencil = toolInterface.mouse;
-cornerstoneTools.targetPencil.setConfiguration(configuration);
-cornerstoneTools.targetPencilTouch = toolInterface.touch;
+cornerstoneTools[toolType] = toolInterface.mouse;
+cornerstoneTools[toolType].setConfiguration(configuration);
+cornerstoneTools[toolType + 'Touch'] = toolInterface.touch;

@@ -1,0 +1,26 @@
+<template name="reportSidebar">
+	<div class="report-siderbar">
+		<div class="report-header clearfix">
+			<div class="origin-report {{#if not this.isCompleteReport.get}} selected {{/if}}">原始报告</div>
+			<div class="complete-report {{#if this.isCompleteReport.get}} selected {{/if}}">完成报告</div>
+		</div>
+		<div class="report-content">
+			<div class="image-watching">
+				<h3>影像所见：</h3>
+				<ul class="list">
+					{{#each item in reportData.imageWatch}}
+						<li class="item">{{item.text}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="diagnostic-advice">
+				<h3>诊断建议：</h3>
+				<ul class="list">
+					{{#each item in reportData.diagnosticAdvice}}
+						<li class="item">{{item.text}}</li>
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+	</div>
+</template>

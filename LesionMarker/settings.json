@@ -1,0 +1,24 @@
+{
+  "public": {
+    "verifyEmail": false,
+    "demoUserEnabled": false,
+    "ui": {
+      "studyListFunctionsEnabled": true,
+      "leftSidebarOpen": true,
+      "leftSidebarDragAndDrop": true,
+      "displaySetNavigationLoopOverSeries": true,
+      "displaySetNavigationMultipleViewports": false,
+      "displayEchoUltrasoundWorkflow": false,
+      "autoPositionMeasurementsTextCallOuts": "TRBL",
+      "showStackLoadingProgressBar": true,
+      "cornerstoneRenderer": "webgl",
+      "sortSeriesByIncomingOrder": false,
+      "useMiddleSeriesInstanceAsThumbnail": true
+    },
+    "prefetch": {
+      "displaySetCount": 1
+    }
+  },
+  "defaultServiceType": "dicomWeb",
+  "dropCollections": false
+}

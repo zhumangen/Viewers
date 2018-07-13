@@ -542,6 +542,6 @@ toolInterface.touch = cornerstoneTools.touchTool({
   toolType
 });
 
-cornerstoneTools.targetEllipse = toolInterface.mouse;
-cornerstoneTools.targetEllipse.setConfiguration(configuration);
-cornerstoneTools.targetEllipseTouch = toolInterface.touch;
+cornerstoneTools[toolType] = toolInterface.mouse;
+cornerstoneTools[toolType].setConfiguration(configuration);
+cornerstoneTools[toolType + 'Touch'] = toolInterface.touch;

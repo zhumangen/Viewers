@@ -221,6 +221,11 @@ class MeasurementApi {
                         measurements = measurements.concat(measurementData[toolGroup.id]);
                     });
                 }
+                
+                measurements.forEach(measurement => {
+                    measurement.location = JSON.stringify(measurement.location);
+                });
+                
                 resolve(measurements);
             }).catch(error => {
                 OHIF.log.error('Measurement storage error: ', error);

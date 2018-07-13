@@ -2,8 +2,8 @@ import { measurementTools } from './measurementTools';
 import { OHIF } from 'meteor/ohif:core';
 import { HTTP } from 'meteor/http';
 
-// const apiHost = 'http://192.168.10.50:8080';
-const apiHost = 'http://47.100.41.69:9090';
+const apiHost = ' http://101.132.45.197:8685';
+// const apiHost = 'http://47.100.41.69:9090';
 
 export const retrieveMeasurements = (options) => {
     OHIF.log.info('retrieveMeasurements');

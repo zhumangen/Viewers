@@ -75,7 +75,9 @@ export const targetEllipse = {
             displayFunction
         },
         caseProgress: {
-            include: true
+            include: true,
+            nonTarget: false,
+            toggleVisibility: true
         }
     }
 };

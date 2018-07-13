@@ -92,7 +92,9 @@ export const bidirectional = {
             displayFunction
         },
         caseProgress: {
-            include: true
+            include: true,
+            nonTarget: false,
+            toggleVisibility: true
         }
     }
 };

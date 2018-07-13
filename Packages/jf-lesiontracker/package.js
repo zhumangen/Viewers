@@ -32,8 +32,4 @@ Package.onUse(function(api) {
     api.addFiles('server/index.js', 'server');
 
     api.addFiles('client/index.js', 'client');
-
-    // Export client-side collections
-    api.export('LesionLocations', 'client');
-    api.export('LocationResponses', 'client');
 });

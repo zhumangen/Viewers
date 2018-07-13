@@ -1,5 +1,5 @@
 {
-  "name": "LesionTracker",
+  "name": "LesionMracker",
   "private": true,
   "scripts": {
     "lint": "eslint .",
@@ -29,7 +29,7 @@
     "type": "git",
     "url": "https://github.com/OHIF/Viewers.git"
   },
-  "author": "OHIF",
+  "author": "JF",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/OHIF/Viewers/issues"

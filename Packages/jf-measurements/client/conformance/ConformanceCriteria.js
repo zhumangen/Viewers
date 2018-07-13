@@ -163,7 +163,7 @@ class ConformanceCriteria {
             };
 
             fillData('targets');
-            fillData('nonTargets');
+            // fillData('nonTargets');
 
             Promise.all(studyPromises).then(() => {
                 resolve(data);

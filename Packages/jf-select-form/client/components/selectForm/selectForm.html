@@ -1,0 +1,15 @@
+<template name="selectForm">
+    <div id="selectForm" class="{{formHidden}}">
+        <div class="flex-v full-height">
+            <div class="header">
+                <span>{{headerText}}</span>
+            </div>
+            {{#scrollArea class='scroll-area flex-grow fit' scrollStep=63}}
+            {{/scrollArea}}
+            <div class="footer">
+                {{#button id='cancel' class='btn p-x-2'}}取消{{/button}}
+                {{#button id='save' class='btn p-x-2'}}确定{{/button}}
+            </div>
+        </div>
+    </div>
+</template>

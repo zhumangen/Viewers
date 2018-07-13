@@ -457,7 +457,7 @@ function doubleClickCallback(e) {
     }
 }
 
-cornerstoneTools.nonTarget = cornerstoneTools.mouseButtonTool({
+cornerstoneTools[toolType] = cornerstoneTools.mouseButtonTool({
     addNewMeasurement,
     createNewMeasurement,
     onImageRendered,
@@ -466,9 +466,9 @@ cornerstoneTools.nonTarget = cornerstoneTools.mouseButtonTool({
     mouseDoubleClickCallback: doubleClickCallback
 });
 
-cornerstoneTools.nonTarget.setConfiguration(configuration);
+cornerstoneTools[toolType].setConfiguration(configuration);
 
-cornerstoneTools.nonTargetTouch = cornerstoneTools.touchTool({
+cornerstoneTools[toolType + 'Touch'] = cornerstoneTools.touchTool({
     addNewMeasurement: addNewMeasurementTouch,
     createNewMeasurement,
     onImageRendered,

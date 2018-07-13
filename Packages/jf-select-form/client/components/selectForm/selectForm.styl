@@ -1,0 +1,55 @@
+@require '{ohif:design}/app'
+
+$borderColor = rgba(77, 99, 110, 0.81)
+
+#selectForm
+  background: rgba(0, 0, 0, 0.95)
+  border-radius: 8px
+  border: solid 1px $borderColor;
+  bottom: 3px
+  height: 600px
+  left: auto
+  overflow: hidden
+  position: absolute
+  right: 341px
+  top: 128px
+  width: 318px
+  z-index: 1
+  
+  .scrollable
+    margin-left: 0
+    padding-left: 0
+
+  .header
+    theme('background', '$uiGrayDarkest')
+    theme('color', '$textSecondaryColor')
+    border-bottom: $uiBorderThickness solid $borderColor
+    font-weight: 300
+    font-size: 20px
+    height: 55px
+    line-height: 55px
+    position: relative
+    text-align: center
+    width: 100%
+
+  .footer
+    theme('background', '$uiGrayDarkest')
+    border-top: $uiBorderThickness solid $borderColor
+    height: 70px
+    padding: 10px
+    
+    button.btn
+      float: right
+      theme('background-color', '$activeColor')
+      theme('border', '1px solid $uiBorderColorActive')
+      color: #fff
+      cursor: pointer
+      font-size: 15px
+      font-weight: bold
+      height: 37px
+      margin-right: 6px
+      text-align: center
+
+      &[disabled]
+        /* opacity: 0.5 */
+        cursor: not-allowed

@@ -171,7 +171,6 @@ Template.viewer.onCreated(() => {
     // JF.lesiontracker.toggleLesionTrackerToolsButtons(!!currentTimepointId);
     
     let params = Session.get('queryParams');
-    measurementApi.retrieveLesions(params);
     measurementApi.queryUserInfo(params).then(user => {
         user.status =  0;
         if ((params.statusCode === '7001' || params.statusCode === '7002') && user.permission > 0) {

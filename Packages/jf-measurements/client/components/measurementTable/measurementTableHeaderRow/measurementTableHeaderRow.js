@@ -1,5 +1,6 @@
 import { Template } from 'meteor/templating';
 import { JF } from 'meteor/jf:core';
+import { cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { Viewerbase } from 'meteor/ohif:viewerbase';
 
 Template.measurementTableHeaderRow.helpers({
@@ -58,8 +59,14 @@ Template.measurementTableHeaderRow.helpers({
 Template.measurementTableHeaderRow.events({
     'click .js-setTool'(event, instance) {
         const { toolGroup } = instance.data;
-        const toolType = toolGroup.childTools[0].cornerstoneToolType;
-        const activeToolId = Array.isArray(toolType) ? toolType[0] : toolType;
-        Viewerbase.toolManager.setActiveTool(activeToolId);
+        const tool = toolGroup.childTools[0];
+        const toolType = tool.cornerstoneToolType;
+        if (tool.options.caseProgress.nonTarget) {
+            const measurement = cornerstoneTools[toolType].createNewMeasurement();
+            Session.set('measurementData', measurement);
+        } else {
+            const activeToolId = Array.isArray(toolType) ? toolType[0] : toolType;
+            Viewerbase.toolManager.setActiveTool(activeToolId);
+        }
     }
 });

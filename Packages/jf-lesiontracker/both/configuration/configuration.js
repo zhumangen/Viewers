@@ -11,10 +11,6 @@ JF.measurements.MeasurementApi.setConfiguration({
         id: 'newTargets',
         name: 'New Targets',
         toolGroupId: 'targets'
-    }, {
-        id: 'newNonTargets',
-        name: 'New Non-Targets',
-        toolGroupId: 'nonTargets'
     }],
     dataExchange: {
         retrieve: retrieveMeasurements,

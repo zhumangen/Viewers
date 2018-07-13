@@ -414,6 +414,6 @@ toolInterface.touch = cornerstoneTools.touchTool({
   toolType
 });
 
-cornerstoneTools.targetProbe = toolInterface.mouse;
-cornerstoneTools.targetProbe.setConfiguration(configuration);
-cornerstoneTools.targetProbeTouch = toolInterface.touch;
+cornerstoneTools[toolType] = toolInterface.mouse;
+cornerstoneTools[toolType].setConfiguration(configuration);
+cornerstoneTools[toolType + 'Touch'] = toolInterface.touch;
