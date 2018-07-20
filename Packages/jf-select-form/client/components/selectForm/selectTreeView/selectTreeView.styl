@@ -23,12 +23,6 @@ $gray6 = #303030
 
             i
                 margin-right: 2px
-
-            &.hover
-                background: #f5f7fa
-            
-            &.selected
-                background: #8fb5db
             
         .tree-leaves
             display: flex
@@ -61,13 +55,13 @@ $gray6 = #303030
                 font-weight: normal
                 
     .tree-node-1
-        backgroud: $gray3
+        theme('background', '$uiGrayDarkest')
         font-size: 18px
         
         .tree-node-2
-            backgroud: $gray2
+            theme('background', '$uiGrayDark')
             font-size: 16px
             
             .tree-node-3
-                backgroud: $gray1
+                theme('background', '$uiGrayDark')
                 font-size: 14px

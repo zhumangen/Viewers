@@ -3,7 +3,7 @@
         {{#if and Template.subscriptionsReady dataSourcesReady}}
             {{>confirmDeleteDialog}}
             <!--{{>measurementTableHUD (clone this)}}-->
-            {{>selectForm measurementApi=this.measurementApi}}
+            {{>selectForm (clone this)}}
             {{>cineDialog}}
         {{/if}}
     </div>

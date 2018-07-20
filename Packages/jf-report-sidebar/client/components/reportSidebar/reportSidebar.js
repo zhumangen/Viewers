@@ -5,74 +5,72 @@ import { Tracker } from 'meteor/tracker';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { OHIF } from 'meteor/ohif:core';
-
-Template.reportSidebar.onRendered(() => {
-	
-});
+import { JF } from 'meteor/jf:core';
 
 Template.reportSidebar.onCreated(() => {
-	const instance = Template.instance();
-	instance.data.isCompleteReport = new ReactiveVar(false);
+    const instance = Template.instance();
+    instance.data.isCompleteReport = new ReactiveVar(false);
+    instance.data.hiLoading = new ReactiveVar(false);
+    instance.data.hiReport = new ReactiveVar({});
+    instance.data.aiLoading = new ReactiveVar(false);
+    instance.data.aiReport = new ReactiveVar({});
 });
 
-Template.reportSidebar.helpers({	
-	reportData() {
-		const instance = Template.instance();
-		const data = {};
-		if(instance.data.isCompleteReport.get()){
-			data = {
-				imageWatch: [{
-					id: 1,
-					text: '两肺轻度淤血，双肺门阴影增大、模糊，心脏增大呈“二尖瓣-普大型”/“三尖瓣-普大型”/“主动脉型”/“梨形”/“烧瓶状”/“靴形”,心胸比例为（）。余未见明显异常。'
-				},{
-					id: 2,
-					text: '左/右膝关节胫骨平台增白变硬'
-				},{
-					id: 3,
-					text: '左/右膝关节胫骨平台增白变硬， 膝关节构成骨部分骨端可见骨质增生影，内侧关节间隙稍变窄，周围软组织未见明显异常。'
-				}],
-				diagnosticAdvice: [{
-					id: 1,
-					text: '双肺纹理无明显增多、增粗，肺内未见明显实变影，两肺门影无增大及增浓；纵隔居中，心影大小、形态、位置可；双侧膈面清晰，肋膈角锐利。'
-				},{
-					id: 2,
-					text: '心、肺、膈未见明显异常。'
-				},{
-					id: 3,
-					text: '左/右膝关节退行性变。'
-				}]
-			}
-		}else{
-			data = {
-				imageWatch: [{
-					id: 1,
-					text: '两肺轻度淤血，双肺门阴影增大、模糊，心脏增大呈“二尖瓣-普大型”/“三尖瓣-普大型”/“主动脉型”/“梨形”/“烧瓶状”/“靴形”,心胸比例为（）。余未见明显异常。'
-				},{
-					id: 2,
-					text: '左/右膝关节胫骨平台增白变硬'
-				}],
-				diagnosticAdvice: [{
-					id: 1,
-					text: '双肺纹理无明显增多、增粗，肺内未见明显实变影，两肺门影无增大及增浓；纵隔居中，心影大小、形态、位置可；双侧膈面清晰，肋膈角锐利。'
-				},{
-					id: 2,
-					text: '心、肺、膈未见明显异常。'
-				}]
-			}
-		}
+const getHiReport = instance => {
+    const api = instance.data.reportApi;
+    const params = Session.get('queryParams');
+    const element = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+    const { getImageAttributes } = JF.measurements.MeasurementHandlers;
+    const imageAttributes = getImageAttributes(element);
+    const options = Object.assign({}, params, imageAttributes);
+    instance.data.hiReport.set(null);
+    api.getHiReport(options).then(data => {
+        instance.data.hiReport.set(data);
+        instance.data.hiLoading.set(false);
+    }).catch(error => {
+        instance.data.hiLoading.set(false);
+    });
+    instance.data.hiLoading.set(true);
+};
 
-		return data;
-		
-	}
+const getAiReport = instance => {
+    const api = instance.data.reportApi;
+    const params = Session.get('queryParams');
+    const element = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+    const { getImageAttributes } = JF.measurements.MeasurementHandlers;
+    const imageAttributes = getImageAttributes(element);
+    const options = Object.assign({}, params, imageAttributes);
+    instance.data.aiReport.set(null);
+    api.getHiReport(options).then(data => {
+        instance.data.aiReport.set(data);
+        instance.data.aiLoading.set(false);
+    }).catch(error => {
+        instance.data.aiLoading.set(false);
+    });
+    instance.data.aiLoading.set(true);
+};
+
+Template.reportSidebar.onRendered(() => {
+    const instance = Template.instance();
+    
+});
+
+Template.reportSidebar.helpers({
+    isLoading() {
+        const instance = Template.instance();
+        return (!instance.data.isCompleteReport.get() && instance.data.hiLoading.get()) ||
+            (instance.data.isCompleteReport.get() && instance.data.aiLoading.get());
+    }
 });
 
 Template.reportSidebar.events({
-	'click .report-header div'(event, instance){
-		const $thisTarget = $(event.currentTarget);
-		if($thisTarget.index() == 0){
-			instance.data.isCompleteReport.set(false)
-		}else{
-			instance.data.isCompleteReport.set(true)
-		}
-	}
+    'click .report-header div'(event, instance){
+        const $thisTarget = $(event.currentTarget);
+        if($thisTarget.index() == 0){
+            getHiReport(instance);
+            instance.data.isCompleteReport.set(false)
+        }else{
+            instance.data.isCompleteReport.set(true)
+        }
+    }
 });

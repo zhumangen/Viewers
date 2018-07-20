@@ -41,15 +41,18 @@ Template.viewer.onCreated(() => {
     OHIF.viewer.data = OHIF.viewer.data || Session.get('ViewerData') || {};
 
     const { TimepointApi, MeasurementApi, ConformanceCriteria } = JF.measurements;
+    const ReportApi = JF.report.ReportApi
 
     const currentTimepointId = OHIF.viewer.data.currentTimepointId;
     const timepointApi = new TimepointApi(currentTimepointId);
     const measurementApi = new MeasurementApi(timepointApi);
     const conformanceCriteria = new ConformanceCriteria(measurementApi, timepointApi);
+    const reportApi = new ReportApi;
     const apis = {
         timepointApi,
         measurementApi,
-        conformanceCriteria
+        conformanceCriteria,
+        reportApi
     };
 
     Object.assign(OHIF.viewer, apis);

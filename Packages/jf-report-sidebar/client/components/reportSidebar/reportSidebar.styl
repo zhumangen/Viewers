@@ -1,53 +1,46 @@
 @require '{ohif:design}/app'
 
-.report-siderbar
-	theme('color', '$textPrimaryColor')
-	max-height: calc(100vh - 40px - 78px)
-	overflow-y: scroll
-	margin-right: -18px
+.report-sidebar
+    theme('color', '$textPrimaryColor')
+    height: 100%
 
-	.report-header
-		&>div			
-			float: left
-			width: 50%
-			height: 40px
-			line-height: 40px
-			text-align: center
-			font-size: 1.5rem
-			theme('background-color', '$uiGrayLight')
-			cursor: pointer
+    .report-header
+        &>div
+            float: left
+            width: 50%
+            height: 40px
+            line-height: 40px
+            text-align: center
+            font-size: 1.5rem
+            theme('background-color', '$uiGrayLight')
+            cursor: pointer
 
-			&.selected
-				theme('background-color', '$activeColor')
+            &.selected
+                theme('background-color', '$activeColor')
 
-	.report-content
-		theme('color', '$defaultColor')
+    .report-content
+        theme('color', '$defaultColor')
+        height: calc(100% - 40px)
 
-		h3
-			height: 50px
-			line-height: 50px
-			margin: 0
-			padding: 0 20px
-			font-size: 1.8rem
-			font-weight: normal
-			theme('background', '$uiGray')
+        .scroll-area .scrollable .content-item
+            theme('background', '$uiGrayDarkest')
+            width: 100%
+            margin-top: 2px
 
-		.list
-			width: 100%
-			padding: 0 20px 0 40px
-			margin-bottom: 2px
-			theme('background-color', '$uiGrayDarkest')
+            .item-header
+                theme('background', '$uiGray')
+                height: 50px
+                line-height: 50px
+                padding-left: 10px
+                font-size: 1.8rem
+                font-weight: normal
 
-			.item
-				width: 100%
-				height: auto
-				padding-top: 10px
-				list-style-type: decimal
-				white-space: normal
-				line-height: 2rem
-				word-break: break-all
-				word-wrap: break-word
-				font-size: 14px
-
-
-		
+            .item-details
+                width: 100%
+                height: auto
+                padding: 20px 10px
+                white-space: normal
+                line-height: 2rem
+                word-break: break-all
+                word-wrap: break-word
+                font-size: 14px
