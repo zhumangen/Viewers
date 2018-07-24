@@ -10,11 +10,11 @@ $gray6 = #303030
 
 .tree-root
     color: #91b9cd
-    
+
     .tree-node
         display: flex-v
         margin: 6px
-        
+
         .node-name
             margin: 2px
             height: 2rem
@@ -23,45 +23,31 @@ $gray6 = #303030
 
             i
                 margin-right: 2px
-            
+
         .tree-leaves
             display: flex
             flex-wrap: wrap
             margin: 6px 12px
-            font-size: 14px
-            
-            label  
-               /* position: relative
+            font-size: 16px
 
-                input 
-                    position: absolute
-                    clip: rect(0,0,0,0)
-
-                &:after
-                    position: absolute
-                    top: 0px
-                    left: -22px
-                    width: 16px
-                    height: 16px
-                    background: #ededed
-                    border: 1px solid #f00
-                    content: ''
-                    */
-            
             .tree-leaf
                 margin-right: 1.5rem
-            
+
             label
                 font-weight: normal
-                
+
+                &.disabled
+                    pointer-events: none;
+                    opacity: 0.5;
+
     .tree-node-1
         theme('background', '$uiGrayDarkest')
         font-size: 18px
-        
+
         .tree-node-2
             theme('background', '$uiGrayDark')
             font-size: 16px
-            
+
             .tree-node-3
                 theme('background', '$uiGrayDark')
-                font-size: 14px
+                font-size: 16px

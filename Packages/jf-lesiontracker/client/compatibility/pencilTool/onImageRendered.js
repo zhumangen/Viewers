@@ -13,7 +13,7 @@ export default function onImageRendered (e) {
 
   const image = eventData.image;
   const element = eventData.element;
-  
+
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
     let rowPixelSpacing;
     let colPixelSpacing;
@@ -48,8 +48,8 @@ export default function onImageRendered (e) {
         // Check which color the rendered tool should be
         const color = cornerstoneTools.toolColors.getColorIfActive(data.active);
         const points = data.points.map(p => cornerstone.pixelToCanvas(element, p));
-        
-        
+
+
         // Draw the curve on the canvas
         if (points.length > 0) {
             context.beginPath();
@@ -67,21 +67,21 @@ export default function onImageRendered (e) {
             context.closePath();
             context.stroke();
         }
-        
+
         const ellipse = {
             left: image.width,
             top: image.height,
             right: 0,
             bottom: 0
           };
-          
+
           data.points.forEach(p => {
               ellipse.left = Math.min(ellipse.left, p.x);
               ellipse.top = Math.min(ellipse.top, p.y);
               ellipse.right = Math.max(ellipse.right, p.x);
               ellipse.bottom = Math.max(ellipse.bottom, p.y);
           });
-          
+
           ellipse.left = Math.max(ellipse.left, 0);
           ellipse.top = Math.max(ellipse.top, 0);
           ellipse.right = Math.min(ellipse.right, image.width);
@@ -96,7 +96,7 @@ export default function onImageRendered (e) {
           }
           data.longestDiameter = Math.max(width, height).toFixed(1);
           data.shortestDiameter = Math.min(width, height).toFixed(1);
-          
+
         let density;
         if (data.invalidated === false) {
             density = data.density;
@@ -106,15 +106,15 @@ export default function onImageRendered (e) {
                 density = parseFloat(cornerstoneTools.calculateEllipseStatistics(pixels, ellipse).mean);
                 data.density = density;
             }
-            
+
             data.invalidated = false;
         }
 
         // Draw the text
         if (data.measurementNumber) {
             const densityText = '  密度：' + density.toFixed(2);
-            const textLines = [`标注 ${data.measurementNumber}`, densityText];
-            
+            const textLines = [`病灶 ${data.measurementNumber}`, densityText];
+
             // If the textbox has not been moved by the user, it should be displayed on the right-most
             // Side of the tool.
             if (!data.handles.textBox.hasMoved) {
@@ -126,7 +126,7 @@ export default function onImageRendered (e) {
 
             // Convert the textbox Image coordinates into Canvas coordinates
             const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
-            
+
             // Set options for the textbox drawing function
             const options = {
               centering: {
@@ -141,7 +141,7 @@ export default function onImageRendered (e) {
 
             // Store the bounding box data in the handle for mouse-dragging and highlighting
             data.handles.textBox.boundingBox = boundingBox;
-            
+
             // OHIF.cornerstone.repositionTextBox(eventData, data, options);
 
               // Draw linked line as dashed

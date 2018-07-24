@@ -133,7 +133,7 @@ function addNewMeasurement(mouseEventData) {
             // Set lesionMeasurementData Session
             config.getMeasurementLocationCallback(measurementData, mouseEventData, doneCallback);
         }
-        
+
         measurementData.invalidated = true;
 
         // Unbind the Esc keydown hook
@@ -259,7 +259,7 @@ function onImageRendered (e) {
 
   const image = eventData.image;
   const element = eventData.element;
-  
+
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
     let rowPixelSpacing;
     let colPixelSpacing;
@@ -342,13 +342,13 @@ function onImageRendered (e) {
             width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
             height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
           };
-          
+
             if (!image.color) {
                 const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
                 density = parseFloat(cornerstoneTools.calculateEllipseStatistics(pixels, ellipse).mean);
                 data.density = density;
             }
-            
+
             data.invalidated = false;
         }
 
@@ -370,10 +370,10 @@ function onImageRendered (e) {
             const lengthText = ' L ' + data.longestDiameter + suffix;
             const widthText = ' W ' + data.shortestDiameter + suffix;
             const densityText = '  密度：' + density.toFixed(2);
-            
-            
-            const textLines = [`标注 ${data.measurementNumber}`, densityText];
-            
+
+
+            const textLines = [`病灶 ${data.measurementNumber}`, densityText];
+
             // If the textbox has not been moved by the user, it should be displayed on the right-most
             // Side of the tool.
             if (!data.handles.textBox.hasMoved) {
@@ -385,7 +385,7 @@ function onImageRendered (e) {
 
             // Convert the textbox Image coordinates into Canvas coordinates
             const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
-            
+
             // Set options for the textbox drawing function
             const options = {
               centering: {
@@ -400,7 +400,7 @@ function onImageRendered (e) {
 
             // Store the bounding box data in the handle for mouse-dragging and highlighting
             data.handles.textBox.boundingBox = boundingBox;
-            
+
             // OHIF.cornerstone.repositionTextBox(eventData, data, options);
 
               // Draw linked line as dashed

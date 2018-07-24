@@ -9,7 +9,7 @@ import { targetUN } from '../tools/targetUN';
 const detailDisplay = data => {
     const items = data.location;
     if (!items || !(items instanceof Array)) return;
-    
+
     const textData = '';
     items.forEach(item => {
         textData += '<div class="prop-node"><span class="prop-name">';
@@ -35,10 +35,10 @@ const detailDisplay = data => {
         });
         while (textData.slice(textData.length-1) === '；')
             textData = textData.slice(0, textData.length-1);
-        
+
         textData += '</span></div>';
     });
-    
+
     return textData;
 };
 
@@ -54,7 +54,7 @@ const headerDisplay = data => {
 export const targets = {
     id: 'targets',
     name: '病灶',
-    childTools: [bidirectional, targetEllipse, targetProbe, targetPencil, targetCR, targetUN],
+    childTools: [targetEllipse, bidirectional, targetProbe, targetPencil, targetCR, targetUN],
     schema: ToolGroupBaseSchema,
     options: {
         measurementTable: {

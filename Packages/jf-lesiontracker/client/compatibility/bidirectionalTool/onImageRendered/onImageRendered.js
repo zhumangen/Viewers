@@ -42,7 +42,7 @@ export default function(event) {
 
     for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
-        
+
         if (data.visible) {
             const { start, end, perpendicularStart, perpendicularEnd, textBox } = data.handles;
             const strokeWidth = lineWidth;
@@ -107,7 +107,7 @@ export default function(event) {
                 length = tempW;
                 width = tempL;
             }
-            
+
             let density;
             if (data.invalidated === false) {
                 density = data.density;
@@ -120,13 +120,13 @@ export default function(event) {
                 };
                 ellipse.width = ellipse.right - ellipse.left;
                 ellipse.height = ellipse.bottom - ellipse.top;
-                
+
                 if (!image.color) {
                     const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
                     density = parseFloat(cornerstoneTools.calculateEllipseStatistics(pixels, ellipse).mean);
                     data.density = density;
                 }
-                
+
                 data.invalidated = false;
             }
 
@@ -140,7 +140,7 @@ export default function(event) {
                 const lengthText = ' L ' + length.toFixed(1) + suffix;
                 const widthText = ' W ' + width.toFixed(1) + suffix;
                 const densityText = '  密度：' + density.toFixed(2);
-                const textLines = [`标注 ${data.measurementNumber}`, densityText];
+                const textLines = [`病灶 ${data.measurementNumber}`, densityText];
 
                 const boundingBox = cornerstoneTools.drawTextBox(
                     context,

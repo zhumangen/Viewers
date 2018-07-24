@@ -8,7 +8,7 @@ import { OHIF } from 'meteor/ohif:core';
 Template.selectForm.onCreated(() => {
     const instance = Template.instance();
     instance.isRemoved = true;
-    instance.bodyPart = 'chest';
+    instance.bodyPart = 'tuberculosis';
     instance.toolGroupId = new ReactiveVar('');
     instance.removeTreeView = () => {
         if (instance.treeView) {
@@ -29,42 +29,43 @@ Template.selectForm.onDestroyed(() => {
 Template.selectForm.onRendered(() => {
     const instance = Template.instance();
     instance.$('#selectForm').resizable().draggable().bounded();
-    
+
     instance.autorun((computation) => {
         instance.removeTreeView();
-        
+
         const measurement = Session.get('measurementData');
         if (computation.firstRun || !measurement) return;
-        
+
         const api = instance.data.measurementApi;
         const toolType = measurement.toolType;
         const toolGroup = api.toolsGroupsMap[toolType];
         instance.toolGroupId.set(toolGroup);
-        
+
         if (!toolGroup) return;
-        
+
         const collection = JF.collections.definitions[toolGroup];
         const definition = collection.findOne({part: instance.bodyPart});
-        const items = definition.items;
+        const item = definition;
 
-        const setValues = (items, itemsWithValue) => {
-            items.forEach((item, index) => {
-                if (itemsWithValue.length > index) {
-                    if (item.items && item.items.length > 0) {
-                        setValues(item.items, itemsWithValue[index].items)
-                    } else {
-                        item.checked = itemsWithValue[index].checked;
-                    }
+        const checkedCodes = (items, codes) => {
+          if (items && items instanceof Array) {
+              items.forEach(item => {
+                if (item.items) {
+                  checkedCodes(item.items, codes)
+                } else {
+                  codes.push(item.code);
                 }
-            });
+              });
+          }
         };
-        
-        if (measurement.location && (measurement.location instanceof Array))
-            setValues(items, measurement.location);
+
+        const codes = [];
+        checkedCodes(measurement.location, codes);
 
         const data = {
             measurement,
-            items
+            item,
+            codes
         };
         instance.measurementData = data;
         const parentElement = instance.$('.scrollable')[0];
@@ -98,9 +99,33 @@ Template.selectForm.helpers({
 Template.selectForm.events({
     'click #save'(event, instance) {
         const measurement = instance.measurementData.measurement;
-        const items = instance.measurementData.items;
-        measurement.location = items;
-        
+        const rootItem = instance.measurementData.item;
+
+        const removeNonChecked = item => {
+          if (item) {
+            if (item.items && item.items instanceof Array) {
+              for (let i = 0; i < item.items.length; ++i) {
+                const subItem = item.items[i];
+                if (subItem.items && subItem.items instanceof Array) {
+                  removeNonChecked(subItem);
+                  if (subItem.items.length === 0) {
+                    item.items.splice(i, 1);
+                    i--;
+                  }
+                } else {
+                  if (!subItem.checked) {
+                    item.items.splice(i, 1);
+                    i--;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        removeNonChecked(rootItem)
+        measurement.location = rootItem.items;
+
         const api = instance.data.measurementApi;
         const groupId = api.toolsGroupsMap[measurement.toolType];
         const config = JF.measurements.MeasurementApi.getConfiguration();
@@ -110,25 +135,25 @@ Template.selectForm.events({
         if (!tool.options.caseProgress.nonTarget || !measurement.isCreating) {
             if (measurement.isCreating !== undefined)
                 delete measurement.isCreating;
-            
+
             api.tools[tool.id].update({
                 measurementNumber: measurement.measurementNumber,
                 patientId: measurement.patientId
             }, {
                 $set: {
-                    location: items
+                    location: rootItem.items
                 }
             }, {
                 multi: true
             });
         } else {
             delete measurement.isCreating;
-            
+
             api.tools[tool.id].insert(measurement);
         }
-        
+
         Session.set('measurementData', false);
-        
+
         // Notify that viewer suffered changes
         if (tool.toolGroup !== 'temp') {
             JF.measurements.triggerTimepointUnsavedChanges(tool.id);

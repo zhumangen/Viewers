@@ -4,9 +4,9 @@ import { tissue } from '../tools/tissue';
 const detailDisplay = data => {
     const items = data.location;
     if (!items || !(items instanceof Array)) return;
-    
+
     items = items.slice(1);
-    
+
     const textData = '';
     items.forEach(item => {
         textData += '<div class="prop-node"><span class="prop-name">';
@@ -30,13 +30,13 @@ const detailDisplay = data => {
                 }
             }
         });
-        
+
         while (textData.slice(textData.length-1) === '；')
             textData = textData.slice(0, textData.length-1);
-        
+
         textData += '</span></div>';
     });
-    
+
     return textData;
 };
 
@@ -58,7 +58,7 @@ const headerDisplay = data => {
 
 export const tissues = {
     id: 'tissues',
-    name: '固有结构',
+    name: '组织结构的改变',
     childTools: [tissue],
     schema: ToolGroupBaseSchema,
     options: {
