@@ -12,15 +12,48 @@ Template.selectTreeView.onCreated(() => {
     instance.channel = new ReactiveVar([]);
   }
 
-  const items = instance.data.item.items;
+  const root = instance.data.item;
+  const items = root.items;
   const type = instance.data.item.type;
   if (!(items.length && items[0].items && items[0].items.length)) {
-    items.forEach(item => {
-      item.checked = instance.data.codes.indexOf(item.code) > -1;
-      if (type === 'master' && item.checked) {
-        instance.data.channel.set(item.enable || []);
+    instance.isGrouped = root.groups && root.groups.length > 0;
+    if (type === 'master') {
+      if (!instance.isGrouped) {
+        items.forEach(item => {
+          item.checked = instance.data.codes.indexOf(item.code) > -1;
+          if (item.checked) {
+            instance.data.channel.set(item.enable || []);
+          }
+        });
+      } else {
+        instance.disables = new ReactiveVar([]);
+        const groups = root.groups;
+        let nonNeutralGroup;
+        items.forEach(item => {
+          item.checked = instance.data.codes.indexOf(item.code) > -1;
+          if (item.checked) {
+            for (let i = 0; i < groups.length; ++i) {
+              const group = groups[i];
+              if (group.indexOf(item.code) >= 0 && !group.neutral) {
+                nonNeutralGroup = group;
+                break;
+              }
+            }
+          }
+        });
+
+        if (nonNeutralGroup) {
+          let disables = [];
+          groups.forEach(group => {
+            if (nonNeutralGroup != group) {
+              disables = disables.concat(group.members);
+            }
+          })
+          instance.disables.set(disables);
+          instance.data.channel.set(nonNeutralGroup.enables);
+        }
       }
-    })
+    }
 
     instance.needUpdate = new Tracker.Dependency();
   }
@@ -70,28 +103,65 @@ Template.selectTreeView.events({
 
         if (!instance.data.item.multi && checked) {
           const items = instance.data.item.items;
+          let update = false;
           items.forEach(item => {
             if (item.checked && item.code !== code) {
               item.checked = false;
-              instance.needUpdate.changed();
+              update = true;
             }
           });
+          if (update) instance.needUpdate.changed();
         }
 
         let codes = [];
         let currItem;
+        let neutralGroup;
+        let nonNeutralGroup;
         const items = instance.data.item.items;
         for (let i = 0; i < items.length; ++i) {
-            if (items[i].code === code) {
-                items[i].checked = checked;
-                currItem = items[i];
-                break;
+            const item = items[i];
+            if (item.code === code) {
+                item.checked = checked;
+                currItem = item;
+                if (!instance.isGrouped) break;
+            }
+            if (item.checked && instance.isGrouped) {
+              const groups = instance.data.item.groups;
+              groups.forEach(group => {
+                if (group.members.indexOf(item.code) >= 0) {
+                  if (group.neutral) {
+                    neutralGroup = group;
+                  } else {
+                    nonNeutralGroup = group;
+                  }
+                }
+              })
             }
         }
 
-        if (type === 'master') {
-          codes = checked?(currItem?currItem.enable:[]):[];
-          channel.set(codes);
+        if (currItem) {
+          if (type === 'master') {
+            if (instance.isGrouped) {
+              let disables = [];
+              if (nonNeutralGroup) {
+                const groups = instance.data.item.groups;
+                groups.forEach(group => {
+                  if (!group.neutral && group != nonNeutralGroup) {
+                    disables = disables.concat(group.members);
+                  }
+                });
+                codes = nonNeutralGroup.enables;
+              } else if (neutralGroup) {
+                codes = neutralGroup.enables;
+              }
+              instance.disables.set(disables);
+            } else {
+              codes = checked?currItem.enable:[];
+            }
+            channel.set(codes);
+          }
+        } else {
+          OHIF.log.info('Something went wrong here.');
         }
     }
 });
@@ -103,10 +173,21 @@ Template.selectTreeView.helpers({
         return !(items.length && items[0].items && items[0].items.length)
     },
     isDisabled(item) {
+      let disabled = false;
       const instance = Template.instance();
+      const type = instance.data.item.type;
       instance.needUpdate.depend();
-      const codes = instance.data.channel.get();
-      const disabled = instance.data.item.type==='slave'&&(!codes||!codes.length||codes.indexOf(item.code)<0);
+
+      if (type === 'master') {
+        if (instance.isGrouped) {
+          const disables = instance.disables.get();
+          disabled = disables.indexOf(item.code) >= 0;
+        }
+      } else if (type === 'slave') {
+        const codes = instance.data.channel.get();
+        disabled = !codes || !codes.length || codes.indexOf(item.code)<0;
+      }
+
       if (disabled) {
         item.checked = false;
         return 'disabled';

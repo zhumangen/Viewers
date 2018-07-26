@@ -35,21 +35,21 @@ Meteor.methods({
     storeMeasurements(measurementData, options) {
         OHIF.log.info('Storing Measurements on the Server');
         OHIF.log.info(JSON.stringify(measurementData, null, 2));
-        
+
         check(options, Match.Where(arg => {
             check(arg.userId, NonEmptyString);
             check(arg.studyInstanceUid, NonEmptyString);
             check(arg.seriesInstanceUids, NonEmptyStringArray);
             return true;
         }));
-        
+
         let filter = {};
         filter.userId = options.userId;
         filter.studyInstanceUid = options.studyInstanceUid;
         filter['$or'] = [];
         options.seriesInstanceUids.forEach(seriesInstanceUid => filter['$or'].push({seriesInstanceUid}));
         filter.status = 0;
-        
+
         measurementTools.forEach(tool => {
             MeasurementCollections[tool.id].remove(filter);
         });
@@ -66,7 +66,7 @@ Meteor.methods({
             });
         });
     },
-    
+
     changeStatus(options) {
         check(options, Match.Where(arg => {
             check(arg.userId, NonEmptyString);
@@ -75,15 +75,20 @@ Meteor.methods({
             check(arg.status, PositiveNumber);
             return true;
         }));
-        
+
         let filter = {};
-        filter.userId = options.userId;
         filter.studyInstanceUid = options.studyInstanceUid;
         filter['$or'] = [];
         options.seriesInstanceUids.forEach(seriesInstanceUid => filter['$or'].push({seriesInstanceUid}));
+        filter.status = options.status;
+        measurementTools.forEach(tool => {
+            MeasurementCollections[tool.id].remove(filter);
+        });
+
+        filter.userId = options.userId;
         filter.status = 0;
-        const operator = { $inc: {status: options.status } };
-        
+        const operator = { $set: {status: options.status } };
+
         measurementTools.forEach(tool => {
             MeasurementCollections[tool.id].update(filter, operator, { multi: true });
         });
@@ -102,7 +107,7 @@ Meteor.methods({
             check(arg.permission, NonNegativeNumber);
             return true;
         }));
-        
+
         let filter = {};
         filter.studyInstanceUid = options.studyInstanceUid;
         filter['$or'] = [];
@@ -132,24 +137,24 @@ Meteor.methods({
                 return measurementData;
             }
         }
-        
+
         measurementTools.forEach(tool => {
             measurementData[tool.id] = MeasurementCollections[tool.id].find(filter).fetch();
         });
 
         return measurementData;
     },
-    
+
     retrieveUserName(options) {
         OHIF.log.info('Retrieving user name');
-        
+
         check(options, Match.Where(arg => {
             check(arg.studyInstanceUid, NonEmptyString);
             check(arg.seriesInstanceUids, NonEmptyStringArray);
             check(arg.status, NonNegativeNumber);
             return true;
         }));
-        
+
         let userName;
         const filter = {
             studyInstanceUid: options.studyInstanceUid,
@@ -157,22 +162,22 @@ Meteor.methods({
         }
         filter.$or = [];
         options.seriesInstanceUids.forEach(seriesInstanceUid => filter.$or.push({seriesInstanceUid}));
-        
+
         let measurements = [];
         measurementTools.forEach(tool => {
             measurements = measurements.concat(MeasurementCollections[tool.id].find(filter).fetch());
         });
-        
+
         if (measurements.length > 0) {
             userName = measurements[0].userName;
         }
-        
+
         return userName;
     },
-    
+
     retrieveLesions(options) {
         OHIF.log.info('Retrieving Lesions from the Server');
-        
+
         check(options, Match.Where(arg => {
             check(arg.token, NonEmptyString);
             check(arg.version, NonEmptyString);
@@ -191,10 +196,10 @@ Meteor.methods({
         } catch (error) {
             OHIF.log.info('Retrieving lesions error: ', error);
         }
-        
+
         return lesions;
     },
-    
+
     postMeasurements(measurementData, token) {
         OHIF.log.info('Posting Measurements to other Server');
     }
