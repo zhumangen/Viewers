@@ -17,10 +17,13 @@ Template.selectTreeView.onCreated(() => {
   const type = instance.data.item.type;
   if (!(items.length && items[0].items && items[0].items.length)) {
     instance.isGrouped = root.groups && root.groups.length > 0;
+    items.forEach(item => {
+      item.checked = instance.data.codes.indexOf(item.code) > -1;
+    });
     if (type === 'master') {
       if (!instance.isGrouped) {
         items.forEach(item => {
-          item.checked = instance.data.codes.indexOf(item.code) > -1;
+          // item.checked = instance.data.codes.indexOf(item.code) > -1;
           if (item.checked) {
             instance.data.channel.set(item.enable || []);
           }
@@ -28,30 +31,39 @@ Template.selectTreeView.onCreated(() => {
       } else {
         instance.disables = new ReactiveVar([]);
         const groups = root.groups;
+        let neutralGroup;
         let nonNeutralGroup;
         items.forEach(item => {
-          item.checked = instance.data.codes.indexOf(item.code) > -1;
+          // item.checked = instance.data.codes.indexOf(item.code) > -1;
           if (item.checked) {
-            for (let i = 0; i < groups.length; ++i) {
-              const group = groups[i];
-              if (group.indexOf(item.code) >= 0 && !group.neutral) {
-                nonNeutralGroup = group;
-                break;
+            const groups = instance.data.item.groups;
+            groups.forEach(group => {
+              if (group.members.indexOf(item.code) >= 0) {
+                if (group.neutral) {
+                  neutralGroup = group;
+                } else {
+                  nonNeutralGroup = group;
+                }
               }
-            }
+            });
           }
         });
 
+        let codes = [];
+        let disables = [];
         if (nonNeutralGroup) {
-          let disables = [];
+          const groups = instance.data.item.groups;
           groups.forEach(group => {
-            if (nonNeutralGroup != group) {
+            if (!group.neutral && group != nonNeutralGroup) {
               disables = disables.concat(group.members);
             }
-          })
-          instance.disables.set(disables);
-          instance.data.channel.set(nonNeutralGroup.enables);
+          });
+          codes = nonNeutralGroup.enables;
+        } else if (neutralGroup) {
+          codes = neutralGroup.enables;
         }
+        instance.disables.set(disables);
+        instance.data.channel.set(codes);
       }
     }
 
@@ -135,7 +147,7 @@ Template.selectTreeView.events({
                     nonNeutralGroup = group;
                   }
                 }
-              })
+              });
             }
         }
 
