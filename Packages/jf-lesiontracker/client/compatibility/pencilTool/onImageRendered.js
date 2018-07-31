@@ -46,7 +46,7 @@ export default function onImageRendered (e) {
         }
 
         // Check which color the rendered tool should be
-        const color = cornerstoneTools.toolColors.getColorIfActive(data.active);
+        const color = cornerstoneTools.toolColors.getColorIfActive(data);
         const points = data.points.map(p => cornerstone.pixelToCanvas(element, p));
 
 

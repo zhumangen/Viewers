@@ -260,17 +260,17 @@ function onImageRendered (e) {
   const image = eventData.image;
   const element = eventData.element;
 
-    const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
-    let rowPixelSpacing;
-    let colPixelSpacing;
+  const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
+  let rowPixelSpacing;
+  let colPixelSpacing;
 
-    if (imagePlane) {
-        rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-        colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-    } else {
-        rowPixelSpacing = eventData.image.rowPixelSpacing;
-        colPixelSpacing = eventData.image.columnPixelSpacing;
-    }
+  if (imagePlane) {
+      rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+      colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+      rowPixelSpacing = eventData.image.rowPixelSpacing;
+      colPixelSpacing = eventData.image.columnPixelSpacing;
+  }
 
   const lineWidth = cornerstoneTools.toolStyle.getToolWidth();
   const config = cornerstoneTools[toolType].getConfiguration();
@@ -292,7 +292,7 @@ function onImageRendered (e) {
         }
 
         // Check which color the rendered tool should be
-        const color = cornerstoneTools.toolColors.getColorIfActive(data.active);
+        const color = cornerstoneTools.toolColors.getColorIfActive(data);
 
         // Convert Image coordinates to Canvas coordinates given the element
         const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);

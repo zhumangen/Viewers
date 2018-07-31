@@ -1,29 +1,34 @@
 <template name="reportSidebar">
   <div class="report-sidebar">
     <div class="report-header clearfix">
-      <div class="origin-report {{#if not this.isCompleteReport.get}} selected {{/if}}">原始报告</div>
-      <div class="complete-report {{#if this.isCompleteReport.get}} selected {{/if}}">完成报告</div>
+      <div class="origin-report {{#if hiSelected}} selected {{/if}}">原始报告</div>
+      <div class="complete-report {{#if not hiSelected}} selected {{/if}}">即时报告</div>
+    </div>
+    <div class="load-status">
+      <button id='update-btn' class='update-btn'>刷新</button>
+      {{#if (bool updateTime)}}
+        <div class="update-time">更新于：{{dateToString updateTime 'yyyy-MM-dd hh:mm:ss'}}</div>
+      {{/if}}
+      {{#if isLoading}}
+        <div class="status-icon"><i class="fa fa-spin fa-circle-o-notch fa-fw"></i></div>
+      {{/if}}
     </div>
     <div class="report-content">
       {{#scrollArea class='scroll-area flex-grow fit' scrollStep=63}}
-        {{#if not isLoading}}
-          {{#let reportData = (valueIf this.isCompleteReport.get this.aiReport this.hiReport)}}
-            <div class="content-item">
-                <div class="item-header">影像所见：</div>
-                <div class="item-details findings">
-                    {{choose reportData.findings '暂无数据'}}
-                </div>
-            </div>
-            <div class="content-item">
-                <div class="item-header">诊断建议：</div>
-                <div class="item-details diagnose">
-                    {{choose reportData.diagnose '暂无数据'}}
-                </div>
-            </div>
-          {{/let}}
-        {{else}}
-          {{>loadingText}}
-        {{/if}}
+        {{#let reportData = reportContent}}
+          <div class="content-item">
+              <div class="item-header">影像所见：</div>
+              <div class="item-details findings">
+                {{choose reportData.findings '暂无数据'}}
+              </div>
+          </div>
+          <div class="content-item">
+              <div class="item-header">诊断建议：</div>
+              <div class="item-details diagnose">
+                  {{choose reportData.diagnose '暂无数据'}}
+              </div>
+          </div>
+        {{/let}}
       {{/scrollArea}}
     </div>
   </div>

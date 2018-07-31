@@ -18,6 +18,27 @@
             &.selected
                 theme('background-color', '$activeColor')
 
+    .load-status
+      theme('background', '$uiGrayDark')
+      margin: 4px 0
+      padding: 2px
+
+      button.update-btn
+        theme('background', '$activeColor')
+        theme('border', 'solid 2px $activeColor')
+        theme('border-radius', '4px');
+
+      .status-icon
+        float: right
+        margin: 2px 4px
+        height: 100%
+
+      .update-time
+        float: right
+        text-align: right
+        padding: 2px
+
+
     .report-content
         theme('color', '$defaultColor')
         height: calc(100% - 40px)
@@ -25,7 +46,7 @@
         .scroll-area .scrollable .content-item
             theme('background', '$uiGrayDarkest')
             width: 100%
-            margin-top: 2px
+            margin-bottom: 2px
 
             .item-header
                 theme('background', '$uiGray')

@@ -6,3 +6,4 @@ import './number.js';
 import './string.js';
 import './typing.js';
 import './ui.js';
+import './time.js';

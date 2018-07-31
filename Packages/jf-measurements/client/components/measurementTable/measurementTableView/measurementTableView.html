@@ -1,14 +1,18 @@
-<template name="measurementTableView">    
+<template name="measurementTableView">
     {{#let config=measurementConfiguration groups=measurementGroups.get}}
-        {{#each measurementGroup in groups}}            
-            {{! #if hasMeasurements measurementGroup.toolGroup.id}}
-                {{>measurementTableHeaderRow (clone this
-                    toolGroup=measurementGroup.toolGroup
-                    measurementRows=measurementGroup.measurementRows)}}
-            {{! /if}}
-            {{#each rowItem in measurementGroup.measurementRows}}
-                {{>measurementTableRow (clone this rowItem=rowItem)}}
-            {{/each}}
+        {{#each measurementGroup in groups}}
+          <div class="group-table">
+              {{! #if hasMeasurements measurementGroup.toolGroup.id}}
+                  {{>measurementTableHeaderRow (clone this
+                      toolGroup=measurementGroup.toolGroup
+                      measurementRows=measurementGroup.measurementRows)}}
+              {{! /if}}
+            <div class="table-rows">
+              {{#each rowItem in measurementGroup.measurementRows}}
+                  {{>measurementTableRow (clone this rowItem=rowItem)}}
+              {{/each}}
+            </div>
+          </div>
         {{/each}}
 
         {{#each newLesionGroup in config.newLesions}}

@@ -36,7 +36,6 @@ export default function(event) {
     const context = canvasContext.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
-    let color;
     const lineWidth = cornerstoneTools.toolStyle.getToolWidth();
     const config = cornerstoneTools[toolType].getConfiguration();
 
@@ -57,12 +56,7 @@ export default function(event) {
                 context.shadowOffsetY = shadow.shadowOffsetY || 1;
             }
 
-            const activeColor = cornerstoneTools.toolColors.getActiveColor();
-            if (data.active) {
-                color = activeColor;
-            } else {
-                color = cornerstoneTools.toolColors.getToolColor();
-            }
+            const color = cornerstoneTools.toolColors.getColorIfActive(data);
 
             // draw the line
             const handleStartCanvas = cornerstone.pixelToCanvas(element, start);
