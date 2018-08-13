@@ -8,15 +8,16 @@
   // required transformation to make inner fixed elements relative to this one
   transform(scale(1))
   width: calc(100% + 6px)
-
+  position: relative
+  &:hover
+    .rowOptions
+      right: 0
   &.active
 
     .measurementRowSidebar
       theme('color', '$activeColor')
-
-    .rowOptions
-      height: 35px
-      visibility: visible
+      theme('background-color', '#006675')
+      
 
   &.response-status .measurementRowSidebar .response-status-icon
     theme('background-color', '$defaultColor')
@@ -46,17 +47,26 @@
       theme('fill', '$textPrimaryColor')
 
   .rowOptions
-    theme('background-color', '$uiGrayDark')
-    height: 0
+    theme('background-color', 'transparent')
     overflow: hidden
     transition(all 0.3s ease)
-    visibility: hidden
+    text-align: center
+    position: absolute
+    top: 0
+    right: -30px
+    display: flex
+    flex-direction: column
+    justify-content: center
+    width: 25px
+    height: 100%
 
     .rowAction
       theme('color', '$defaultColor')
       cursor: pointer
-      line-height: 35px
       transition(all 0.3s ease)
+      width: 100%
+      line-height: 3
+      height: 50%
 
       &:hover, &:active
         theme('color', '$textPrimaryColor')
@@ -71,12 +81,12 @@
       transition(all 0.3s ease)
 
       &.edit-icon
-        width: 14px
-        height: 13px
+        width: 18px
+        height: 17px
 
       &.close-icon
-        width: 11px
-        height: 11px
+        width: 18px
+        height: 18px
 
   .measurementRowSidebar
     theme('background', '$uiGrayDark')
@@ -85,44 +95,68 @@
     flex: 1
     max-width: 30px
     transition(all 0.3s ease)
+    padding-top: 5px
+    &:hover
+      .arrow
+        visibility: visible
+
+    .arrow
+      font-size: 20px
+      text-align: center
+      display: block
+      margin-right: 5px
+      visibility: hidden
+      &:hover
+        theme('color', '$textPrimaryColor')
 
     .measurementNumber
-      font-size: 14px
+      font-size: 16px
       font-weight: 400
       margin-right: 5px
-      padding-top: 10px
+      //padding-top: 10px
       text-align: center
 
-    #visible-check
-       margin-left: 5px
-       width: 20px
-       height: 20px
 
   .measurementDetails
     flex: 1
     padding: 5px 2px 0 0
     theme('background', '$uiGrayDarkest')
+    min-width: 220px
 
     &>*
       padding-left: 14px
 
     .location
       font-weight: 400
-      font-size: 14px
+      font-size: 16px
       theme('color', '$textSecondaryColor')
       height: 30px
       line-height: 30px
       margin-left: -2px
       width: 100%
+      display: flex
+
+      #visible-check
+       margin: 6px 5px 0
+       width: 18px
+       height: 18px
 
     .timepointData
       display: flex
-      min-height: 27px
       margin-top: 1px
+      width: 280px
+      //transition(all 0.3s ease)
+      //height: 100%
+
+      &.on
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        height: 18px
 
       div
         flex: 1
-        font-size: 14px
+        font-size: 16px
         font-weight: 400
         justify-content: space-around
         line-height: 18px

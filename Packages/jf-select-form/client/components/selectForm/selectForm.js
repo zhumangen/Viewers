@@ -124,7 +124,7 @@ Template.selectForm.events({
         }
 
         removeNonChecked(rootItem)
-        measurement.location = rootItem.items;
+        measurement.location = rootItem.items.length>0 && rootItem.items;
 
         const api = instance.data.measurementApi;
         const groupId = api.toolsGroupsMap[measurement.toolType];
@@ -141,7 +141,7 @@ Template.selectForm.events({
                 patientId: measurement.patientId
             }, {
                 $set: {
-                    location: rootItem.items
+                    location: measurement.location
                 }
             }, {
                 multi: true

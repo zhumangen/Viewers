@@ -1,67 +1,74 @@
 @require '{ohif:design}/app'
 
 .report-sidebar
-    theme('color', '$textPrimaryColor')
-    height: 100%
+  theme('color', '$textPrimaryColor')
+  height: 100%
 
-    .report-header
-        &>div
-            float: left
-            width: 50%
-            height: 40px
-            line-height: 40px
-            text-align: center
-            font-size: 1.5rem
-            theme('background-color', '$uiGrayLight')
-            cursor: pointer
+  .report-header
+    &>div
+      float: left
+      width: 50%
+      height: 40px
+      line-height: 40px
+      text-align: center
+      font-size: 1.5rem
+      theme('background-color', '$uiGrayLight')
+      cursor: pointer
 
-            &.selected
-                theme('background-color', '$activeColor')
+      &.selected
+        theme('background-color', '$activeColor')
 
-    .load-status
-      theme('background', '$uiGrayDark')
-      margin: 4px 0
-      padding: 2px
+      .hi-notifier
+        display: inline-block
+        width: 0
+        height: 0
+        border: 4px solid #06f906
+        border-radius: 50%
+//
+// .load-status
+//   theme('background', '$uiGrayDark')
+//   margin: 4px 0
+//   padding: 2px
+//
+//   button.update-btn
+//     theme('background', '$activeColor')
+//     theme('border', 'solid 2px $activeColor')
+//     theme('border-radius', '4px');
+//
+//   .status-icon
+//     float: right
+//     margin: 2px 4px
+//     height: 100%
+//
+//   .update-time
+//     float: right
+//     text-align: right
+//     padding: 2px
 
-      button.update-btn
-        theme('background', '$activeColor')
-        theme('border', 'solid 2px $activeColor')
-        theme('border-radius', '4px');
 
-      .status-icon
-        float: right
-        margin: 2px 4px
-        height: 100%
+  .report-content
+    theme('color', '$defaultColor')
+    height: calc(100% - 40px)
 
-      .update-time
-        float: right
-        text-align: right
-        padding: 2px
+    .scroll-area .scrollable .content-item
+      theme('background', '$uiGray')
+      margin: 3px 0
+      padding: 6px
 
+      .item-header
+        height: 50px
+        line-height: 50px
+        font-size: 1.8rem
+        font-weight: normal
 
-    .report-content
-        theme('color', '$defaultColor')
-        height: calc(100% - 40px)
-
-        .scroll-area .scrollable .content-item
-            theme('background', '$uiGrayDarkest')
-            width: 100%
-            margin-bottom: 2px
-
-            .item-header
-                theme('background', '$uiGray')
-                height: 50px
-                line-height: 50px
-                padding-left: 10px
-                font-size: 1.8rem
-                font-weight: normal
-
-            .item-details
-                width: 100%
-                height: auto
-                padding: 20px 10px
-                white-space: normal
-                line-height: 2rem
-                word-break: break-all
-                word-wrap: break-word
-                font-size: 14px
+      .item-details
+        theme('color', '$textPrimaryColor')
+        theme('background', '$uiGrayDarkest')
+        // width: 100%
+        // height: auto
+        padding: 14px 10px
+        white-space: normal
+        line-height: 2rem
+        word-break: break-all
+        word-wrap: break-word
+        font-size: 16px

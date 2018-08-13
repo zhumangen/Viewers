@@ -59,16 +59,25 @@ Template.measurementTableRow.events({
         });
     },
 
-    'click .measurementRowSidebar'(event, instance) {
-        const $row = instance.$('.measurementTableRow');
-        const rowItem = instance.data.rowItem;
-        const timepoints = instance.data.timepoints.get();
+    // 'click .measurementRowSidebar, click .measurementDetails'(event, instance) {
+    //     const $row = instance.$('.measurementTableRow');
+    //     const rowItem = instance.data.rowItem;
+    //     const timepoints = instance.data.timepoints.get();
 
+    //     $row.closest('.measurementTableView').find('.measurementTableRow').not($row).removeClass('active');
+    //     $row.toggleClass('active');
+
+    //     const childToolKey = $(event.target).attr('data-child');
+    //     JF.measurements.jumpToRowItem(rowItem, timepoints, childToolKey);
+    // },
+    'click .measurementRowSidebar, click .measurementDetails'(event, instance) {
+        event.stopPropagation();
+        const $row = instance.$('.measurementTableRow')
+        const $timepoint = instance.$('.timepointData')
         $row.closest('.measurementTableView').find('.measurementTableRow').not($row).removeClass('active');
-        $row.toggleClass('active');
-
-        const childToolKey = $(event.target).attr('data-child');
-        JF.measurements.jumpToRowItem(rowItem, timepoints, childToolKey);
+        $row.addClass('active');
+        $timepoint.closest('.measurementTableView').find('.timepointData').not($row).addClass('on');
+        $timepoint.removeClass('on');
     },
 
     'click .js-rename'(event, instance) {

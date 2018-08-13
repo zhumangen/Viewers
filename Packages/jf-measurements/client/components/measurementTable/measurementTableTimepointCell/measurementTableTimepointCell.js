@@ -61,25 +61,25 @@ Template.measurementTableTimepointCell.helpers({
 });
 
 Template.measurementTableTimepointCell.events({
+    // 'click .measurementTableTimepointCell'(event, instance){
+    //   event.stopPropagation();
+    // },
+    //
     'dblclick .measurementTableTimepointCell'(event, instance) {
-        const { rowItem, timepointId } = instance.data;
-        if (!timepointId) return;
-
-        const measurementData = _.findWhere(rowItem.entries, { timepointId });
-        if (!measurementData || measurementData.toolType !== 'nonTarget') return;
-
-        const viewportIndex = rowItem.entries.indexOf(measurementData);
-        const $viewports = $('#viewer .imageViewerViewport');
-        let $element = $viewports.eq(viewportIndex);
-        $element = $element.length ? $element : $viewports.eq(0);
-
-        OHIF.ui.showDialog('dialogNonTargetMeasurement', {
-            event,
-            title: 'Change Lesion Location',
-            element: $element[0],
-            measurementData,
-            edit: true
-        });
+        // const { rowItem } = instance.data;
+        // const entry = rowItem.entries[0];
+        //
+        // // Show the measure flow for targets
+        // JF.measurements.toggleLabelButton({
+        //     measurement: entry,
+        //     element: document.body,
+        //     measurementApi: instance.data.measurementApi,
+        //     position: {
+        //         x: event.clientX,
+        //         y: event.clientY
+        //     },
+        //     autoClick: true
+        // });
     },
 
     'keydown .measurementTableTimepointCell'(event, instance) {

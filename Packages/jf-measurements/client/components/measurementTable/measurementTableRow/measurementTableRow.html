@@ -1,12 +1,14 @@
 <template name="measurementTableRow">
     <div class="measurementTableRow {{#if hasWarnings}}warning{{/if}}{{#if responseStatus}}response-status{{/if}}" data-measurementid="{{_id}}">
         <div class='measurementRowSidebar'>
+            <i class="fa fa-caret-up arrow"></i>
             <div class="measurementNumber">
                 {{rowItem.measurementNumber}}
             </div>
-            {{#unless nonTargetTool}}
+            <i class="fa fa-caret-down arrow"></i>
+            <!-- {{#unless nonTargetTool}}
                 <input type="checkbox" id="visible-check" checked="{{isVisible}}">
-            {{/unless}}
+            {{/unless}} -->
             {{#if hasWarnings}}
                 <div class="warning-icon">
                     <svg>
@@ -22,13 +24,16 @@
         </div>
         <div class="measurementDetails">
             <div class='location'>
+                {{#unless nonTargetTool}}
+                    <input type="checkbox" id="visible-check" checked="{{isVisible}}">
+                {{/unless}}
                 {{#if rowItem.location}}
                     {{displayHeader}}
                 {{else}}
                     (未选)
                 {{/if}}
             </div>
-            <div class="timepointData">
+            <div class="timepointData on">
                 <!--Each time point as a column-->
                 {{#each timepoint in timepoints.get}}
                     {{>measurementTableTimepointCell (clone this timepoint)}}
@@ -36,7 +41,7 @@
                     {{>measurementTableTimepointCell}}
                 {{/each}}
             </div>
-            <div class="rowOptions">
+            <!-- <div class="rowOptions">
                 <div class="rowAction js-rename pull-left m-r-2" tabindex="1">
                     <svg class="edit-icon">
                         <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-measurements-additional"}}></use>
@@ -49,6 +54,18 @@
                     </svg>
                     删除
                 </div>
+            </div> -->
+        </div>
+        <div class="rowOptions">
+            <div class="rowAction js-rename" tabindex="1">
+                <svg class="edit-icon">
+                    <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-measurements-additional"}}></use>
+                </svg>
+            </div>
+            <div class="rowAction js-delete" tabindex="1">
+                <svg class="close-icon">
+                    <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-ui-close"}}></use>
+                </svg>
             </div>
         </div>
     </div>

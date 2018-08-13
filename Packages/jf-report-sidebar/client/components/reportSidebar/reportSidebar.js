@@ -7,6 +7,7 @@ import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
+import { cornerstone } from 'meteor/ohif:cornerstone';
 
 Template.reportSidebar.onCreated(() => {
     const instance = Template.instance();
@@ -19,8 +20,16 @@ Template.reportSidebar.onCreated(() => {
         const api = instance.data.reportApi;
         const params = Session.get('queryParams');
         const element = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+        if (!element) return;
+
+        const enabledElement = cornerstone.getEnabledElement(element);
+        if (!enabledElement || !enabledElement.image) return;
+
         const { getImageAttributes } = JF.measurements.MeasurementHandlers;
         const imageAttributes = getImageAttributes(element);
+        if (!imageAttributes || !imageAttributes.studyInstanceUid) return;
+
+        clearInterval(instance.timerId);
         const options = Object.assign({}, params, imageAttributes);
         instance.hiReport.set('loading', true);
         api.getHiReport(options).then(data => {
@@ -63,7 +72,14 @@ Template.reportSidebar.onCreated(() => {
 
 Template.reportSidebar.onRendered(() => {
     const instance = Template.instance();
+    instance.timerId = setInterval(instance.api.getHiReport, 1000);
+    instance.getAiReportWrapper = _.throttle(instance.api.getAiReport, 1000);
 
+    instance.autorun(() => {
+      const measurementApi = instance.data.measurementApi;
+      measurementApi.changeObserver.depend();
+      instance.getAiReportWrapper();
+    });
 });
 
 Template.reportSidebar.helpers({
@@ -81,6 +97,11 @@ Template.reportSidebar.helpers({
     reportContent() {
       const instance = Template.instance();
       return instance.isHiReport.get()?instance.hiReport.get('data'):instance.aiReport.get('data');
+    },
+    hasHiReport() {
+      const instance = Template.instance();
+      const data = instance.hiReport.get('data');
+      return data && !!data.findings;
     }
 });
 
@@ -89,7 +110,7 @@ Template.reportSidebar.events({
       const $thisTarget = $(event.currentTarget);
       instance.isHiReport.set($thisTarget.index() == 0)
     },
-    'click #update-btn'(event, instance) {
-      instance.isHiReport.get()?instance.api.getHiReport():instance.api.getAiReport();
-    }
+    // 'click #update-btn'(event, instance) {
+    //   instance.isHiReport.get()?instance.api.getHiReport():instance.api.getAiReport();
+    // }
 });

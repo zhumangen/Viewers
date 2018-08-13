@@ -23,7 +23,7 @@ body>.header
       /* font-size: 14px */
       font-size: 20px
       font-weight: $logoFontWeight
-      theme('color', '$textPrimaryColor')
+      theme('color', '$defaultColor')
       line-height: 30px
 
   .header-menu
@@ -57,19 +57,20 @@ body>.header
 
     &:active
       theme('color', '$activeColor')
-      
+
   .physician-info
     left: 50%
     margin-left: -10%
     position: absolute
     font-size: 20px
-    
+    theme('color', '$defaultColor')
+
     .physician-type
       display: inline
       margin: 0 10px
-    
+
       .physician-name
-        color: #9ccef9
+        theme('color', '$textPrimaryColor')
 
   .studyListLinkSection
     theme('border-left', '%s solid $uiBorderColor' % $uiBorderThickness)

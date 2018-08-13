@@ -32,7 +32,7 @@ class ReportApi {
         return new Promise((resolve, reject) => {
             fn(options).then(data => {
                 OHIF.log.info('origin report: ', data);
-                let result = {}
+                let result = {};
                 if (data) {
                   result = {
                       findings: data.reprcdFinding,
