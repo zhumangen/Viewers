@@ -67,6 +67,7 @@ class MeasurementApi {
                     });
 
                     // Enable reactivity
+                    Session.set('activeMeasurement', measurement);
                     this.changeObserver.changed();
                 };
 
@@ -88,10 +89,10 @@ class MeasurementApi {
                         $inc: { measurementNumber: -1 }
                     };
                     const options = { multi: true };
-                    
+
                     const entries = groupCollection.find(filter).fetch();
                     groupCollection.update(filter, operator, options);
-                    
+
                     // Synchronize the updated measurements with Cornerstone Tools
                     // toolData to make sure the displayed measurements show 'Target X' correctly
                     const toolTypes = _.uniq(entries.map(entry => entry.toolId));
@@ -104,6 +105,7 @@ class MeasurementApi {
                     this.syncMeasurementsAndToolData();
 
                     // Enable reactivity
+                    Session.set('activeMeasurement', undefined);
                     this.changeObserver.changed();
                 };
 
@@ -140,6 +142,7 @@ class MeasurementApi {
                             measurement.userName = options.userName;
                             measurement.permission = options.permission;
                             measurement.status = 0;
+                            measurement.active = false;
                             const toolGroup = toolsGroupsMap[toolType];
                             if (!measurementsGroups[toolGroup]) {
                                 measurementsGroups[toolGroup] = [];
@@ -169,7 +172,7 @@ class MeasurementApi {
             });
         });
     }
-    
+
     retrieveUserName(options) {
         const retrievalFn = configuration.dataExchange.retrieveUserName;
         if (!_.isFunction(retrievalFn)) {
@@ -198,7 +201,7 @@ class MeasurementApi {
         }
 
         let measurementData = {};
-        
+
         if (!options.abandoned) {
             configuration.measurementTools.forEach(toolGroup => {
                 toolGroup.childTools.forEach(tool => {
@@ -214,18 +217,18 @@ class MeasurementApi {
         return new Promise((resolve, reject) => {
             storeFn(measurementData, options).then((measurementData) => {
                 OHIF.log.info('Measurement storage completed');
-                
+
                 let measurements = [];
                 if (!options.abandoned) {
                     configuration.measurementTools.forEach(toolGroup => {
                         measurements = measurements.concat(measurementData[toolGroup.id]);
                     });
                 }
-                
+
                 measurements.forEach(measurement => {
                     measurement.location = JSON.stringify(measurement.location);
                 });
-                
+
                 resolve(measurements);
             }).catch(error => {
                 OHIF.log.error('Measurement storage error: ', error);
@@ -233,13 +236,13 @@ class MeasurementApi {
             });
         });
     }
-    
+
     changeStatus(options) {
         const changeFn = configuration.dataExchange.changeStatus;
         if (!_.isFunction(changeFn)) {
             return;
         }
-        
+
         return new Promise((resolve, reject) => {
             changeFn(options).then(result => {
                 OHIF.log.info('Change measurements status completed');
@@ -250,13 +253,13 @@ class MeasurementApi {
             });
         });
     }
-    
+
     submitMeasurements(options, measurementData) {
         const storeFn = configuration.dataExchange.submitMeasurements;
         if (!_.isFunction(storeFn)) {
             return;
         }
-        
+
         return new Promise((resolve, reject) => {
             for (let i = 0; i < measurementData.length; ++i) {
                 measurementData[i].status = options.status;
@@ -270,13 +273,13 @@ class MeasurementApi {
             });
         });
     }
-    
+
     retrieveLesions(options) {
         const retrievalFn = configuration.dataExchange.retrieveLesions;
         if (!_.isFunction(retrievalFn)) {
             return;
         }
-        
+
         return new Promise((resolve, reject) => {
             retrievalFn(options).then(lesions => {
                 OHIF.log.info('Retrieved Lesions: ', lesions);
@@ -289,13 +292,13 @@ class MeasurementApi {
             });
         });
     }
-    
+
     submitResult(options) {
         const submitFn = configuration.dataExchange.submitResult;
         if (!_.isFunction(submitFn)) {
             return;
         }
-        
+
         return new Promise((resolve, reject) => {
             submitFn(options).then(result => {
                 OHIF.log.info('Submit result: ', result.code);
@@ -306,13 +309,13 @@ class MeasurementApi {
             });
         });
     }
-    
+
     queryUserInfo(options) {
         const queryFn = configuration.dataExchange.queryUserInfo;
         if (!_.isFunction(queryFn)) {
             return;
         }
-        
+
         return new Promise((resolve, reject) => {
             queryFn(options).then(result => {
                 OHIF.log.info('Query user info: ', result);
@@ -336,7 +339,7 @@ class MeasurementApi {
             toolGroup.childTools.forEach(tool => {
                 const measurements = this.tools[tool.id].find().fetch();
                 measurements.forEach(measurement => {
-                    JF.measurements.syncMeasurementAndToolData(measurement);
+                    JF.measurements.syncMeasurementAndToolData(measurement, false);
                 });
             });
         });
@@ -354,11 +357,11 @@ class MeasurementApi {
             const collection = this.tools[tool.id];
             const measurements = collection.find().fetch();
             measurements.forEach(measurement => {
-                JF.measurements.syncMeasurementAndToolData(measurement);
+                JF.measurements.syncMeasurementAndToolData(measurement, false);
             });
         });
     }
-    
+
     updateMeasurement(measurement) {
         // const collection = this.tools[measurement.toolType];
         // collection.update({_id: measurement._id}, measurement);

@@ -56,7 +56,8 @@ export default function(event) {
                 context.shadowOffsetY = shadow.shadowOffsetY || 1;
             }
 
-            const color = cornerstoneTools.toolColors.getColorIfActive(data);
+            let color = cornerstoneTools.toolColors.getColorIfActive(data);
+            if (data.hover) color = cornerstoneTools.toolColors.getActiveColor();
 
             // draw the line
             const handleStartCanvas = cornerstone.pixelToCanvas(element, start);

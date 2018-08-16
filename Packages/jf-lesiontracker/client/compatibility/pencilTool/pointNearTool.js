@@ -1,4 +1,5 @@
 import { cornerstone, cornerstoneMath, cornerstoneTools } from 'meteor/ohif:cornerstone';
+import { distanceThreshold, distanceThresholdTouch } from './definitions'
 
 function pointNearPencil (element, data, coords, distance) {
     for (let i = 0; i < data.points.length; ++i) {
@@ -11,11 +12,11 @@ function pointNearPencil (element, data, coords, distance) {
 }
 
 function pointNearTool (element, data, coords) {
-  return pointNearPencil(element, data, coords, 6);
+  return pointNearPencil(element, data, coords, distanceThreshold);
 }
 
 function pointNearToolTouch (element, data, coords) {
-  return pointNearPencil(element, data, coords, 15);
+  return pointNearPencil(element, data, coords, distanceThresholdTouch);
 }
 
 export {

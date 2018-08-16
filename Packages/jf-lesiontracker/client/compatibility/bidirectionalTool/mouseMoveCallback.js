@@ -52,10 +52,11 @@ export default function (event) {
             imageNeedsUpdate = true;
         }
 
-        const nearToolAndInactive = pointNearTool(element, data, coords) && !data.active;
-        const notNearToolAndActive = !pointNearTool(element, data, coords) && data.active;
-        if (nearToolAndInactive || notNearToolAndActive) {
-            data.active = !data.active;
+        const nearTool = pointNearTool(element, data, coords);
+        const nearToolAndNotHover = nearTool && !data.hover;
+        const notNearToolAndHover = !nearTool && data.hover;
+        if (nearToolAndNotHover || notNearToolAndHover) {
+            data.hover = !data.hover;
             imageNeedsUpdate = true;
         }
     }

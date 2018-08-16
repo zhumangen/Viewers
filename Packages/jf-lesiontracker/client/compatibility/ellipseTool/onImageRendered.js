@@ -1,6 +1,13 @@
 import { cornerstone, cornerstoneMath, cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { toolType } from './definitions';
 
+function numberWithCommas (x) {
+  // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+  const parts = x.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+}
+
 export default function onImageRendered (e) {
   const eventData = e.detail;
 
@@ -14,17 +21,17 @@ export default function onImageRendered (e) {
   const image = eventData.image;
   const element = eventData.element;
 
-    const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
-    let rowPixelSpacing;
-    let colPixelSpacing;
+  const imagePlane = cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
+  let rowPixelSpacing;
+  let colPixelSpacing;
 
-    if (imagePlane) {
-        rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-        colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-    } else {
-        rowPixelSpacing = eventData.image.rowPixelSpacing;
-        colPixelSpacing = eventData.image.columnPixelSpacing;
-    }
+  if (imagePlane) {
+      rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+      colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+      rowPixelSpacing = eventData.image.rowPixelSpacing;
+      colPixelSpacing = eventData.image.columnPixelSpacing;
+  }
 
   const lineWidth = cornerstoneTools.toolStyle.getToolWidth();
   const config = cornerstoneTools[toolType].getConfiguration();
@@ -49,59 +56,55 @@ export default function onImageRendered (e) {
         const color = cornerstoneTools.toolColors.getColorIfActive(data);
         if (data.hover) color = cornerstoneTools.toolColors.getActiveColor();
 
-        const points = data.points.map(p => cornerstone.pixelToCanvas(element, p));
+        // Convert Image coordinates to Canvas coordinates given the element
+        const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-        // Draw the curve on the canvas
-        if (points.length > 0) {
-            context.beginPath();
-            context.strokeStyle = color;
-            context.lineWidth = lineWidth;
+        // Retrieve the bounds of the ellipse (left, top, width, and height)
+        // In Canvas coordinates
+        const leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
+        const topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
+        const widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
+        const heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
 
-            let currPos = points[0];
-            context.moveTo(currPos.x, currPos.y);
-            for (let i = 1; i < points.length; ++i) {
-                const nextPos = points[i];
-                context.lineTo(nextPos.x, nextPos.y);
-                currPos = nextPos;
-            }
-            context.lineTo(points[0].x, points[0].y);
-            context.closePath();
-            context.stroke();
-        }
+        // Draw the ellipse on the canvas
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = lineWidth;
+        cornerstoneTools.drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
+        context.closePath();
 
-        const ellipse = {
-            left: image.width,
-            top: image.height,
-            right: 0,
-            bottom: 0
-          };
+        // If the tool configuration specifies to only draw the handles on hover / active,
+        // Follow this logic
+        if (config && config.drawHandlesOnHover) {
+          // Draw the handles if the tool is active
+          if (data.active === true) {
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+          } else {
+            // If the tool is inactive, draw the handles only if each specific handle is being
+            // Hovered over
+            const handleOptions = {
+              drawHandlesIfActive: true
+            };
 
-          data.points.forEach(p => {
-              ellipse.left = Math.min(ellipse.left, p.x);
-              ellipse.top = Math.min(ellipse.top, p.y);
-              ellipse.right = Math.max(ellipse.right, p.x);
-              ellipse.bottom = Math.max(ellipse.bottom, p.y);
-          });
-
-          ellipse.left = Math.max(ellipse.left, 0);
-          ellipse.top = Math.max(ellipse.top, 0);
-          ellipse.right = Math.min(ellipse.right, image.width);
-          ellipse.bottom = Math.min(ellipse.bottom, image.height);
-          ellipse.width = ellipse.right - ellipse.left;
-          ellipse.height = ellipse.bottom - ellipse.top;
-          const width = ellipse.width;
-          const height = ellipse.height;
-          if (colPixelSpacing && rowPixelSpacing) {
-              width *= colPixelSpacing;
-              height *= rowPixelSpacing;
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
           }
-          data.longestDiameter = Math.max(width, height).toFixed(1);
-          data.shortestDiameter = Math.min(width, height).toFixed(1);
+        } else {
+          // If the tool has no configuration settings, always draw the handles
+          cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+        }
 
         let density;
         if (data.invalidated === false) {
             density = data.density;
         } else {
+          const ellipse = {
+            left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+            top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+            width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+            height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
+          };
+
             if (!image.color) {
                 const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
                 density = parseFloat(cornerstoneTools.calculateEllipseStatistics(pixels, ellipse).mean);
@@ -113,7 +116,24 @@ export default function onImageRendered (e) {
 
         // Draw the text
         if (data.measurementNumber) {
+            // Draw the textbox
+            let suffix = ' pixels';
+            const width = Math.abs(data.handles.start.x - data.handles.end.x);
+            const height = Math.abs(data.handles.start.y - data.handles.end.y);
+            if (rowPixelSpacing && colPixelSpacing) {
+                suffix = ' mm';
+                width *= colPixelSpacing;
+                height *= rowPixelSpacing;
+            }
+
+            data.longestDiameter = (width>height?width:height).toFixed(1);
+            data.shortestDiameter = (width>height?height:width).toFixed(1);
+
+            const lengthText = ' L ' + data.longestDiameter + suffix;
+            const widthText = ' W ' + data.shortestDiameter + suffix;
             const densityText = '  密度：' + density.toFixed(2);
+
+
             const textLines = [`病灶 ${data.measurementNumber}`, densityText];
 
             // If the textbox has not been moved by the user, it should be displayed on the right-most
@@ -154,9 +174,28 @@ export default function onImageRendered (e) {
                 }
               };
 
+              // First we calculate the ellipse points (top, left, right, and bottom)
+              const ellipsePoints = [{
+                // Top middle point of ellipse
+                x: leftCanvas + widthCanvas / 2,
+                y: topCanvas
+              }, {
+                // Left middle point of ellipse
+                x: leftCanvas,
+                y: topCanvas + heightCanvas / 2
+              }, {
+                // Bottom middle point of ellipse
+                x: leftCanvas + widthCanvas / 2,
+                y: topCanvas + heightCanvas
+              }, {
+                // Right middle point of ellipse
+                x: leftCanvas + widthCanvas,
+                y: topCanvas + heightCanvas / 2
+              }];
+
               // We obtain the link starting point by finding the closest point on the ellipse to the
               // Center of the textbox
-              link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
+              link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
 
               // Next we calculate the corners of the textbox bounding box
               const boundingBoxPoints = [{

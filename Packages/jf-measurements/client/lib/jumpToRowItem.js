@@ -75,7 +75,7 @@ let lastActivatedRowItem;
  */
 JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
     const { isZoomed, zoomedViewportIndex } = OHIF.viewerbase.layoutManager;
-
+    
     lastActivatedRowItem = rowItem;
 
     // Retrieve the list of available viewports
@@ -139,7 +139,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
         for (let viewportIndex = 0; viewportIndex < numViewportsToUpdate; viewportIndex++) {
             const measurementData = measurementsData[viewportIndex];
             if (!measurementData) continue;
-
+                
             activatedViewportIndexes.push(viewportIndex);
 
             const element = $viewports.get(viewportIndex);

@@ -49,9 +49,9 @@ export default function mouseDownCallback (e) {
       const handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceThreshold);
 
       if (handle) {
-        element.removeEventListener(cornerstoneTools.EVENTS.MOUSE_MOVE, mouseMoveCallback);
         data.active = true;
         Session.set('activeMeasurement', data);
+        element.removeEventListener(cornerstoneTools.EVENTS.MOUSE_MOVE, mouseMoveCallback);
         cornerstoneTools.moveHandle(eventData, toolType, data, handle, handleDoneMove, preventHandleOutsideImage);
         e.stopImmediatePropagation();
         e.stopPropagation();

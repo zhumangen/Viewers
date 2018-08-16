@@ -124,8 +124,7 @@ export default function(mouseEventData) {
         const isTooFast = (new Date().getTime() - timestamp) < 150;
         if (cancelled || hasHandlesOutside || isTooSmal || isTooFast) {
             // delete the measurement
-            measurementData.cancelled = true;
-            cornerstoneTools.removeToolState(element, toolType, measurementData);
+            cancelAction();
         } else {
             // Set lesionMeasurementData Session
             config.getMeasurementLocationCallback(measurementData, mouseEventData, doneCallback);
@@ -146,7 +145,7 @@ export default function(mouseEventData) {
 
         // perpendicular line is not connected to long-line
         perpendicularStart.locked = false;
-        
+
         measurementData.invalidated = true;
 
         // Unbind the handlers to update perpendicular line

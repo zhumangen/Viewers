@@ -12,7 +12,40 @@
   &:hover
     .rowOptions
       right: 0
+  
+  .measurementDetails .timepointData
+    display: flex
+    margin-top: 1px
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+    width: 260px
+    height: 18px
+
+    div
+      flex: 1
+      font-size: 16px
+      font-weight: 400
+      justify-content: space-around
+      line-height: 18px
+      padding-bottom: 4px
+
+    .more
+      position: absolute
+      top: 27px
+      right: -4px
+      display: block
+      width: 35px
+      height: 35px
   &.active
+    .measurementDetails .timepointData
+      width: 100%
+      height: calc(100% - 30px)
+      overflow: visible
+      white-space: normal
+
+      .more
+        display: none
 
     .measurementRowSidebar
       theme('color', '$activeColor')
@@ -124,7 +157,7 @@
     min-width: 220px
 
     &>*
-      padding-left: 14px
+      padding-left: 5px
 
     .location
       font-weight: 400
@@ -141,23 +174,4 @@
        width: 18px
        height: 18px
 
-    .timepointData
-      display: flex
-      margin-top: 1px
-      width: 280px
-      //transition(all 0.3s ease)
-      //height: 100%
-
-      &.on
-        overflow: hidden
-        text-overflow: ellipsis
-        white-space: nowrap
-        height: 18px
-
-      div
-        flex: 1
-        font-size: 16px
-        font-weight: 400
-        justify-content: space-around
-        line-height: 18px
-        padding-bottom: 4px
+    

@@ -1,5 +1,5 @@
 /* jshint -W083 */
-
+import { Session } from 'meteor/session';
 import { cornerstone, cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { toolType, distanceThreshold } from './definitions';
 import mouseMoveCallback from './mouseMoveCallback';
@@ -91,12 +91,12 @@ export default function(event) {
         const handle = cornerstoneTools.getHandleNearImagePoint(...handleParams);
 
         if (handle) {
+            data.active = true;
+            Session.set('activeMeasurement', data);
             // Hide the cursor to improve precision while resizing the line or set to move
             // if dragging text box
             $element.css('cursor', handle.hasBoundingBox ? 'move' : 'none');
-
             element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
-            data.active = true;
 
             unselectAllHandles(data.handles);
             handle.moving = true;
@@ -124,11 +124,12 @@ export default function(event) {
     for (let i = 0; i < toolData.data.length; i++) {
         data = toolData.data[i];
         if (pointNearTool(element, data, coords)) {
+            data.active = true;
+            Session.set('activeMeasurement', data);
+
             // Set the cursor to move
             $element.css('cursor', 'move');
-
             element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
-            data.active = true;
 
             unselectAllHandles(data.handles);
             setHandlesMovingState(data.handles, true);

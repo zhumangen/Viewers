@@ -1,4 +1,4 @@
-const toolType = 'targetPencil';
+const toolType = 'targetEllipse';
 const distanceThreshold = 6;
 const distanceThresholdTouch = 15;
 

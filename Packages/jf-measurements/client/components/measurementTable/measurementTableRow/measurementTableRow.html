@@ -33,13 +33,16 @@
                     (未选)
                 {{/if}}
             </div>
-            <div class="timepointData on">
+            <div class="timepointData">
                 <!--Each time point as a column-->
                 {{#each timepoint in timepoints.get}}
                     {{>measurementTableTimepointCell (clone this timepoint)}}
                 {{else}}
                     {{>measurementTableTimepointCell}}
                 {{/each}}
+                {{#if rowItem.location}}
+                    <img src="/images/more.png" type="image/png" class="more">
+                {{/if}}
             </div>
             <!-- <div class="rowOptions">
                 <div class="rowAction js-rename pull-left m-r-2" tabindex="1">

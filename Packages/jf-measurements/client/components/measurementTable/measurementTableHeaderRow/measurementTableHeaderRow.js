@@ -61,6 +61,20 @@ Template.measurementTableHeaderRow.events({
         const { toolGroup } = instance.data;
         const tool = toolGroup.childTools[0];
         const toolType = tool.cornerstoneToolType;
+        const setTool = instance.$('.js-setTool');
+        setTool.popover({
+            trigger: 'click',
+            placement: 'top',
+            html: true,
+            content: '请开始标注',
+            container: 'body',
+            animation: false
+        });
+        setTool.popover('show');
+        clearTimeout(instance.timeout);
+        instance.timeout = setTimeout(function(){
+            setTool.popover('hide');
+        },1000)
         if (tool.options.caseProgress.nonTarget) {
             const measurement = cornerstoneTools[toolType].createNewMeasurement();
             Session.set('measurementData', measurement);

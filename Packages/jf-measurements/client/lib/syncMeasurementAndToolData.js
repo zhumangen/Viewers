@@ -1,9 +1,10 @@
 import { JF } from 'meteor/jf:core';
 import { cornerstoneTools } from 'meteor/ohif:cornerstone';
 
-JF.measurements.syncMeasurementAndToolData = measurement => {
+JF.measurements.syncMeasurementAndToolData = (measurement, syncAll) => {
     OHIF.log.info('syncMeasurementAndToolData');
 
+    syncAll = syncAll !== undefined?  syncAll : true;
     const toolState = cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
 
     // Iterate each child tool if the current tool has children
@@ -33,15 +34,12 @@ JF.measurements.syncMeasurementAndToolData = measurement => {
 
     const currentToolState = toolState[imageId][toolType];
     const toolData = currentToolState && currentToolState.data;
-
+    
     // Check if we already have toolData for this imageId and toolType
     if (toolData && toolData.length) {
         // If we have toolData, we should search it for any data related to the current Measurement
         const toolData = toolState[imageId][toolType].data;
-
-        // Create a flag so we know if we've successfully updated the Measurement in the toolData
         let alreadyExists = false;
-
         // Loop through the toolData to search for this Measurement
         toolData.forEach(tool => {
             // Break the loop if this isn't the Measurement we are looking for
@@ -53,23 +51,24 @@ JF.measurements.syncMeasurementAndToolData = measurement => {
             alreadyExists = true;
 
             // Update the toolData from the Measurement data
+            const active = tool.active;
+            const hover = tool.hover;
             Object.assign(tool, measurement);
+            if (!syncAll) {
+              tool.active = active;
+              tool.hover = hover;
+            }
+
             return false;
         });
 
-        // If we have found the Measurement we intended to update, we can stop this function here
-        if (alreadyExists === true) {
-            return;
-        }
+        if (alreadyExists) return;
     } else {
         // If no toolData exists for this toolType, create an empty array to hold some
         toolState[imageId][toolType] = {
             data: []
         };
     }
-
-    // If we have reached this point, it means we haven't found the Measurement we are looking for
-    // in the current toolData. This means we need to add it.
 
     // Add the MeasurementData into the toolData for this imageId
     toolState[imageId][toolType].data.push(measurement);

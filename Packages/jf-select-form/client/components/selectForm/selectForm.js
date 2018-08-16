@@ -100,7 +100,7 @@ Template.selectForm.events({
     'click #save'(event, instance) {
         const measurement = instance.measurementData.measurement;
         const rootItem = instance.measurementData.item;
-
+        
         const removeNonChecked = item => {
           if (item) {
             if (item.items && item.items instanceof Array) {

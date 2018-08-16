@@ -99,13 +99,12 @@ export default function addNewMeasurement(mouseEventData) {
         const isTooFast = (new Date().getTime() - timestamp) < 150;
         if (cancelled || hasHandlesOutside || isTooFast) {
             // delete the measurement
-            measurementData.cancelled = true;
-            cornerstoneTools.removeToolState(element, toolType, measurementData);
+            cancelAction();
         } else {
             // Set lesionMeasurementData Session
             config.getMeasurementLocationCallback(measurementData, mouseEventData, doneCallback);
         }
-        
+
         measurementData.invalidated = true;
 
         // Unbind the Esc keydown hook
