@@ -12,7 +12,7 @@
   &:hover
     .rowOptions
       right: 0
-  
+
   .measurementDetails .timepointData
     display: flex
     margin-top: 1px
@@ -50,7 +50,7 @@
     .measurementRowSidebar
       theme('color', '$activeColor')
       theme('background-color', '#006675')
-      
+
 
   &.response-status .measurementRowSidebar .response-status-icon
     theme('background-color', '$defaultColor')
@@ -98,8 +98,7 @@
       cursor: pointer
       transition(all 0.3s ease)
       width: 100%
-      line-height: 3
-      height: 50%
+      line-height: 2.5
 
       &:hover, &:active
         theme('color', '$textPrimaryColor')
@@ -129,6 +128,7 @@
     max-width: 30px
     transition(all 0.3s ease)
     padding-top: 5px
+    min-height: 67px
     &:hover
       .arrow
         visibility: visible
@@ -139,6 +139,7 @@
       display: block
       margin-right: 5px
       visibility: hidden
+      height: 20px
       &:hover
         theme('color', '$textPrimaryColor')
 
@@ -173,5 +174,3 @@
        margin: 6px 5px 0
        width: 18px
        height: 18px
-
-    

@@ -24,7 +24,8 @@ Template.measurementTableRow.onRendered(() => {
   const instance = Template.instance();
   instance.autorun(() => {
     const activeMeasurement = Session.get('activeMeasurement');
-    const measurement = Template.instance().data.rowItem.entries[0];
+    const rowItem = instance.data.rowItem;
+    const measurement = rowItem.entries[0];
     const $rowItem = instance.$('.measurementTableRow');
     const isActive = $rowItem.hasClass('active');
     if (!activeMeasurement || (activeMeasurement._id !== measurement._id && isActive)) {
@@ -35,7 +36,7 @@ Template.measurementTableRow.onRendered(() => {
       } else {
         JF.measurements.deactivateAllToolData();
       }
-      _.each($('.imageViewerViewport'), element => cornerstone.updateImage(element));
+      // _.each($('.imageViewerViewport'), element => cornerstone.updateImage(element));
     } else if (activeMeasurement._id === measurement._id && !isActive) {
       $rowItem.addClass('active');
     }
@@ -51,19 +52,19 @@ Template.measurementTableRow.helpers({
     },
     displayHeader() {
         const instance = Template.instance();
-        const entry = instance.data.rowItem.entries[0];
+        const rowItem = instance.data.rowItem;
+        const entry = rowItem.entries[0];
         const config = JF.measurements.MeasurementApi.getConfiguration();
-        const groupId = instance.data.measurementApi.toolsGroupsMap[entry.toolType];
-        const group = _.findWhere(config.measurementTools, { id: groupId });
+        const group = _.findWhere(config.measurementTools, { id: rowItem.measurementTypeId });
         const { headerDisplay } = group.options.measurementTable;
-        return headerDisplay(entry);
+        return _.isFunction(headerDisplay)?headerDisplay(entry):'';
     },
     nonTargetTool() {
         const instance = Template.instance();
-        const entry = instance.data.rowItem.entries[0];
+        const rowItem = instance.data.rowItem;
+        const entry = rowItem.entries[0];
         const config = JF.measurements.MeasurementApi.getConfiguration();
-        const groupId = instance.data.measurementApi.toolsGroupsMap[entry.toolType];
-        const group = _.findWhere(config.measurementTools, { id: groupId });
+        const group = _.findWhere(config.measurementTools, { id: rowItem.measurementTypeId });
         const tool = _.findWhere(group.childTools, { id: entry.toolType });
         return tool.options.caseProgress.nonTarget;
     }
@@ -81,17 +82,42 @@ Template.measurementTableRow.events({
             }
         });
     },
-    
-    'click .measurementRowSidebar, click .measurementDetails'(event, instance) {
-        const $row = instance.$('.measurementTableRow')
-        const rowItem = instance.data.rowItem;
+
+    'click .measurementRowSidebar .fa-caret-up'(event, instance) {
+      event.stopPropagation();
+      const rowItem = instance.data.rowItem;
+      const measurementTypeId = rowItem.measurementTypeId;
+      const measurementNumber = rowItem.entries[0].measurementNumber;
+      instance.data.measurementApi.shiftMeasurement(measurementTypeId, { measurementNumber }, 0);
+      JF.measurements.triggerTimepointUnsavedChanges(rowItem.entries[0].id);
+      Meteor.defer(() => {
+        Session.set('activeMeasurement', rowItem.entries[0]);
+        rowItem.entries[0].measurementNumber = measurementNumber-1;
         const timepoints = instance.data.timepoints.get();
+        JF.measurements.jumpToRowItem(rowItem, timepoints);
+      });
+    },
 
-        $row.closest('.measurementTableView').find('.measurementTableRow').not($row).removeClass('active');
-        $row.addClass('active');
+    'click .measurementRowSidebar .fa-caret-down'(event, instance) {
+      event.stopPropagation();
+      const rowItem = instance.data.rowItem;
+      const measurementTypeId = rowItem.measurementTypeId;
+      const measurementNumber = rowItem.entries[0].measurementNumber;
+      instance.data.measurementApi.shiftMeasurement(measurementTypeId, { measurementNumber }, 1);
+      JF.measurements.triggerTimepointUnsavedChanges(rowItem.entries[0].id);
+      Meteor.defer(() => {
+        Session.set('activeMeasurement', rowItem.entries[0]);
+        rowItem.entries[0].measurementNumber = measurementNumber+1;
+        const timepoints = instance.data.timepoints.get();
+        JF.measurements.jumpToRowItem(rowItem, timepoints);
+      });
+    },
 
-        const childToolKey = $(event.target).attr('data-child');
-        JF.measurements.jumpToRowItem(rowItem, timepoints, childToolKey);
+    'click .measurementRowSidebar, click .measurementDetails'(event, instance) {
+        const rowItem = instance.data.rowItem;
+        Session.set('activeMeasurement', rowItem.entries[0]);
+        const timepoints = instance.data.timepoints.get();
+        JF.measurements.jumpToRowItem(rowItem, timepoints);
     },
 
     'click .js-rename'(event, instance) {

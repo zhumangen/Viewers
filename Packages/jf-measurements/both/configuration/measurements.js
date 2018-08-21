@@ -67,7 +67,8 @@ class MeasurementApi {
                     });
 
                     // Enable reactivity
-                    Session.set('activeMeasurement', measurement);
+                    if (Session.get('MeasurementsReady'))
+                      Session.set('activeMeasurement', measurement);
                     this.changeObserver.changed();
                 };
 
@@ -332,6 +333,45 @@ class MeasurementApi {
         if (validateFn && validateFn instanceof Function) {
             validateFn();
         }
+    }
+
+    shiftMeasurement(measurementTypeId, filter, order) {
+      if ((order !== 0 && order !== 1) || !filter.measurementNumber) return;
+
+      const groupCollection = this.toolGroups[measurementTypeId];
+      // Stop here if it is a temporary toolGroups
+      if (!groupCollection) return;
+
+      // Get the entries information before removing them
+      const groupItems = groupCollection.find(filter).fetch();
+      const operator = {
+        $inc: { measurementNumber: order===0?-1:1}
+      };
+
+      // If the filter doesn't have the measurement number, get it from the first entry
+      const measurementNumber = filter.measurementNumber;
+      const filterAffected = {
+        measurementNumber: order===0?measurementNumber-1:measurementNumber+1
+      };
+      const operatorAffected = {
+        $inc: { measurementNumber: order===0?1:-1 }
+      };
+      const affectedGroupItems = groupCollection.find(filterAffected).fetch();
+      affectedGroupItems.forEach(groupItem => {
+        groupCollection.update({_id: groupItem._id}, operatorAffected);
+        if (!groupItem.toolId) return;
+        const collection = this.tools[groupItem.toolId];
+        collection.update({_id: groupItem.toolItemId}, operatorAffected);
+      });
+
+      groupItems.forEach(groupItem => {
+        groupCollection.update({_id: groupItem._id}, operator);
+        if (!groupItem.toolId) return;
+        const collection = this.tools[groupItem.toolId];
+        collection.update({_id: groupItem.toolItemId}, operator);
+      });
+
+      this.syncMeasurementsAndToolData();
     }
 
     syncMeasurementsAndToolData() {

@@ -34,12 +34,13 @@ JF.measurements.syncMeasurementAndToolData = (measurement, syncAll) => {
 
     const currentToolState = toolState[imageId][toolType];
     const toolData = currentToolState && currentToolState.data;
-    
+
+    let alreadyExists = false;
     // Check if we already have toolData for this imageId and toolType
     if (toolData && toolData.length) {
         // If we have toolData, we should search it for any data related to the current Measurement
         const toolData = toolState[imageId][toolType].data;
-        let alreadyExists = false;
+
         // Loop through the toolData to search for this Measurement
         toolData.forEach(tool => {
             // Break the loop if this isn't the Measurement we are looking for
@@ -61,8 +62,6 @@ JF.measurements.syncMeasurementAndToolData = (measurement, syncAll) => {
 
             return false;
         });
-
-        if (alreadyExists) return;
     } else {
         // If no toolData exists for this toolType, create an empty array to hold some
         toolState[imageId][toolType] = {
@@ -71,7 +70,7 @@ JF.measurements.syncMeasurementAndToolData = (measurement, syncAll) => {
     }
 
     // Add the MeasurementData into the toolData for this imageId
-    toolState[imageId][toolType].data.push(measurement);
+    if (!alreadyExists) toolState[imageId][toolType].data.push(measurement);
 
     cornerstoneTools.globalImageIdSpecificToolStateManager.restoreToolState(toolState);
 };

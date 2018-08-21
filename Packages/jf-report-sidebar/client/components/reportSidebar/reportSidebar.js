@@ -44,7 +44,7 @@ Template.reportSidebar.onCreated(() => {
       },
       getAiReport: () => {
         const api = instance.data.reportApi;
-        const data = {};
+        let data = {};
         const config = JF.measurements.MeasurementApi.getConfiguration();
         const measurementApi = instance.data.measurementApi;
         config.measurementTools.forEach(toolGroup => {
@@ -55,6 +55,47 @@ Template.reportSidebar.onCreated(() => {
             data[toolGroup.id] = data[toolGroup.id].concat(measurementApi.tools[tool.id].find().fetch());
           });
         });
+
+        const classifier = {};
+        Object.keys(data).forEach(groupId => {
+          data[groupId].forEach(item => {
+            const path = item.imagePath;
+            if (!classifier[path]) {
+              classifier[path] = {};
+            }
+            if (!classifier[path][groupId]) {
+              classifier[path][groupId] = [];
+            }
+            classifier[path][groupId].push(item);
+          });
+        });
+
+        data = [];
+        Object.keys(classifier).forEach(path => {
+            const groups = classifier[path];
+            Object.keys(groups).forEach(groupId => {
+              groups[groupId].sort((a, b) => {
+                  if (a.measurementNumber > b.measurementNumber) {
+                      return 1;
+                  } else if (a.measurementNumber < b.measurementNumber) {
+                      return -1;
+                  }
+                  return 0;
+              });
+            });
+
+            const uids = path.split('_', 3);
+            if (uids.length < 3) {
+              OHIF.log.error('Image path format error: ', path);
+            }
+            const server = OHIF.servers.getCurrentServer();
+            const url = server.wadoUriRoot + '?requestType=WADO&studyUID=';
+            url += uids[0] + '&seriesUID=';
+            url += uids[1] + '&objectUID=';
+            url += uids[2];
+            data.push(Object.assign({url}, groups));
+        });
+
         const options = { data };
         instance.aiReport.set('loading', true);
         api.getAiReport(options).then(data => {
@@ -107,10 +148,10 @@ Template.reportSidebar.helpers({
 
 Template.reportSidebar.events({
     'click .report-header div'(event, instance){
-      const $thisTarget = $(event.currentTarget);
-      instance.isHiReport.set($thisTarget.index() == 0)
-    },
-    // 'click #update-btn'(event, instance) {
-    //   instance.isHiReport.get()?instance.api.getHiReport():instance.api.getAiReport();
-    // }
+      const length = $('.report-header>div').length;
+      if(length > 1) {
+        const $thisTarget = $(event.currentTarget);
+        instance.isHiReport.set($thisTarget.index() == 0)
+      }
+    }
 });

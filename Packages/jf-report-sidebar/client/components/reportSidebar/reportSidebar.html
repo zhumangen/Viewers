@@ -1,25 +1,14 @@
 <template name="reportSidebar">
   <div class="report-sidebar">
     <div class="report-header clearfix">
-      <div class="origin-report {{#if hiSelected}} selected {{/if}}">
-        <span>原始报告</span>
-        {{#if hasHiReport}}
-          <div class='hi-notifier'></div>
-        {{/if}}
-      </div>
+      {{#if hasHiReport}}
+        <div class="origin-report {{#if hiSelected}} selected {{/if}}">
+          <span>原始报告</span>
+            <div class='hi-notifier'></div>
+        </div>
+      {{/if}}
       <div class="complete-report {{#if not hiSelected}} selected {{/if}}">即时报告</div>
     </div>
-  <!--
-    <div class="load-status">
-      <button id='update-btn' class='update-btn'>刷新</button>
-      {{#if (bool updateTime)}}
-        <div class="update-time">更新于：{{dateToString updateTime 'yyyy-MM-dd hh:mm:ss'}}</div>
-      {{/if}}
-      {{#if isLoading}}
-        <div class="status-icon"><i class="fa fa-spin fa-circle-o-notch fa-fw"></i></div>
-      {{/if}}
-    </div>
-  -->
     <div class="report-content">
       {{#scrollArea class='scroll-area flex-grow fit' scrollStep=63}}
         {{#let reportData = reportContent}}

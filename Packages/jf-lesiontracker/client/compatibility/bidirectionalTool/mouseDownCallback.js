@@ -92,7 +92,6 @@ export default function(event) {
 
         if (handle) {
             data.active = true;
-            Session.set('activeMeasurement', data);
             // Hide the cursor to improve precision while resizing the line or set to move
             // if dragging text box
             $element.css('cursor', handle.hasBoundingBox ? 'move' : 'none');
@@ -105,6 +104,7 @@ export default function(event) {
             event.stopPropagation();
             event.preventDefault();
 
+            Session.set('activeMeasurement', data);
             return;
         }
     }
@@ -125,8 +125,6 @@ export default function(event) {
         data = toolData.data[i];
         if (pointNearTool(element, data, coords)) {
             data.active = true;
-            Session.set('activeMeasurement', data);
-
             // Set the cursor to move
             $element.css('cursor', 'move');
             element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
@@ -141,6 +139,7 @@ export default function(event) {
             event.stopPropagation();
             event.preventDefault();
 
+            Session.set('activeMeasurement', data);
             return;
         }
     }

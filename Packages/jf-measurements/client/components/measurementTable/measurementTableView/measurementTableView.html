@@ -9,7 +9,7 @@
               {{! /if}}
             <div class="table-rows">
               {{#each rowItem in measurementGroup.measurementRows}}
-                  {{>measurementTableRow (clone this rowItem=rowItem)}}
+                  {{>measurementTableRow (clone this rowItem=rowItem totalRows=measurementGroup.measurementRows.length)}}
               {{/each}}
             </div>
           </div>

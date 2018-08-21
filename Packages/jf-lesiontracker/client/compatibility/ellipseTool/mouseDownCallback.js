@@ -50,13 +50,13 @@ export default function mouseDownCallback (e) {
 
       if (handle) {
         data.active = true;
-        Session.set('activeMeasurement', data);
         element.removeEventListener(cornerstoneTools.EVENTS.MOUSE_MOVE, mouseMoveCallback);
         cornerstoneTools.moveHandle(eventData, toolType, data, handle, handleDoneMove, preventHandleOutsideImage);
         e.stopImmediatePropagation();
         e.stopPropagation();
         e.preventDefault();
 
+        Session.set('activeMeasurement', data);
         return;
       }
     }
@@ -71,13 +71,13 @@ export default function mouseDownCallback (e) {
       data.active = false;
       if (pointNearTool(element, data, coords)) {
         data.active = true;
-        Session.set('activeMeasurement', data);
         element.removeEventListener(cornerstoneTools.EVENTS.MOUSE_MOVE, mouseMoveCallback);
         cornerstoneTools.moveAllHandles(e, data, toolData, toolType, opt, handleDoneMove);
         e.stopImmediatePropagation();
         e.stopPropagation();
         e.preventDefault();
 
+        Session.set('activeMeasurement', data);
         return;
       }
     }
