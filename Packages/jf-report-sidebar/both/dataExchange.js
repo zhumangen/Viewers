@@ -2,7 +2,7 @@ import { OHIF } from 'meteor/ohif:core';
 import { HTTP } from 'meteor/http';
 import { JF } from 'meteor/jf:core';
 
-const hiPath = 'http://101.132.45.197:8686/v2/rmis/sysop/rmisReprot';
+const hiPath = 'http://47.100.41.69:8467/v2/rmis/sysop/rmisReprot';
 const aiPath = 'http://47.100.41.69:8091/report';
 
 export const getHiReport = options => {

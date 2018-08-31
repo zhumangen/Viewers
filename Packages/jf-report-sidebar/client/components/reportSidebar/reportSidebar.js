@@ -37,7 +37,7 @@ Template.reportSidebar.onCreated(() => {
             instance.hiReport.set('loading', false);
             instance.hiReport.set('updateTime', new Date());
         }).catch(error => {
-            instance.hiReport.set('data', {findings: '请求失败', diagnose: '请求失败'});
+            instance.hiReport.set('data', {findings: '请求失败', diagnose: '请求失败', invalid: true});
             instance.hiReport.set('loading', false);
             instance.hiReport.set('updateTime', new Date());
         });
@@ -103,7 +103,7 @@ Template.reportSidebar.onCreated(() => {
             instance.aiReport.set('loading', false);
             instance.aiReport.set('updateTime', new Date());
         }).catch(error => {
-            instance.aiReport.set('data', {findings: '请求失败', diagnose: '请求失败'});
+            instance.aiReport.set('data', {findings: '请求失败', diagnose: '请求失败', invalid: true});
             instance.aiReport.set('loading', false);
             instance.aiReport.set('updateTime', new Date());
         });
@@ -142,7 +142,7 @@ Template.reportSidebar.helpers({
     hasHiReport() {
       const instance = Template.instance();
       const data = instance.hiReport.get('data');
-      return data && !!data.findings;
+      return data && !data.invalid;
     }
 });
 
