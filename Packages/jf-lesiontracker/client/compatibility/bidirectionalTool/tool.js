@@ -1,4 +1,4 @@
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 import { cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { toolType } from './definitions';
 import createNewMeasurement from './createNewMeasurement';

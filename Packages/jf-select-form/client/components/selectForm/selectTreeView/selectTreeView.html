@@ -4,7 +4,7 @@
           {{#if (and item (isArray item.items))}}
             <div class="tree-node {{concat 'tree-node-' this.index}}" data-index="{{this.index}}">
                 <div class="node-name"><i class="fa fa-caret-down"></i>{{item.name.zh}}</div>
-                {{>selectTreeView item=item codes=this.codes channel=instance.channel index=(sum this.index 1)}}
+                {{>selectTreeView item=item codes=this.codes channel=instance.channel checks=this.checks index=(sum this.index 1)}}
             </div>
           {{/if}}
         {{/each}}

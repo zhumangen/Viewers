@@ -18,7 +18,7 @@ JF.lesiontracker.configureTargetToolsHandles = () => {
         JF.measurements.toggleLabelButton({
             measurement: measurementData,
             element: eventData.element,
-            measurementApi: OHIF.viewer.measurementApi,
+            measurementApi: JF.viewer.measurementApi,
             position: position,
             direction: {
                 x: getDirection('x'),

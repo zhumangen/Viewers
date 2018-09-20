@@ -8,13 +8,32 @@ import { OHIF } from 'meteor/ohif:core';
 Template.selectForm.onCreated(() => {
     const instance = Template.instance();
     instance.isRemoved = true;
-    instance.bodyPart = 'tuberculosis';
     instance.toolGroupId = new ReactiveVar('');
     instance.removeTreeView = () => {
         if (instance.treeView) {
             Blaze.remove(instance.treeView);
             instance.treeView = undefined;
         }
+    };
+    instance.setTreeRect = () => {
+      const rect = JF.managers.settings.treeRect();
+      if (!rect) return;
+      const $form = instance.$('#selectForm');
+      const winWidth = $(window).width();
+      const winHeight = $(window).height();
+      if (!(rect.left + rect.width < 0 || rect.left >= winWidth ||
+            rect.top + rect.height < 0 || rect.top >= winHeight)) {
+        $form.offset({top: rect.top, left: rect.left});
+        $form.outerWidth(rect.width);
+        $form.outerHeight(rect.height);
+      }
+    };
+    instance.saveTreeRect = () => {
+      const $form = instance.$('#selectForm');
+      const rect = $form.offset();
+      rect.width = $form.outerWidth();
+      rect.height = $form.outerHeight();
+      JF.managers.settings.setTreeRect(rect);
     };
 });
 
@@ -29,6 +48,7 @@ Template.selectForm.onDestroyed(() => {
 Template.selectForm.onRendered(() => {
     const instance = Template.instance();
     instance.$('#selectForm').resizable().draggable().bounded();
+    instance.autorun(instance.setTreeRect);
 
     instance.autorun((computation) => {
         instance.removeTreeView();
@@ -44,7 +64,8 @@ Template.selectForm.onRendered(() => {
         if (!toolGroup) return;
 
         const collection = JF.collections.definitions[toolGroup];
-        const definition = collection.findOne({part: instance.bodyPart});
+        const code = measurement.lesionCode? measurement.lesionCode : JF.managers.settings.lesionCode();
+        const definition = collection.findOne({code});
         const item = definition;
 
         const checkedCodes = (items, codes) => {
@@ -65,7 +86,8 @@ Template.selectForm.onRendered(() => {
         const data = {
             measurement,
             item,
-            codes
+            codes,
+            lesionCode: code
         };
         instance.measurementData = data;
         const parentElement = instance.$('.scrollable')[0];
@@ -100,7 +122,8 @@ Template.selectForm.events({
     'click #save'(event, instance) {
         const measurement = instance.measurementData.measurement;
         const rootItem = instance.measurementData.item;
-        
+        const code = instance.measurementData.lesionCode;
+
         const removeNonChecked = item => {
           if (item) {
             if (item.items && item.items instanceof Array) {
@@ -141,7 +164,8 @@ Template.selectForm.events({
                 patientId: measurement.patientId
             }, {
                 $set: {
-                    location: measurement.location
+                    location: measurement.location,
+                    lesionCode: code
                 }
             }, {
                 multi: true
@@ -158,8 +182,11 @@ Template.selectForm.events({
         if (tool.toolGroup !== 'temp') {
             JF.measurements.triggerTimepointUnsavedChanges(tool.id);
         }
+
+        instance.saveTreeRect();
     },
     'click #cancel'(event, instance) {
-        Session.set('measurementData', false);
+      instance.saveTreeRect();
+      Session.set('measurementData', false);
     }
 });

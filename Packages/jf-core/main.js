@@ -6,7 +6,9 @@ import { Meteor } from 'meteor/meteor';
 
 const JF = {
     lesiontracker: {},
-    collections: {}
+    collections: {},
+    managers: {},
+    viewer: {}
 };
 
 // Expose the OHIF object to the client if it is on development mode

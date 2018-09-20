@@ -7,7 +7,7 @@ import { JF } from 'meteor/jf:core';
 
 Template.timepointBrowserQuickSwitch.onCreated(() => {
     const instance = Template.instance();
-    const { timepointApi } = OHIF.viewer;
+    const { timepointApi } = JF.viewer;
 
     instance.hasAdditional = new ReactiveVar(false);
     instance.showAdditional = new ReactiveVar(false);
@@ -25,8 +25,8 @@ Template.timepointBrowserQuickSwitch.onCreated(() => {
 
     const { viewportIndex } = instance.data;
     instance.autorun(() => {
-        OHIF.viewerbase.layoutManager.observer.depend();
-        const viewportData = OHIF.viewerbase.layoutManager.viewportData[viewportIndex];
+        JF.viewerbase.layoutManager.observer.depend();
+        const viewportData = JF.viewerbase.layoutManager.viewportData[viewportIndex];
         let { studyInstanceUid } = viewportData;
         if (!studyInstanceUid) {
             Tracker.nonreactive(() => {
@@ -93,7 +93,7 @@ Template.timepointBrowserQuickSwitch.events({
 
     'ohif.studies.study.click'(event, instance, studyInformation) {
         const { studyInstanceUid } = studyInformation;
-        const study = OHIF.viewer.Studies.findBy({ studyInstanceUid });
+        const study = JF.viewer.Studies.findBy({ studyInstanceUid });
         instance.data.currentStudy.set(study);
         const $studySwitch = $(event.currentTarget).closest('.study-switch');
         $studySwitch.siblings('.series-switch').trigger('rescale');
@@ -126,7 +126,7 @@ Template.timepointBrowserQuickSwitch.events({
 Template.timepointBrowserQuickSwitch.helpers({
     timepointBrowserData() {
         const instance = Template.instance();
-        const { timepointApi } = OHIF.viewer;
+        const { timepointApi } = JF.viewer;
         return {
             timepointApi,
             timepoints: instance.timepoints.get(),

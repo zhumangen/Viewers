@@ -21,13 +21,15 @@ export default function ({ instance, eventData, tool }) {
 
     const imageAttributes = getImageAttributes(eventData.element);
     const userInfo = Session.get('userInfo');
-    
+
     const measurement = _.extend({}, measurementData, imageAttributes, {
         measurementNumber: measurementData.measurementNumber,
         userId: userInfo.userId,
         userName: userInfo.userName,
         permission: userInfo.permission,
-        status: 0
+        status: 0,
+        version: JF.managers.settings.systemVersion(),
+        lesionCode: JF.managers.settings.lesionCode()
     });
 
     // Get the related timepoint by the measurement number and use its location if defined
@@ -56,7 +58,7 @@ export default function ({ instance, eventData, tool }) {
     // Get the updated measurement number after inserting
     Meteor.defer(() => {
         measurementData.measurementNumber = Collection.findOne(measurementData._id).measurementNumber;
-        cornerstone.updateImage(OHIF.viewerbase.viewportUtils.getActiveViewportElement());
+        cornerstone.updateImage(JF.viewerbase.viewportUtils.getActiveViewportElement());
     });
 
     // Notify that viewer suffered changes

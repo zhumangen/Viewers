@@ -91,7 +91,7 @@ export default function ({ instance, eventData, tool, toolGroupId, toolGroup }) 
         // Get the updated measurement number after inserting
         Meteor.defer(() => {
             measurementData.measurementNumber = Collection.findOne(measurementData._id).measurementNumber;
-            cornerstone.updateImage(OHIF.viewerbase.viewportUtils.getActiveViewportElement());
+            cornerstone.updateImage(JF.viewerbase.viewportUtils.getActiveViewportElement());
         });
     }
 

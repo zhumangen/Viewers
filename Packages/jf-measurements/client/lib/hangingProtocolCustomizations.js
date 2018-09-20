@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 import { JF } from 'meteor/jf:core';
 
 const { InstanceMetadata, StudySummary } = Viewerbase.metadata;
@@ -11,7 +11,7 @@ const { InstanceMetadata, StudySummary } = Viewerbase.metadata;
  * @return {String|undefined}    Timepoint type if found or undefined if not found or any error/missing information
  */
 const getTimepointType = study => {
-    const { timepointApi } = OHIF.viewer;
+    const { timepointApi } = JF.viewer;
 
     if (!timepointApi || !(study instanceof InstanceMetadata || study instanceof StudySummary)) {
         return;
@@ -31,7 +31,7 @@ const getTimepointType = study => {
  * @return {String|undefined} Timepoint key if found or undefined if not found or any error/missing information
  */
 const getTimepointKey = study => {
-    const { timepointApi } = OHIF.viewer;
+    const { timepointApi } = JF.viewer;
 
     if (!timepointApi || !(study instanceof InstanceMetadata || study instanceof StudySummary)) {
         return;

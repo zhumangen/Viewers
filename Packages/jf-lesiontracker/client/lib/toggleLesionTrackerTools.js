@@ -1,5 +1,5 @@
 import { JF } from 'meteor/jf:core';
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 
 /**
  * Show / hide lesion tracker tools
@@ -69,15 +69,15 @@ JF.lesiontracker.toggleLesionTrackerToolsButtons = (isEnabled) => {
 
 JF.lesiontracker.toggleLesionTrackerToolsHotKeys = (isEnabled) => {
     // The hotkey can also be an array (e.g. ["NUMPAD0", "0"])
-    OHIF.viewer.defaultHotkeys = OHIF.viewer.defaultHotkeys || {};
+    JF.managers.defaultHotkeys = JF.managers.defaultHotkeys || {};
 
     if (isEnabled) {
-        OHIF.viewer.defaultHotkeys.toggleLesionTrackerTools = 'O';
-        OHIF.viewer.defaultHotkeys.bidirectional = 'T'; // Target
-        OHIF.viewer.defaultHotkeys.nonTarget = 'N'; // Non-target
+        JF.managers.defaultHotkeys.toggleLesionTrackerTools = 'O';
+        JF.managers.defaultHotkeys.bidirectional = 'T'; // Target
+        JF.managers.defaultHotkeys.nonTarget = 'N'; // Non-target
     } else {
-        OHIF.viewer.defaultHotkeys.toggleLesionTrackerTools = null;
-        OHIF.viewer.defaultHotkeys.bidirectional = null; // Target
-        OHIF.viewer.defaultHotkeys.nonTarget = null; // Non-target
+        JF.managers.defaultHotkeys.toggleLesionTrackerTools = null;
+        JF.managers.defaultHotkeys.bidirectional = null; // Target
+        JF.managers.defaultHotkeys.nonTarget = null; // Non-target
     }
 };

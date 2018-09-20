@@ -12,7 +12,7 @@ import { JF } from 'meteor/jf:core';
  */
 function activateTool(measurementData) {
     const toolType = measurementData.toolType;
-    const imageId = OHIF.viewerbase.getImageIdForImagePath(measurementData.imagePath);
+    const imageId = JF.viewerbase.getImageIdForImagePath(measurementData.imagePath);
     const toolState = cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
 
     const imageToolState = toolState[imageId];
@@ -71,7 +71,7 @@ JF.measurements.activateMeasurements = (element, measurementData) => {
     const enabledElement = cornerstone.getEnabledElement(element);
     const currentImageId = enabledElement.image.imageId;
     const toolData = cornerstoneTools.getToolState(element, 'stack');
-    const imageId = OHIF.viewerbase.getImageIdForImagePath(measurementData.imagePath);
+    const imageId = JF.viewerbase.getImageIdForImagePath(measurementData.imagePath);
     const imageIdIndex = toolData.data[0].imageIds.indexOf(imageId);
 
     // If we aren't currently displaying the image that this tool is on,

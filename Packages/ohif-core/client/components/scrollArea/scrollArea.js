@@ -41,7 +41,6 @@ Template.scrollArea.onRendered(() => {
         const height = $scrollable.outerHeight();
         const scrollTop = $scrollable.scrollTop();
         const { scrollHeight } = $scrollable[0];
-
         // Stop here if unable to scroll
         if (scrollHeight <= height) return;
 
@@ -53,6 +52,10 @@ Template.scrollArea.onRendered(() => {
         // Check if can scroll down
         if (scrollTop + height < scrollHeight) {
             $scrollArea.addClass('can-scroll-down');
+        }
+        
+        if(scrollTop + height + 2 > scrollHeight) {
+            $scrollArea.removeClass('can-scroll-down');
         }
     }, 150);
 

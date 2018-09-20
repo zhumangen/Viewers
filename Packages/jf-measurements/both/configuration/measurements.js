@@ -30,7 +30,6 @@ class MeasurementApi {
         this.tools = {};
         this.toolsGroupsMap = MeasurementApi.getToolsGroupsMap();
         this.changeObserver = new Tracker.Dependency();
-        this.lesions = [];
 
         configuration.measurementTools.forEach(toolGroup => {
             const groupCollection = new Mongo.Collection(null);
@@ -275,25 +274,6 @@ class MeasurementApi {
         });
     }
 
-    retrieveLesions(options) {
-        const retrievalFn = configuration.dataExchange.retrieveLesions;
-        if (!_.isFunction(retrievalFn)) {
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            retrievalFn(options).then(lesions => {
-                OHIF.log.info('Retrieved Lesions: ', lesions);
-                this.lesions = lesions;
-                configuration.schema.nonTargetLocation.allowedValues = lesions;
-                resolve(lesions);
-            }).catch(error => {
-                OHIF.log.error('Retrieving lesions error: ', error);
-                reject(error);
-            });
-        });
-    }
-
     submitResult(options) {
         const submitFn = configuration.dataExchange.submitResult;
         if (!_.isFunction(submitFn)) {
@@ -453,7 +433,7 @@ class MeasurementApi {
 
             measurementsData.forEach(measurementData => {
                 const { imagePath, toolType } = measurementData;
-                const imageId = OHIF.viewerbase.getImageIdForImagePath(imagePath);
+                const imageId = JF.viewerbase.getImageIdForImagePath(imagePath);
                 if (toolState[imageId]) {
                     const toolData = toolState[imageId][toolType];
                     const measurementEntries = toolData && toolData.data;

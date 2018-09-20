@@ -1,5 +1,5 @@
 import { JF } from 'meteor/jf:core';
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 import { cornerstone, cornerstoneMath, cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { toolType } from './definitions';
 import addNewMeasurement from './addNewMeasurement';

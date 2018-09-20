@@ -2,7 +2,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Tracker } from 'meteor/tracker';
 import { _ } from 'meteor/underscore';
 import { JF } from 'meteor/jf:core';
-import 'meteor/ohif:viewerbase';
+import 'meteor/jf:viewerbase';
 import { CriteriaEvaluator } from './CriteriaEvaluator';
 import * as evaluations from './evaluations';
 
@@ -149,9 +149,9 @@ class ConformanceCriteria {
                 measurements.forEach(measurement => {
                     const { studyInstanceUid } = measurement;
 
-                    const promise = OHIF.studies.loadStudy(studyInstanceUid);
+                    const promise = JF.studies.loadStudy(studyInstanceUid);
                     promise.then(study => {
-                        const studyMetadata = OHIF.viewerbase.getStudyMetadata(study);
+                        const studyMetadata = JF.viewerbase.getStudyMetadata(study);
 
                         data[measurementType].push({
                             measurement,

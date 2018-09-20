@@ -17,7 +17,7 @@ function renderIntoViewport(measurementData, enabledElement, viewportIndex) {
         // Find the study by studyInstanceUid and render the display set
         const findAndRender = () => {
             // @TypeSafeStudies
-            const study = OHIF.viewer.Studies.findBy({ studyInstanceUid });
+            const study = JF.viewer.Studies.findBy({ studyInstanceUid });
 
             // TODO: Support frames? e.g. for measurements on multi-frame instances
             findAndRenderDisplaySet(
@@ -42,7 +42,7 @@ function renderIntoViewport(measurementData, enabledElement, viewportIndex) {
             const isSameSeries = series.seriesInstanceUid === measurementData.seriesInstanceUid;
             if (isSameStudy && isSameSeries) {
                 // If it is, activate the measurements in this viewport and stop here
-                OHIF.viewerbase.viewportUtils.resetViewport(viewportIndex);
+                JF.viewerbase.viewportUtils.resetViewport(viewportIndex);
                 renderedCallback(element);
             } else {
                 findAndRender();
@@ -54,13 +54,13 @@ function renderIntoViewport(measurementData, enabledElement, viewportIndex) {
 }
 
 function syncViewports(viewportsIndexes) {
-    const synchronizer = OHIF.viewer.stackImagePositionOffsetSynchronizer;
+    const synchronizer = JF.viewer.stackImagePositionOffsetSynchronizer;
     const linkableViewports = synchronizer.getLinkableViewports();
     if (linkableViewports.length) {
         const linkableViewportsIndexes = _.pluck(linkableViewports, 'index');
         const indexes = _.intersection(linkableViewportsIndexes, viewportsIndexes);
         if (indexes.length) {
-            OHIF.viewer.stackImagePositionOffsetSynchronizer.activateByViewportIndexes(indexes);
+            JF.viewer.stackImagePositionOffsetSynchronizer.activateByViewportIndexes(indexes);
         }
     }
 }
@@ -74,7 +74,7 @@ let lastActivatedRowItem;
  * @param measurementId The unique key for a specific Measurement
  */
 JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
-    const { isZoomed, zoomedViewportIndex } = OHIF.viewerbase.layoutManager;
+    const { isZoomed, zoomedViewportIndex } = JF.viewerbase.layoutManager;
     
     lastActivatedRowItem = rowItem;
 
@@ -91,7 +91,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
     }
 
     // Reverse the timepointList array if the flag is set
-    if (OHIF.viewer.invertViewportTimepointsOrder) {
+    if (JF.viewer.invertViewportTimepointsOrder) {
         timepointList.reverse();
     }
 
@@ -118,7 +118,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
         }
 
         measurementsData.push(measurementData);
-        const promise = OHIF.studies.loadStudy(measurementData.studyInstanceUid);
+        const promise = JF.studies.loadStudy(measurementData.studyInstanceUid);
         promise.then(() => JF.measurements.syncMeasurementAndToolData(measurement));
         promises.add(promise);
     }
@@ -133,7 +133,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
         const activatedViewportIndexes = [];
 
         // Deactivate stack synchronizer because it will be re-activated later
-        OHIF.viewer.stackImagePositionOffsetSynchronizer.deactivate();
+        JF.viewer.stackImagePositionOffsetSynchronizer.deactivate();
 
         const renderPromises = [];
         for (let viewportIndex = 0; viewportIndex < numViewportsToUpdate; viewportIndex++) {

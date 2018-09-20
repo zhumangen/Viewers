@@ -14,7 +14,7 @@ JF.measurements.updateMeasurementsDescription = (measurementData, description) =
     const options = { multi: true };
     const { toolGroup } = JF.measurements.getToolConfiguration(toolType);
     toolGroup.childTools.forEach(childTool => {
-        const collection = OHIF.viewer.measurementApi.tools[childTool.id];
+        const collection = JF.viewer.measurementApi.tools[childTool.id];
         collection.update(filter, operator, options);
     });
 

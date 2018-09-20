@@ -9,23 +9,23 @@ import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
 
 import 'meteor/ohif:cornerstone';
-import 'meteor/ohif:viewerbase';
-import 'meteor/ohif:metadata';
+import 'meteor/jf:viewerbase';
+import 'meteor/jf:metadata';
 
 Meteor.startup(() => {
     Session.set('TimepointsReady', false);
     Session.set('MeasurementsReady', false);
 
-    OHIF.viewer.displaySeriesQuickSwitch = false;
-    OHIF.viewer.stackImagePositionOffsetSynchronizer = new OHIF.viewerbase.StackImagePositionOffsetSynchronizer();
+    JF.viewer.displaySeriesQuickSwitch = false;
+    JF.viewer.stackImagePositionOffsetSynchronizer = new JF.viewerbase.StackImagePositionOffsetSynchronizer();
 
     // Create the synchronizer used to update reference lines
-    OHIF.viewer.updateImageSynchronizer = new cornerstoneTools.Synchronizer('cornerstonenewimage', cornerstoneTools.updateImageSynchronizer);
+    JF.viewer.updateImageSynchronizer = new cornerstoneTools.Synchronizer('cornerstonenewimage', cornerstoneTools.updateImageSynchronizer);
 
-    OHIF.viewer.metadataProvider = new OHIF.cornerstone.MetadataProvider();
+    JF.viewer.metadataProvider = new OHIF.cornerstone.MetadataProvider();
 
     // Metadata configuration
-    const metadataProvider = OHIF.viewer.metadataProvider;
+    const metadataProvider = JF.viewer.metadataProvider;
     cornerstone.metaData.addProvider(metadataProvider.getProvider());
 
     // Target tools configuration
@@ -37,13 +37,13 @@ Template.viewer.onCreated(() => {
 
     const instance = Template.instance();
 
-    // Define the OHIF.viewer.data global object
-    OHIF.viewer.data = OHIF.viewer.data || Session.get('ViewerData') || {};
+    // Define the JF.viewer.data global object
+    JF.viewer.data = JF.viewer.data || Session.get('ViewerData') || {};
 
     const { TimepointApi, MeasurementApi, ConformanceCriteria } = JF.measurements;
     const ReportApi = JF.report.ReportApi
 
-    const currentTimepointId = OHIF.viewer.data.currentTimepointId;
+    const currentTimepointId = JF.viewer.data.currentTimepointId;
     const timepointApi = new TimepointApi(currentTimepointId);
     const measurementApi = new MeasurementApi(timepointApi);
     const conformanceCriteria = new ConformanceCriteria(measurementApi, timepointApi);
@@ -55,24 +55,38 @@ Template.viewer.onCreated(() => {
         reportApi
     };
 
-    Object.assign(OHIF.viewer, apis);
+    Object.assign(JF.viewer, apis);
     Object.assign(instance.data, apis);
 
     instance.state = new ReactiveDict();
-    instance.state.set('leftSidebar', Session.get('leftSidebar'));
-    instance.state.set('rightSidebar', Session.get('rightSidebar'));
 
-    const viewportUtils = OHIF.viewerbase.viewportUtils;
+    instance.autorun(() => {
+      instance.state.set('leftSidebar', JF.managers.settings.leftSidebarOpen());
+      instance.state.set('rightSidebar', JF.managers.settings.rightSidebarOpen());
+    });
 
-    OHIF.viewer.functionList = $.extend(OHIF.viewer.functionList, {
+    instance.autorun(() => {
+      const value = instance.state.get('leftSidebar');
+      if (value !== JF.managers.settings.leftSidebarOpen()) {
+        JF.managers.settings.setLeftSidebarOpen(value);
+      }
+      value = instance.state.get('rightSidebar');
+      if (value !== JF.managers.settings.rightSidebarOpen()) {
+        JF.managers.settings.setRightSidebarOpen(value);
+      }
+    });
+
+    const viewportUtils = JF.viewerbase.viewportUtils;
+
+    JF.viewer.functionList = $.extend(JF.viewer.functionList, {
         toggleLesionTrackerTools: JF.lesiontracker.toggleLesionTrackerTools,
         bidirectional: () => {
             // Used for hotkeys
-            OHIF.viewerbase.toolManager.setActiveTool('bidirectional');
+            JF.viewerbase.toolManager.setActiveTool('bidirectional');
         },
         nonTarget: () => {
             // Used for hotkeys
-            OHIF.viewerbase.toolManager.setActiveTool('nonTarget');
+            JF.viewerbase.toolManager.setActiveTool('nonTarget');
         },
         // Viewport functions
         toggleCineDialog: viewportUtils.toggleCineDialog,
@@ -86,45 +100,45 @@ Template.viewer.onCreated(() => {
         linkStackScroll: viewportUtils.linkStackScroll
     });
 
-    if (OHIF.viewer.data.loadedSeriesData) {
+    if (JF.viewer.data.loadedSeriesData) {
         OHIF.log.info('Reloading previous loadedSeriesData');
-        OHIF.viewer.loadedSeriesData = OHIF.viewer.data.loadedSeriesData;
+        JF.viewer.loadedSeriesData = JF.viewer.data.loadedSeriesData;
     } else {
         OHIF.log.info('Setting default viewer data');
-        OHIF.viewer.loadedSeriesData = {};
-        OHIF.viewer.data.loadedSeriesData = {};
+        JF.viewer.loadedSeriesData = {};
+        JF.viewer.data.loadedSeriesData = {};
     }
 
     // Store the viewer data in session for further user
-    Session.setPersistent('ViewerData', OHIF.viewer.data);
+    Session.setPersistent('ViewerData', JF.viewer.data);
 
-    Session.set('activeViewport', OHIF.viewer.data.activeViewport || false);
+    Session.set('activeViewport', JF.viewer.data.activeViewport || false);
 
     // Set lesion tool buttons as disabled if pixel spacing is not available for active element
     instance.autorun(JF.lesiontracker.pixelSpacingAutorunCheck);
 
     // @TypeSafeStudies
-    // Clears OHIF.viewer.Studies collection
-    OHIF.viewer.Studies.removeAll();
+    // Clears JF.viewer.Studies collection
+    JF.viewer.Studies.removeAll();
 
     // @TypeSafeStudies
-    // Clears OHIF.viewer.StudyMetadataList collection
-    OHIF.viewer.StudyMetadataList.removeAll();
+    // Clears JF.viewer.StudyMetadataList collection
+    JF.viewer.StudyMetadataList.removeAll();
 
     instance.data.studies.forEach(study => {
-        const studyMetadata = new OHIF.metadata.StudyMetadata(study, study.studyInstanceUid);
+        const studyMetadata = new JF.metadata.StudyMetadata(study, study.studyInstanceUid);
         let displaySets = study.displaySets;
 
         if (!study.displaySets) {
-            displaySets = OHIF.viewerbase.sortingManager.getDisplaySets(studyMetadata);
+            displaySets = JF.viewerbase.sortingManager.getDisplaySets(studyMetadata);
             study.displaySets = displaySets;
         }
 
         studyMetadata.setDisplaySets(displaySets);
 
         study.selected = true;
-        OHIF.viewer.Studies.insert(study);
-        OHIF.viewer.StudyMetadataList.insert(studyMetadata);
+        JF.viewer.Studies.insert(study);
+        JF.viewer.StudyMetadataList.insert(studyMetadata);
     });
 /*
     const patientId = instance.data.studies[0].patientId;
@@ -172,7 +186,7 @@ Template.viewer.onCreated(() => {
 
     //  Enable/Disable Lesion Tracker Tools if the opened study is associated or not
     // JF.lesiontracker.toggleLesionTrackerToolsButtons(!!currentTimepointId);
-    
+
     let params = Session.get('queryParams');
     measurementApi.queryUserInfo(params).then(user => {
         user.status =  0;
@@ -183,14 +197,14 @@ Template.viewer.onCreated(() => {
         }
         Object.assign(params, user);
         Session.set('userInfo', user);
-        
+
         const measurementsPromise = measurementApi.retrieveMeasurements(params);
         measurementsPromise.then(() => {
             Session.set('MeasurementsReady', true);
             measurementApi.syncMeasurementsAndToolData();
         });
     });
-    
+
     if (params.statusCode === '7003' || params.statusCode === '7004' || params.statusCode === '7005') {
         const options = {
             studyInstanceUid: params.studyInstanceUid,
@@ -322,23 +336,9 @@ const setActiveToolAndSidebar = () => {
             }
 
             // If not set, for associated studies default is target-tool
-            OHIF.viewerbase.toolManager.setActiveTool(activeTool || 'bidirectional');
-        }
-
-        // Toggle Measurement Table
-        if (instance.state) {
-            instance.state.set('rightSidebar', 'measurements');
+            JF.viewerbase.toolManager.setActiveTool(activeTool || 'targetEllipse');
         }
     }
-    // Hide as default for single study
-    else {
-        if (instance.state) {
-            instance.state.set('rightSidebar', null);
-        }
-    }
-    
-    // changed defaut to open measurements table.
-    instance.state.set('rightSidebar', 'measurements');
 };
 
 /**
@@ -354,13 +354,13 @@ const initHangingProtocol = () => {
         setActiveToolAndSidebar();
 
         // Gets all StudyMetadata objects: necessary for Hanging Protocol to access study metadata
-        const studyMetadataList = OHIF.viewer.StudyMetadataList.all();
+        const studyMetadataList = JF.viewer.StudyMetadataList.all();
 
         // Caches Layout Manager: Hanging Protocol uses it for layout management according to current protocol
-        const layoutManager = OHIF.viewerbase.layoutManager;
+        const layoutManager = JF.viewerbase.layoutManager;
 
         // Instantiate StudyMetadataSource: necessary for Hanging Protocol to get study metadata
-        const studyMetadataSource = new OHIF.studies.classes.OHIFStudyMetadataSource();
+        const studyMetadataSource = new JF.studies.classes.OHIFStudyMetadataSource();
 
         // Creates Protocol Engine object with required arguments
         const ProtocolEngine = new HP.ProtocolEngine(layoutManager, studyMetadataList, [], studyMetadataSource);
@@ -423,5 +423,5 @@ Template.viewer.onDestroyed(() => {
     Session.set('TimepointsReady', false);
     Session.set('MeasurementsReady', false);
 
-    OHIF.viewer.stackImagePositionOffsetSynchronizer.deactivate();
+    JF.viewer.stackImagePositionOffsetSynchronizer.deactivate();
 });

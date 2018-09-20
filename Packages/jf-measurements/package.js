@@ -31,12 +31,11 @@ Package.onUse(function(api) {
 
     // Our custom packages
     api.use('ohif:cornerstone');
-    api.use('ohif:design');
-    api.use('ohif:select-tree');
+    api.use('jf:design');
     api.use('ohif:log');
-    api.use('ohif:studies');
-    api.use('ohif:hanging-protocols');
-    api.use('ohif:viewerbase');
+    api.use('jf:studies');
+    api.use('jf:hanging-protocols');
+    api.use('jf:viewerbase');
     api.use('jf:core');
 
     // Client and server imports

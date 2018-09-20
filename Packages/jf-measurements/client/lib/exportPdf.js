@@ -4,13 +4,13 @@ import { MeasurementReport } from 'meteor/jf:measurements/client/reports/measure
 JF.measurements.exportPdf = (measurementApi, timepointApi) => {
     const currentTimepoint = timepointApi.current();
     const { timepointId } = currentTimepoint;
-    const study = OHIF.viewer.Studies.findBy({
+    const study = JF.viewer.Studies.findBy({
         studyInstanceUid: currentTimepoint.studyInstanceUids[0]
     });
     const report = new MeasurementReport({
         header: {
             trial: 'RECIST 1.1',
-            patientName: OHIF.viewerbase.helpers.formatPN(study.patientName),
+            patientName: JF.viewerbase.helpers.formatPN(study.patientName),
             mrn: study.patientId,
             timepoint: timepointApi.name(currentTimepoint)
         }
@@ -18,7 +18,7 @@ JF.measurements.exportPdf = (measurementApi, timepointApi) => {
 
     const printMeasurement = (measurement, callback) => {
         JF.measurements.getImageDataUrl({ measurement }).then(imageDataUrl => {
-            const imageId = OHIF.viewerbase.getImageIdForImagePath(measurement.imagePath);
+            const imageId = JF.viewerbase.getImageIdForImagePath(measurement.imagePath);
             const series = cornerstone.metaData.get('series', imageId);
             const instance = cornerstone.metaData.get('instance', imageId);
 

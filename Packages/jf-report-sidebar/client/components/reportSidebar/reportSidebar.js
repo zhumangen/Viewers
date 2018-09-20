@@ -19,7 +19,7 @@ Template.reportSidebar.onCreated(() => {
       getHiReport: () => {
         const api = instance.data.reportApi;
         const params = Session.get('queryParams');
-        const element = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+        const element = JF.viewerbase.viewportUtils.getActiveViewportElement();
         if (!element) return;
 
         const enabledElement = cornerstone.getEnabledElement(element);
@@ -33,6 +33,7 @@ Template.reportSidebar.onCreated(() => {
         const options = Object.assign({}, params, imageAttributes);
         instance.hiReport.set('loading', true);
         api.getHiReport(options).then(data => {
+            if (!data.findings && !data.diagnose) data.invalid = true;
             instance.hiReport.set('data', data);
             instance.hiReport.set('loading', false);
             instance.hiReport.set('updateTime', new Date());

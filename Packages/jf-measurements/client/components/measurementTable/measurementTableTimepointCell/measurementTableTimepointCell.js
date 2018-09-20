@@ -56,7 +56,7 @@ Template.measurementTableTimepointCell.helpers({
         const { entries } = rowItem;
         const measurementData = timepointId ? _.findWhere(entries, { timepointId }) : entries[0];
         const { studyInstanceUid } = measurementData;
-        return OHIF.studies.loadingDict.get(studyInstanceUid) === 'loading';
+        return JF.studies.loadingDict.get(studyInstanceUid) === 'loading';
     }
 });
 

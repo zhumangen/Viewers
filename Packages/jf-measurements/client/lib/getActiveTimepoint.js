@@ -8,6 +8,6 @@ import { JF } from 'meteor/jf:core';
  */
 JF.measurements.getActiveTimepoint = () => {
     const activeViewportIndex = Session.get('activeViewport');
-    const { studyInstanceUid } = OHIF.viewerbase.layoutManager.viewportData[activeViewportIndex];
-    return OHIF.viewer.timepointApi.study(studyInstanceUid)[0];
+    const { studyInstanceUid } = JF.viewerbase.layoutManager.viewportData[activeViewportIndex];
+    return JF.viewer.timepointApi.study(studyInstanceUid)[0];
 };

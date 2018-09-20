@@ -22,7 +22,7 @@ Package.onUse(function(api) {
     ], 'client');
 
     // OHIF dependencies
-    api.use('ohif:design');
+    api.use('jf:design');
     api.use('ohif:core');
 
     // Main module

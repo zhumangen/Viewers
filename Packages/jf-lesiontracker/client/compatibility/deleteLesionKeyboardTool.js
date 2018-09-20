@@ -42,7 +42,7 @@ function removeMeasurementTimepoint(data, index, toolType, element) {
 
 // TODO = Check if we have the same function already in Cornerstone Tools
 function getNearbyToolData(element, coords) {
-    const Viewerbase = OHIF.viewerbase;
+    const Viewerbase = JF.viewerbase;
     const allTools = Viewerbase.toolManager.getTools();
     let pointNearTool = false;
     const isTouchDevice = Viewerbase.helpers.isTouchDevice();

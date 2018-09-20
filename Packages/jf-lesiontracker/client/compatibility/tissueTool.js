@@ -9,15 +9,19 @@ function createNewMeasurement () {
   const measurementData = {
     isCreating: true,
     toolType: toolType,
+    version: JF.managers.settings.systemVersion(),
+    lesionCode: JF.managers.settings.lesionCode(),
     createdAt: new Date()
   };
-  
-  const element = OHIF.viewerbase.viewportUtils.getActiveViewportElement();
+
+  const element = JF.viewerbase.viewportUtils.getActiveViewportElement();
   const { getImageAttributes } = JF.measurements.MeasurementHandlers;
   const imageAttributes = getImageAttributes(element);
+  const viewport = cornerstone.getViewport(element);
+  delete viewport.voiLUT;
   const userInfo = Session.get('userInfo');
 
-  const measurement = _.extend({}, measurementData, imageAttributes, {
+  const measurement = _.extend({}, measurementData, imageAttributes, {viewport}, {
     userId: userInfo.userId,
     userName: userInfo.userName,
     permission: userInfo.permission,

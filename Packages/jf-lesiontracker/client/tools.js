@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 
 Meteor.startup(function() {
     const toolManager = Viewerbase.toolManager;

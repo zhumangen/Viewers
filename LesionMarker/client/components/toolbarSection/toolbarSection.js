@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import { OHIF } from 'meteor/ohif:core';
-import { Viewerbase } from 'meteor/ohif:viewerbase';
+import { Viewerbase } from 'meteor/jf:viewerbase';
 
 Template.toolbarSection.helpers({
     leftSidebarToggleButtonData() {
@@ -11,7 +11,7 @@ Template.toolbarSection.helpers({
             key: 'leftSidebar',
             value: instance.data.state,
             options: [{
-                value: 'studies',
+                value: 'report',
                 svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-studies',
                 svgWidth: 15,
                 svgHeight: 13,

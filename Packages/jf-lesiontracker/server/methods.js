@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
 import { Mongo } from 'meteor/mongo';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
@@ -12,23 +11,6 @@ measurementTools.forEach(tool => {
     MeasurementCollections[tool.id]._debugName = tool.id;
 });
 
-const NonEmptyString = Match.Where(str => {
-    check(str, String);
-    return str.length > 0;
-});
-const NonEmptyStringArray = Match.Where(arr => {
-    check(arr, [String]);
-    return arr.length > 0;
-});
-const PositiveNumber = Match.Where(num => {
-    check(num, Number);
-    return num > 0;
-});
-const NonNegativeNumber = Match.Where(num => {
-    check(num, Number);
-    return !(num < 0);
-});
-
 // TODO: Make storage use update instead of clearing the entire collection and
 // re-inserting everything.
 Meteor.methods({
@@ -37,9 +19,9 @@ Meteor.methods({
         OHIF.log.info(JSON.stringify(measurementData, null, 2));
 
         check(options, Match.Where(arg => {
-            check(arg.userId, NonEmptyString);
-            check(arg.studyInstanceUid, NonEmptyString);
-            check(arg.seriesInstanceUids, NonEmptyStringArray);
+            check(arg.userId, JF.validation.NonEmptyString);
+            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
+            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
             return true;
         }));
 
@@ -69,10 +51,10 @@ Meteor.methods({
 
     changeStatus(options) {
         check(options, Match.Where(arg => {
-            check(arg.userId, NonEmptyString);
-            check(arg.studyInstanceUid, NonEmptyString);
-            check(arg.seriesInstanceUids, NonEmptyStringArray);
-            check(arg.status, PositiveNumber);
+            check(arg.userId, JF.validation.NonEmptyString);
+            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
+            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
+            check(arg.status, JF.validation.PositiveNumber);
             return true;
         }));
 
@@ -100,11 +82,11 @@ Meteor.methods({
         let measurementData = {};
 
         check(options, Match.Where(arg => {
-            check(arg.userId, NonEmptyString);
-            check(arg.studyInstanceUid, NonEmptyString);
-            check(arg.seriesInstanceUids, NonEmptyStringArray);
-            check(arg.statusCode, NonEmptyString);
-            check(arg.permission, NonNegativeNumber);
+            check(arg.userId, JF.validation.NonEmptyString);
+            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
+            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
+            check(arg.statusCode, JF.validation.NonEmptyString);
+            check(arg.permission, JF.validation.NonNegativeNumber);
             return true;
         }));
 
@@ -149,9 +131,9 @@ Meteor.methods({
         OHIF.log.info('Retrieving user name');
 
         check(options, Match.Where(arg => {
-            check(arg.studyInstanceUid, NonEmptyString);
-            check(arg.seriesInstanceUids, NonEmptyStringArray);
-            check(arg.status, NonNegativeNumber);
+            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
+            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
+            check(arg.status, JF.validation.NonNegativeNumber);
             return true;
         }));
 
@@ -179,8 +161,8 @@ Meteor.methods({
         OHIF.log.info('Retrieving Lesions from the Server');
 
         check(options, Match.Where(arg => {
-            check(arg.token, NonEmptyString);
-            check(arg.version, NonEmptyString);
+            check(arg.token, JF.validation.NonEmptyString);
+            check(arg.version, JF.validation.NonEmptyString);
             return true;
         }));
 

@@ -10,6 +10,6 @@ JF.measurements.getParentToolData = measurementData => {
     const { toolType, _id } = measurementData;
     const { tool } = JF.measurements.getToolConfiguration(toolType);
     const parentToolType = tool.parentTool || toolType;
-    const parentToolData = OHIF.viewer.measurementApi.tools[parentToolType].findOne(_id);
+    const parentToolData = JF.viewer.measurementApi.tools[parentToolType].findOne(_id);
     return parentToolData;
 };

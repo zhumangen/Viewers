@@ -17,7 +17,7 @@ Template[defaultTemplate].onCreated(() => {
     const instance = Template.instance();
     instance.instanceMetadata = new ReactiveVar();
 
-    const { DICOMTagDescriptions } = OHIF.viewerbase;
+    const { DICOMTagDescriptions } = JF.viewerbase;
     instance.getValueByTagKeyword = tagKeyword => {
         const instanceMetadata = instance.instanceMetadata.get();
         const tagObject = DICOMTagDescriptions.find(tagKeyword);
@@ -35,7 +35,7 @@ Template[defaultTemplate].onRendered(() => {
         if (computation.firstRun) return;
         computation.stop();
         const imageIndex = instance.getImageIndex();
-        OHIF.studies.loadStudy(studyInstanceUid).then(studyMetadata => {
+        JF.studies.loadStudy(studyInstanceUid).then(studyMetadata => {
             const seriesMetadata = studyMetadata.getSeriesByUID(seriesInstanceUid);
             const instanceMetadata = seriesMetadata.getInstanceByIndex(imageIndex);
             if (!instanceMetadata) return;
@@ -112,7 +112,7 @@ Template[defaultTemplate].helpers({
     zoom() {
         const instance = Template.instance();
         const { viewportIndex } = instance.data;
-        const { getElementIfNotEmpty } = OHIF.viewerbase;
+        const { getElementIfNotEmpty } = JF.viewerbase;
         Session.get('CornerstoneImageRendered' + viewportIndex);
 
         const element = getElementIfNotEmpty(viewportIndex);
@@ -127,9 +127,9 @@ Template[defaultTemplate].helpers({
     wwwc() {
         const instance = Template.instance();
         const { viewportIndex } = instance.data;
-        const { getElementIfNotEmpty, wlPresets } = OHIF.viewerbase;
+        const { getElementIfNotEmpty } = JF.viewerbase;
         Session.get('CornerstoneImageRendered' + viewportIndex);
-        wlPresets.changeObserver.depend();
+        JF.managers.wlPresets.changeObserver.depend();
 
         const element = getElementIfNotEmpty(viewportIndex);
         if (!element) return;
@@ -142,7 +142,7 @@ Template[defaultTemplate].helpers({
         const result = [`W: ${ww}, L: ${wc}`];
 
         // Check if there's a preset with this W/L
-        const preset = _.findWhere(OHIF.viewer.wlPresets, {
+        const preset = _.findWhere(JF.managers.currentWLPresets, {
             ww: parseInt(ww),
             wc: parseInt(wc)
         });
@@ -159,7 +159,7 @@ Template[defaultTemplate].helpers({
         const instance = Template.instance();
         const studyInstanceUid = instance.data.studyInstanceUid;
 
-        const timepointApi = OHIF.viewer.timepointApi;
+        const timepointApi = JF.viewer.timepointApi;
         if (!timepointApi) return;
 
         const timepoints = timepointApi.study(studyInstanceUid);

@@ -5,7 +5,7 @@ JF.measurements.saveMeasurements = (measurementApi, timepointId) => {
     const basePath = `viewer.studyViewer.measurements.${timepointId}`;
 
     // Stop here if there are nonconformities in the timepoints
-    const nonconformities = OHIF.viewer.conformanceCriteria.nonconformities.get();
+    const nonconformities = JF.viewer.conformanceCriteria.nonconformities.get();
     if (nonconformities.length) return;
 
     // Stop here if there were no changes to the timepoint

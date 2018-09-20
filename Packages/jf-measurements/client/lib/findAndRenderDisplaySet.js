@@ -23,5 +23,5 @@ JF.measurements.findAndRenderDisplaySet = (displaySets, viewportIndex, studyInst
         displaySetData.renderedCallback = renderedCallback;
     }
 
-    OHIF.viewerbase.layoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, displaySetData);
+    JF.viewerbase.layoutManager.rerenderViewportWithNewDisplaySet(viewportIndex, displaySetData);
 };

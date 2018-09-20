@@ -3,6 +3,7 @@ import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { OHIF } from 'meteor/ohif:core';
+import { JF } from 'meteor/jf:core';
 
 Template.app.onCreated(() => {
     const instance = Template.instance();
@@ -67,11 +68,11 @@ Template.app.events({
         const isViewer = Session.get('ViewerOpened');
 
         if (!isViewer) {
-            const timepointId = OHIF.viewer.data.currentTimepointId;
+            const timepointId = JF.viewer.data.currentTimepointId;
             if (timepointId) {
                 Router.go('viewerTimepoint', { timepointId });
             } else {
-                const { studyInstanceUids } = OHIF.viewer.data;
+                const { studyInstanceUids } = JF.viewer.data;
                 Router.go('viewerStudies', { studyInstanceUids });
             }
 
@@ -106,6 +107,8 @@ Template.app.events({
 });
 
 Template.app.helpers({
+    title() { return JF.managers.settings.systemTitle(); },
+    version() { return JF.managers.settings.systemVersion(); },
     userName() { return Session.get('userInfo').userName },
     hasReporter() {
         return !!Session.get('reporter');

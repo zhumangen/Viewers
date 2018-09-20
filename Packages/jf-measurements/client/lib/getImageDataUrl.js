@@ -14,7 +14,7 @@ JF.measurements.getImageDataUrl = ({
     viewport
 }) => {
     imagePath = imagePath || measurement.imagePath;
-    const imageId = OHIF.viewerbase.getImageIdForImagePath(imagePath);
+    const imageId = JF.viewerbase.getImageIdForImagePath(imagePath);
 
     // Create a deep copy of the measurement to prevent changing its original properties
     if (measurement) {

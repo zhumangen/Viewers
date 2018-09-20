@@ -6,15 +6,15 @@ import { OHIF } from 'meteor/ohif:core';
 Template.viewerSection.onCreated(() => {
     const instance = Template.instance();
 
-    instance.isTimepointBrowser = () => !!OHIF.viewer.data.currentTimepointId;
+    instance.isTimepointBrowser = () => !!JF.viewer.data.currentTimepointId;
 
-    OHIF.viewer.quickSwitchStudyBrowserTemplate = 'timepointBrowserQuickSwitch';
+    JF.viewer.quickSwitchStudyBrowserTemplate = 'timepointBrowserQuickSwitch';
     if (!instance.isTimepointBrowser()) {
-        OHIF.viewer.quickSwitchStudyBrowserTemplate = 'studyBrowserQuickSwitch';
+        JF.viewer.quickSwitchStudyBrowserTemplate = 'studyBrowserQuickSwitch';
         instance.loading = new ReactiveVar(true);
         instance.studiesInformation = new ReactiveVar([]);
-        const filter = { studyInstanceUid: OHIF.viewer.data.studyInstanceUids };
-        OHIF.studies.searchStudies(filter).then(studiesData => {
+        const filter = { studyInstanceUid: JF.viewer.data.studyInstanceUids };
+        JF.studies.searchStudies(filter).then(studiesData => {
             instance.loading.set(false);
             instance.studiesInformation.set(studiesData);
         }).catch(error => {
@@ -40,7 +40,7 @@ Template.viewerSection.events({
         $allBrowserItems.removeClass('active');
 
         if (viewType === 'key') {
-            const { timepointIds, currentTimepointId } = OHIF.viewer.data;
+            const { timepointIds, currentTimepointId } = JF.viewer.data;
             timepointIds.forEach(timepointId => {
                 const $browserItem = $allBrowserItems.filter(`[data-id=${timepointId}]`);
                 $browserItem.find('.timepoint-item').trigger('JF.lesiontracker.timepoint.load');

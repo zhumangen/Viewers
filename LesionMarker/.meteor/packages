@@ -33,17 +33,17 @@ clinical:hipaa-logger
 
 # OHIF Packages
 ohif:polyfill
-ohif:design
+jf:design
 ohif:core
 ohif:header
 ohif:cornerstone
 ohif:cornerstone-settings
-ohif:viewerbase
-ohif:studies
-ohif:study-list
+jf:viewerbase
+jf:studies
+jf:study-list
 ohif:dicom-services
-ohif:hanging-protocols
-ohif:metadata
+jf:hanging-protocols
+jf:metadata
 jf:core
 
 # Necessary for Lesion Trakcer
@@ -52,7 +52,6 @@ jf:select-form
 jf:report-sidebar
 ohif:user
 ohif:user-management
-ohif:select-tree
 
 accounts-base@1.4.0
 accounts-password@1.5.0

@@ -42,7 +42,7 @@ Template.timepointBrowserItem.onCreated(() => {
     };
 
     const filter = { studyInstanceUid: timepoint.studyInstanceUids };
-    instance.loadStudies = () => OHIF.studies.searchStudies(filter).then(studiesData => {
+    instance.loadStudies = () => JF.studies.searchStudies(filter).then(studiesData => {
         instance.studiesData.set(studiesData);
         timepointApi.timepoints.update(timepoint._id, { $set: { studiesData } });
         instance.setModalitiesSummary();

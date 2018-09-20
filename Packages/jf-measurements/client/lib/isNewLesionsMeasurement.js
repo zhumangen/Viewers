@@ -12,7 +12,7 @@ JF.measurements.isNewLesionsMeasurement = measurementData => {
 
     const toolConfig = JF.measurements.getToolConfiguration(measurementData.toolType);
     const toolType = toolConfig.tool.parentTool || measurementData.toolType;
-    const { timepointApi, measurementApi } = OHIF.viewer;
+    const { timepointApi, measurementApi } = JF.viewer;
     const currentMeasurement = measurementApi.tools[toolType].findOne(measurementData._id);
     const { timepointId, measurementNumber } = currentMeasurement;
 

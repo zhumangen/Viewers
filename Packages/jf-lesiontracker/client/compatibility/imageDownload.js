@@ -1,6 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
-OHIF.viewerbase.getImageDownloadDialogAnnotationTools = () => {
+JF.viewerbase.getImageDownloadDialogAnnotationTools = () => {
     const { measurementTools } = JF.measurements.MeasurementApi.getConfiguration();
 
     const resultSet = new Set();

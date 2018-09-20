@@ -36,7 +36,7 @@ Router.route('/studylist', {
         const next = this.next;
 
         // Retrieve the timepoints data to display in studylist
-        const promise = OHIF.studylist.timepointApi.retrieveTimepoints({});
+        const promise = JF.studylist.timepointApi.retrieveTimepoints({});
         promise.then(() => next());
     },*/
     action: function() {
@@ -46,12 +46,12 @@ Router.route('/studylist', {
 
 Router.route('/viewer/timepoints/:timepointId', function() {
     const timepointId = this.params.timepointId;
-    OHIF.viewerbase.renderViewer(this, { timepointId });
+    JF.viewerbase.renderViewer(this, { timepointId });
 }, { name: 'viewerTimepoint' });
 
 Router.route('/viewer/studies/:studyInstanceUids', function() {
     const studyInstanceUids = this.params.studyInstanceUids.split(';');
-    OHIF.viewerbase.renderViewer(this, { studyInstanceUids });
+    JF.viewerbase.renderViewer(this, { studyInstanceUids });
 }, { name: 'viewerStudies' });
 
 // OHIF #98 Show specific series of study
@@ -63,5 +63,5 @@ Router.route('/viewer/study/:studyInstanceUid/series/:seriesInstanceUids', funct
     Session.set('queryParams', queryParams);
     Session.set('userInfo', {userId: '', userName: '未知用户', permission: 0})
     console.log(Session.get('queryParams'));
-    OHIF.viewerbase.renderViewer(this, { studyInstanceUids: [studyInstanceUid], seriesInstanceUids });
+    JF.viewerbase.renderViewer(this, { studyInstanceUids: [studyInstanceUid], seriesInstanceUids });
 }, { name: 'viewerSeries' });

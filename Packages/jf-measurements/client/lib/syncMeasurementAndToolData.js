@@ -8,7 +8,7 @@ JF.measurements.syncMeasurementAndToolData = (measurement, syncAll) => {
     const toolState = cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
 
     // Iterate each child tool if the current tool has children
-    const { getImageIdForImagePath } = OHIF.viewerbase;
+    const { getImageIdForImagePath } = JF.viewerbase;
     const toolType = measurement.toolType;
     const { tool } = JF.measurements.getToolConfiguration(toolType);
     if (Array.isArray(tool.childTools)) {

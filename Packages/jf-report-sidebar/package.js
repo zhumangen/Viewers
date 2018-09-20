@@ -20,7 +20,7 @@ Package.onUse(function(api) {
 
     // JF dependencies
     api.use('jf:core');
-    api.use('ohif:design');
+    api.use('jf:design');
 
     api.addFiles('both/index.js', ['client', 'server']);
     // Client imports

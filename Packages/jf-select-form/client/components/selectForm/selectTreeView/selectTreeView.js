@@ -10,97 +10,111 @@ Template.selectTreeView.onCreated(() => {
   const instance = Template.instance();
   if (instance.data.item.control) {
     instance.channel = new ReactiveVar([]);
+    if (!instance.data.checks) {
+      instance.data.checks = new ReactiveVar([]);
+    }
   }
 
   const root = instance.data.item;
   const items = root.items;
-  const type = instance.data.item.type;
+  const type = root.type;
+  const groups = root.groups;
+
+  instance.applyRules = () => {
+    if (type === 'master') {
+      let enableCodes = [];
+      let checkCodes = []
+      const checkedItems = _.where(items, {checked: true});
+      if (instance.isGrouped) {
+        let neutralGroup;
+        let nonNeutralGroup;
+        checkedItems.forEach(item => {
+          groups.forEach(group => {
+            if (group.members.indexOf(item.code) >= 0) {
+              if (group.neutral) {
+                neutralGroup = group;
+              } else {
+                nonNeutralGroup = group;
+              }
+            }
+          });
+        });
+
+        let disableCodes = [];
+        if (nonNeutralGroup) {
+          groups.forEach(group => {
+            if (!group.neutral && group != nonNeutralGroup) {
+              disableCodes = disableCodes.concat(group.members);
+            }
+          });
+          enableCodes = nonNeutralGroup.enables;
+        } else if (neutralGroup) {
+          enableCodes = neutralGroup.enables;
+        }
+        instance.disables.set(disableCodes);
+      } else {
+        checkedItems.forEach(item => {
+          enableCodes = enableCodes.concat(item.enables || []);
+          checkCodes = checkCodes.concat(item.checks || []);
+        });
+      }
+      instance.data.channel.set(enableCodes);
+      if (checkCodes.length > 0) instance.data.checks.set(checkCodes)
+    }
+  }
+
   if (!(items.length && items[0].items && items[0].items.length)) {
     instance.isGrouped = root.groups && root.groups.length > 0;
+    instance.disables = new ReactiveVar([]);
+    instance.needUpdate = new Tracker.Dependency();
+
     items.forEach(item => {
       item.checked = instance.data.codes.indexOf(item.code) > -1;
     });
-    if (type === 'master') {
-      if (!instance.isGrouped) {
-        items.forEach(item => {
-          // item.checked = instance.data.codes.indexOf(item.code) > -1;
-          if (item.checked) {
-            instance.data.channel.set(item.enable || []);
-          }
-        });
-      } else {
-        instance.disables = new ReactiveVar([]);
-        const groups = root.groups;
-        let neutralGroup;
-        let nonNeutralGroup;
-        items.forEach(item => {
-          // item.checked = instance.data.codes.indexOf(item.code) > -1;
-          if (item.checked) {
-            const groups = instance.data.item.groups;
-            groups.forEach(group => {
-              if (group.members.indexOf(item.code) >= 0) {
-                if (group.neutral) {
-                  neutralGroup = group;
-                } else {
-                  nonNeutralGroup = group;
-                }
-              }
-            });
-          }
-        });
 
-        let codes = [];
-        let disables = [];
-        if (nonNeutralGroup) {
-          const groups = instance.data.item.groups;
-          groups.forEach(group => {
-            if (!group.neutral && group != nonNeutralGroup) {
-              disables = disables.concat(group.members);
-            }
-          });
-          codes = nonNeutralGroup.enables;
-        } else if (neutralGroup) {
-          codes = neutralGroup.enables;
-        }
-        instance.disables.set(disables);
-        instance.data.channel.set(codes);
-      }
-    }
-
-    instance.needUpdate = new Tracker.Dependency();
+    instance.applyRules();
   }
 });
 
 Template.selectTreeView.onRendered(() => {
   const instance = Template.instance();
+  const items = instance.data.item.items;
+  if (!(items.length && items[0].items && items[0].items.length) && instance.data.checks) {
+    instance.autorun(() => {
+      const currentCode = instance.data.item.code;
+      const checkCodes = instance.data.checks.get();
+      checkCodes = checkCodes.filter(code => {
+        return currentCode.slice(0, 4) === code.slice(0, 4);
+      });
+      if (!checkCodes || !checkCodes.length) return;
+      for (let item of items) {
+        item.checked = checkCodes.indexOf(item.code) >= 0
+      }
 
-  if (instance.data.item.type === 'slave') {
-    instance.autorun((computation) => {
-      if (computation.firstRun) return;
-      const allowedItems  = instance.data.channel.get();
-      console.log(allowedItems);
+      instance.applyRules();
+      instance.needUpdate.changed();
     });
   }
 });
 
 Template.selectTreeView.events({
     'mouseover .node-name'(event, instance){
-        $(event.currentTarget).addClass("hover")
+        $(event.currentTarget).addClass("hover");
     },
 
     'mouseout .node-name'(event, instance){
-        $(event.currentTarget).removeClass("hover")
+        $(event.currentTarget).removeClass("hover");
     },
 
     'click .node-name'(event, instance){
-        event.stopPropagation()
-        let $dom = $(event.currentTarget)
-        let $i = $dom.find('i')
-        $dom.siblings().slideToggle()
+        event.stopPropagation();
+        let $dom = $(event.currentTarget);
+        let $i = $dom.find('i');
+        $dom.siblings().slideToggle();
         if($i.hasClass('fa-caret-down')){
-            $i.removeClass('fa-caret-down').addClass('fa-caret-right')
+            $i.removeClass('fa-caret-down').addClass('fa-caret-right');
         }else{
-            $i.removeClass('fa-caret-right').addClass('fa-caret-down')
+            $i.removeClass('fa-caret-right').addClass('fa-caret-down');
         }
 
     },
@@ -110,71 +124,33 @@ Template.selectTreeView.events({
         const $target = $(event.currentTarget);
         const checked = $target.is(':checked');
         const code = $target.val();
-        const channel = instance.data.channel;
-        const type = instance.data.item.type;
 
-        if (!instance.data.item.multi && checked) {
-          const items = instance.data.item.items;
-          let update = false;
-          items.forEach(item => {
-            if (item.checked && item.code !== code) {
-              item.checked = false;
-              update = true;
-            }
-          });
-          if (update) instance.needUpdate.changed();
-        }
-
-        let codes = [];
-        let currItem;
-        let neutralGroup;
-        let nonNeutralGroup;
         const items = instance.data.item.items;
-        for (let i = 0; i < items.length; ++i) {
-            const item = items[i];
-            if (item.code === code) {
-                item.checked = checked;
-                currItem = item;
-                if (!instance.isGrouped) break;
-            }
-            if (item.checked && instance.isGrouped) {
-              const groups = instance.data.item.groups;
-              groups.forEach(group => {
-                if (group.members.indexOf(item.code) >= 0) {
-                  if (group.neutral) {
-                    neutralGroup = group;
-                  } else {
-                    nonNeutralGroup = group;
-                  }
-                }
-              });
-            }
+        const currItem = _.findWhere(items, {code});
+        if (!currItem) {
+          OHIF.log.info('Something went wrong here.');
+          return;
         }
 
-        if (currItem) {
-          if (type === 'master') {
-            if (instance.isGrouped) {
-              let disables = [];
-              if (nonNeutralGroup) {
-                const groups = instance.data.item.groups;
-                groups.forEach(group => {
-                  if (!group.neutral && group != nonNeutralGroup) {
-                    disables = disables.concat(group.members);
-                  }
-                });
-                codes = nonNeutralGroup.enables;
-              } else if (neutralGroup) {
-                codes = neutralGroup.enables;
-              }
-              instance.disables.set(disables);
-            } else {
-              codes = checked?currItem.enable:[];
-            }
-            channel.set(codes);
+        currItem.checked = checked;
+        let hasChecksItem = false;
+        for (let item of items) {
+          if (item.checked && item.checks && item.checks.length) {
+            hasChecksItem = true;
+            break;
           }
-        } else {
-          OHIF.log.info('Something went wrong here.');
         }
+
+        const exclusive = !instance.data.item.multi || hasChecksItem;
+        if (exclusive && checked) {
+          items.forEach(item => {
+            item.checked = false;
+          });
+        }
+
+        currItem.checked = checked;
+        instance.applyRules();
+        instance.needUpdate.changed();
     }
 });
 

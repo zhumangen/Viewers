@@ -21,10 +21,9 @@ Package.onUse(function(api) {
     api.use('aldeed:template-extension@4.0.0');
 
     // Our custom packages
-    api.use('ohif:design');
+    api.use('jf:design');
     api.use('ohif:core');
     api.use('ohif:user');
-    api.use('ohif:study-list');
 
     // Load icons
     api.addAssets('assets/user-menu-icons.svg', 'client');
