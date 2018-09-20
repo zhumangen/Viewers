@@ -12,7 +12,7 @@ Template.toolbarSection.helpers({
             value: instance.data.state,
             options: [{
                 value: 'report',
-                svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-studies',
+                svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-studies',
                 svgWidth: 15,
                 svgHeight: 13,
                 bottomLabel: '报告'
@@ -28,7 +28,7 @@ Template.toolbarSection.helpers({
             value: instance.data.state,
             options: [{
                 value: 'measurements',
-                svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-measurements-lesions',
+                svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-measurements-lesions',
                 svgWidth: 18,
                 svgHeight: 10,
                 bottomLabel: '标注'
@@ -46,7 +46,7 @@ Template.toolbarSection.helpers({
             id: 'bidirectional',
             title: '双直线',
             classes: 'imageViewerTool rm-l-3',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target',
             disabled: isToolDisabled
         });
 
@@ -54,7 +54,7 @@ Template.toolbarSection.helpers({
             id: 'targetEllipse',
             title: '椭圆',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
             disabled: isToolDisabled
         });
         /*
@@ -62,7 +62,7 @@ Template.toolbarSection.helpers({
             id: 'targetProbe',
             title: '探针',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-un',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target-un',
             disabled: isToolDisabled
         });
         */
@@ -70,7 +70,7 @@ Template.toolbarSection.helpers({
             id: 'targetPencil',
             title: '画笔',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
             disabled: isToolDisabled
         });
 /*
@@ -78,7 +78,7 @@ Template.toolbarSection.helpers({
             id: 'targetCR',
             title: 'CR Target',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
             disabled: isToolDisabled
         });
 
@@ -86,7 +86,7 @@ Template.toolbarSection.helpers({
             id: 'targetUN',
             title: 'UN Target',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-un',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target-un',
             disabled: isToolDisabled
         });
 */
@@ -96,63 +96,63 @@ Template.toolbarSection.helpers({
             id: 'stackScroll',
             title: '翻页',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-stack-scroll'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-stack-scroll'
         });
 
         extraTools.push({
             id: 'resetViewport',
             title: '重置',
             classes: 'imageViewerCommand',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-reset'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-reset'
         });
 
         extraTools.push({
             id: 'rotateR',
             title: '旋转',
             classes: 'imageViewerCommand',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-rotate-right'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-rotate-right'
         });
 
         extraTools.push({
             id: 'flipH',
             title: '左右翻转',
             classes: 'imageViewerCommand',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-flip-horizontal'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-flip-horizontal'
         });
 
         extraTools.push({
             id: 'flipV',
             title: '上下翻转',
             classes: 'imageViewerCommand',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-flip-vertical'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-flip-vertical'
         });
 
         extraTools.push({
             id: 'invert',
             title: '负相',
             classes: 'imageViewerCommand',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-invert'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-invert'
         });
 
         extraTools.push({
             id: 'magnify',
             title: '放大镜',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-magnify'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-magnify'
         });
 
         extraTools.push({
             id: 'ellipticalRoi',
             title: '椭圆',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-elliptical-roi'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-elliptical-roi'
         });
 
         extraTools.push({
             id: 'length',
             title: '直线',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-temp'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-temp'
         });
 
         extraTools.push({
@@ -177,28 +177,28 @@ Template.toolbarSection.helpers({
             id: 'zoom',
             title: '缩放',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-zoom'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-zoom'
         });
 
         buttonData.push({
             id: 'wwwc',
             title: '调窗',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-levels'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-levels'
         });
 
         buttonData.push({
             id: 'pan',
             title: '移动',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-pan'
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-pan'
         });
 
         buttonData.push({
             id: 'linkStackScroll',
             title: '链接',
             classes: 'imageViewerCommand toolbarSectionButton nonAutoDisableState',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-link',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-link',
             disableFunction: Viewerbase.viewportUtils.isStackScrollLinkingDisabled
         });
 
@@ -208,7 +208,7 @@ Template.toolbarSection.helpers({
             id: 'toggleTarget',
             title: '标注',
             classes: 'rm-l-3',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-target',
             disabled: isToolDisabled,
             subTools: targetSubTools
         });
@@ -217,7 +217,7 @@ Template.toolbarSection.helpers({
             id: 'nonTarget',
             title: '标签',
             classes: 'imageViewerTool',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-non-target',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-measure-non-target',
             disabled: isToolDisabled
         });
 */
@@ -225,7 +225,7 @@ Template.toolbarSection.helpers({
             id: 'toggleMore',
             title: '更多',
             classes: 'rp-x-1 rm-l-3',
-            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-more',
+            svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-tools-more',
             disabled: isToolDisabled,
             subTools: extraTools
         });

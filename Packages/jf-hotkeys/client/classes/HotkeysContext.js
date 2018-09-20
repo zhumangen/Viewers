@@ -34,7 +34,7 @@ export class HotkeysContext {
         const bindingKey = `keydown.hotkey.${this.name}.${command}`;
         const bind = hotkey => $(document).bind(bindingKey, hotkey, event => {
             if (!this.enabled.get()) return;
-            JF.commands.run(command);
+            JF.managers.commands.run(command);
             event.preventDefault();
         });
 

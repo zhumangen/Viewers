@@ -4,13 +4,9 @@ import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 import { ReactiveDict } from 'meteor/reactive-dict';
 
-JF.report = {
-
-};
-
 let configuration = {};
 
-class ReportApi {
+export class ReportsManager {
     static setConfiguration(config) {
         _.extend(configuration, config);
     }
@@ -74,5 +70,3 @@ class ReportApi {
         });
     }
 }
-
-JF.report.ReportApi = ReportApi;

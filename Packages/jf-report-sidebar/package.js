@@ -25,6 +25,8 @@ Package.onUse(function(api) {
     api.addFiles('both/index.js', ['client', 'server']);
     // Client imports
     api.addFiles('client/index.js', 'client');
-    
+
     api.addFiles('server/index.js', 'server');
+
+    api.mainModule('main.js', 'client');
 });

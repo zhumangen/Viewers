@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { JF } from 'meteor/ohif:core';
+import { JF } from 'meteor/jf:core';
 
 Template.hotkeysFormTable.helpers({
     getLabel(input) {

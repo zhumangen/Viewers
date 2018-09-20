@@ -17,7 +17,7 @@ Template.reportSidebar.onCreated(() => {
 
     instance.api = {
       getHiReport: () => {
-        const api = instance.data.reportApi;
+        const api = JF.managers.reports;
         const params = Session.get('queryParams');
         const element = JF.viewerbase.viewportUtils.getActiveViewportElement();
         if (!element) return;
@@ -44,7 +44,7 @@ Template.reportSidebar.onCreated(() => {
         });
       },
       getAiReport: () => {
-        const api = instance.data.reportApi;
+        const api = JF.managers.reports;
         let data = {};
         const config = JF.measurements.MeasurementApi.getConfiguration();
         const measurementApi = instance.data.measurementApi;

@@ -171,9 +171,21 @@ Meteor.startup(function() {
         }
     }, true);
 
+    JF.managers.hotkeys.setStoreFunction(storeHotkeys);
+    JF.managers.hotkeys.setRetrieveFunction(retrieveHotKeys);
+
     // Enable hotkeys
     hotkeyUtils.enableHotkeys();
+    JF.managers.hotkeys.load(contextName);
 });
+
+function storeHotkeys(contextName, definitions) {
+  return JF.managers.settings.setHotkeys(contextName, definitions);
+}
+
+function retrieveHotKeys(contextName) {
+  return JF.managers.settings.hotkeys(contextName);
+}
 
 // Define a jQuery reverse function
 $.fn.reverse = [].reverse;

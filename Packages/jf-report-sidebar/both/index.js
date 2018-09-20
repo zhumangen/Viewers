@@ -1,2 +1,2 @@
-import './configuration';
+import './ReportsManager';
 import './dataExchange';

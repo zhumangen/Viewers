@@ -1,8 +1,9 @@
 import { OHIF } from 'meteor/ohif:core';
 import { HTTP } from 'meteor/http';
 import { JF } from 'meteor/jf:core';
+import { ReportsManager } from './ReportsManager';
 
-export const getHiReport = options => {
+const getHiReport = options => {
   OHIF.log.info('Get origin report');
 
   return new Promise((resolve, reject) => {
@@ -32,7 +33,7 @@ export const getHiReport = options => {
   });
 };
 
-export const getAiReport = options => {
+const getAiReport = options => {
   OHIF.log.info('Get ai report');
 
   return new Promise((resolve, reject) => {
@@ -57,7 +58,7 @@ export const getAiReport = options => {
   });
 };
 
-JF.report.ReportApi.setConfiguration({
+ReportsManager.setConfiguration({
     dataExchange: {
         getHiReport,
         getAiReport

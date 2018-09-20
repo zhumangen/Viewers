@@ -41,18 +41,14 @@ Template.viewer.onCreated(() => {
     JF.viewer.data = JF.viewer.data || Session.get('ViewerData') || {};
 
     const { TimepointApi, MeasurementApi, ConformanceCriteria } = JF.measurements;
-    const ReportApi = JF.report.ReportApi
-
     const currentTimepointId = JF.viewer.data.currentTimepointId;
     const timepointApi = new TimepointApi(currentTimepointId);
     const measurementApi = new MeasurementApi(timepointApi);
     const conformanceCriteria = new ConformanceCriteria(measurementApi, timepointApi);
-    const reportApi = new ReportApi;
     const apis = {
         timepointApi,
         measurementApi,
-        conformanceCriteria,
-        reportApi
+        conformanceCriteria
     };
 
     Object.assign(JF.viewer, apis);

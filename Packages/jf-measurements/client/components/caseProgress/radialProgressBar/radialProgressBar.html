@@ -29,12 +29,12 @@
         <div class="progressArea {{#if isLocked}}locked{{else}}{{#if progressComplete}}complete{{/if}}{{/if}}">
             {{#if isLocked}}
                 <svg>
-                    <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-status-lock"}}></use>
+                    <use xlink:href={{absoluteUrl "packages/jf_viewerbase/assets/icons.svg#icon-status-lock"}}></use>
                 </svg>
             {{else}}
                 {{#if progressComplete}}
                     <svg>
-                        <use xlink:href={{absoluteUrl "packages/ohif_viewerbase/assets/icons.svg#icon-status-complete"}}></use>
+                        <use xlink:href={{absoluteUrl "packages/jf_viewerbase/assets/icons.svg#icon-status-complete"}}></use>
                     </svg>
                 {{else}}
                     {{progressText}}
