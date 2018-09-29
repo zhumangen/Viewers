@@ -31,16 +31,15 @@ clinical:fonts
 clinical:hipaa-audit-log
 clinical:hipaa-logger
 
-# OHIF Packages
+# JF/OHIF Packages
 ohif:polyfill
 jf:design
 ohif:core
 ohif:header
 ohif:cornerstone
 ohif:cornerstone-settings
-jf:viewerbase
+ohif:viewerbase
 jf:studies
-jf:study-list
 ohif:dicom-services
 jf:hanging-protocols
 jf:metadata
@@ -50,6 +49,9 @@ jf:core
 jf:lesiontracker
 jf:select-form
 jf:report-sidebar
+jf:keycloak
+jf:order-list
+jf:import-dicom
 ohif:user
 ohif:user-management
 

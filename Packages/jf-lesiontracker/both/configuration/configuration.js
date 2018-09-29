@@ -1,9 +1,8 @@
 import { JF } from 'meteor/jf:core';
 
 import { measurementTools } from './measurementTools';
-import { retrieveMeasurements, storeMeasurements, changeStatus, retrieveLesions, submitResult, submitMeasurements, queryUserInfo, retrieveUserName } from './dataExchange';
+import { retrieveMeasurements, storeMeasurements, changeStatus } from './dataExchange';
 import { validateMeasurements } from './dataValidation';
-import { FieldLesionLocation, FieldLesionLocationResponse } from 'meteor/jf:lesiontracker/both/schema/fields';
 
 JF.measurements.MeasurementApi.setConfiguration({
     measurementTools,
@@ -15,18 +14,9 @@ JF.measurements.MeasurementApi.setConfiguration({
     dataExchange: {
         retrieve: retrieveMeasurements,
         store: storeMeasurements,
-        changeStatus,
-        retrieveLesions,
-        submitResult,
-        submitMeasurements,
-        queryUserInfo,
-        retrieveUserName
+        changeStatus
     },
     dataValidation: {
         validation: validateMeasurements
-    },
-    schema: {
-        nonTargetLocation: FieldLesionLocation,
-        nonTargetResponse: FieldLesionLocationResponse
     }
 });

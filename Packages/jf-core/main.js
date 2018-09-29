@@ -8,7 +8,8 @@ const JF = {
     lesiontracker: {},
     collections: {},
     managers: {},
-    viewer: {}
+    viewer: {},
+    orderlist: {}
 };
 
 // Expose the OHIF object to the client if it is on development mode
