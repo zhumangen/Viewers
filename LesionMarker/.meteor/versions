@@ -64,13 +64,16 @@ jf:core@0.0.1
 jf:design@0.0.1
 jf:hanging-protocols@0.0.1
 jf:hotkeys@0.0.1
+jf:import-dicom@0.0.1
+jf:keycloak@0.0.1
 jf:lesiontracker@0.0.1
 jf:measurements@0.0.1
 jf:metadata@0.0.1
+jf:order-list@0.0.1
+jf:organizations@0.0.1
 jf:report-sidebar@0.0.1
 jf:select-form@0.0.1
 jf:studies@0.0.1
-jf:study-list@0.0.1
 jf:themes@0.0.1
 jf:themes-common@0.0.1
 jf:viewerbase@0.0.1

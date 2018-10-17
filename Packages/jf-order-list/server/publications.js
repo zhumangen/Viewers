@@ -1,4 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import { OHIF } from 'meteor/ohif:core';
+import { JF } from 'meteor/jf:core';
 
-Meteor.publish('studyImportStatus', () => OHIF.studylist.collections.StudyImportStatus.find());
+Meteor.publish('orders', options => {
+  
+});

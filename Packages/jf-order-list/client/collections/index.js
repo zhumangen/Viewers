@@ -1,1 +1,1 @@
-import './studies.js';
+import './orderStatus.js';

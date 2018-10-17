@@ -1,0 +1,28 @@
+<template name="dicomListRow">
+    <tr class="dicomListRow noselect {{#if this.selected}}active{{/if}}">
+        <td class="numberOf">
+            {{numberOf}}
+        </td>
+        <td class="patientName">
+            {{formatPN patientName}}
+        </td>
+        <td class="patientSex">
+            {{patientSex}}
+        </td>
+        <td class="patientAge">
+            {{patientAge}}
+        </td>
+        <td class="modality">
+            {{modality}}
+        </td>
+        <td class="bodyPart">
+            {{bodyPart}}
+        </td>
+        <td class="dicomTime">
+            {{formatDT seriesTime}}
+        </td>
+        <td class="dicomDesc">
+            {{seriesDesc}}
+        </td>
+    </tr>
+</template>

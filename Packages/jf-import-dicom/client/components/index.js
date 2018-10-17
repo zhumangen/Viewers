@@ -1,1 +1,2 @@
 import './importDicom';
+import './dicomList';

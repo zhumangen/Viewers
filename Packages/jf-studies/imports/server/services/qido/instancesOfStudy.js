@@ -75,7 +75,7 @@ function resultDataToStudyMetadata(server, studyInstanceUid, resultData) {
  * @throws ECONNREFUSED
  * @returns {{wadoUriRoot: String, studyInstanceUid: String, seriesList: Array}}
  */
-JF.studies.services.QIDO.Instances = function(server, studyInstanceUid) {
+JF.studies.services.QIDO.InstancesOfStudy = function(server, studyInstanceUid) {
     var url = buildUrl(server, studyInstanceUid);
 
     try {

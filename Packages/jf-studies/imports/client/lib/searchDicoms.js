@@ -1,30 +1,29 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
-import { OHIF } from 'meteor/ohif:core';
 
-const studySearchPromises = new Map();
+const dicomsSearchPromises = new Map();
 
 /**
  * Search for studies information by the given filter
  *
  * @param {Object} filter Filter that will be used on search
- * @returns {Promise} resolved with an array of studies information or rejected with an error
+ * @returns {Promise} resolved with an array of dicoms information or rejected with an error
  */
-JF.studies.searchStudies = filter => {
+JF.studies.searchDicoms = (serverId, level, filter) => {
     const promiseKey = JSON.stringify(filter);
-    if (studySearchPromises.has(promiseKey)) {
-        return studySearchPromises.get(promiseKey);
+    if (dicomsSearchPromises.has(promiseKey)) {
+        return dicomsSearchPromises.get(promiseKey);
     } else {
         const promise = new Promise((resolve, reject) => {
-            Meteor.call('StudyListSearch', filter, (error, studiesData) => {
+            Meteor.call('DicomListSearch', serverId, level, filter, (error, dicomsData) => {
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(studiesData);
+                    resolve(dicomsData);
                 }
             });
         });
-        studySearchPromises.set(promiseKey, promise);
+        dicomsSearchPromises.set(promiseKey, promise);
         return promise;
     }
 };

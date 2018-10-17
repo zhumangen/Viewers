@@ -1,24 +1,33 @@
 import { JF } from 'meteor/jf:core';
 import { check, Match } from 'meteor/check';
 
-const Validation = {
-  NonEmptyString: Match.Where(str => {
-      check(str, String);
-      return str.length > 0;
+const Validator = {
+  NonEmptyString: Match.Where(arg => {
+      check(arg, String);
+      return arg.length > 0;
   }),
-  NonEmptyStringArray: Match.Where(arr => {
-      check(arr, [String]);
-      return arr.length > 0;
+  NonEmptyStringArray: Match.Where(arg => {
+      check(arg, [String]);
+      return arg.length > 0;
   }),
-  PositiveNumber: Match.Where(num => {
-      check(num, Number);
-      return num > 0;
+  PositiveNumber: Match.Where(arg => {
+      check(arg, Number);
+      return arg > 0;
   }),
-  NonNegativeNumber: Match.Where(num => {
-      check(num, Number);
-      return !(num < 0);
+  NonNegativeNumber: Match.Where(arg => {
+      check(arg, Number);
+      return !(arg < 0);
   })
 };
 
-JF.validation = Validation;
-export { Validation };
+const Checks = {
+  checkNonEmptyString: arg => check(arg, Validator.NonEmptyString),
+  checkNonEmptyStringArray: arg => check(arg, Validator.NonEmptyStringArray),
+  checkPositiveNumber: arg => check(arg, Validator.PositiveNumber),
+  checkNonNegativeNumber: arg => check(arg, Validator.NonNegativeNumber)
+}
+
+JF.validation.validator = Validator;
+JF.validation.checks = Checks;
+
+export { Validation, Checks };

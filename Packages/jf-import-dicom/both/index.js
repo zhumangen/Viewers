@@ -1,2 +1,0 @@
-import './configuration';
-import './dataExchange';

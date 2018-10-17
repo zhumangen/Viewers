@@ -1,8 +1,10 @@
 import './namespace.js';
 
 // DICOMWeb instance, study, and metadata retrieval
-import './qido/instances.js';
+import './qido/instancesOfStudy.js';
+import './qido/instancesOfSeries.js';
 import './qido/studies.js';
+import './qido/series.js';
 import './wado/retrieveMetadata.js';
 
 // DIMSE instance, study, and metadata retrieval

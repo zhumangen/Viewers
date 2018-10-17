@@ -1,2 +1,1 @@
-import './configuration';
-import './dataExchange';
+import './collections/organizations';

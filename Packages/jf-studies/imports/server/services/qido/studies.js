@@ -30,7 +30,8 @@ function dateToString(date) {
 function filterToQIDOURL(server, filter) {
     const commaSeparatedFields = [
         '00081030', // Study Description
-        '00080060' //Modality
+        '00080060', //Modality
+        '00080080'
         // Add more fields here if you want them in the result
     ].join(',');
 
@@ -40,6 +41,7 @@ function filterToQIDOURL(server, filter) {
         AccessionNumber: filter.accessionNumber,
         StudyDescription: filter.studyDescription,
         ModalitiesInStudy: filter.modalitiesInStudy,
+        InstitutionName: filter.institutionName,
         limit: filter.limit,
         includefield: server.qidoSupportsIncludeField ? 'all' : commaSeparatedFields
     };

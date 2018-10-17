@@ -1,5 +1,5 @@
-import { OHIF } from 'meteor/ohif:core';
+import { JF } from 'meteor/jf:core';
 
-Object.assign(OHIF.studylist, {
+Object.assign(JF.orderlist, {
     callbacks: {}
 });

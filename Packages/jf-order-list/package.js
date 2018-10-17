@@ -1,5 +1,5 @@
 Package.describe({
-    name: 'ohif:order-list',
+    name: 'jf:order-list',
     summary: 'Basic order list for lesion marker system',
     version: '0.0.1'
 });
@@ -28,14 +28,14 @@ Package.onUse(function(api) {
     api.use('dangrossman:bootstrap-daterangepicker@2.1.13');
 
     // Our custom packages
-    api.use('ohif:design');
+    api.use('jf:design');
     api.use('ohif:core');
     api.use('ohif:log');
     api.use('ohif:servers');
     api.use('ohif:dicom-services');
-    api.use('ohif:viewerbase');
+    api.use('jf:viewerbase');
     api.use('ohif:wadoproxy');
-    api.use('ohif:studies');
+    api.use('jf:studies');
     api.use('jf:core');
 
     // Client and server imports

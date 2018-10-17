@@ -23,15 +23,15 @@ Router.onBeforeAction(function() {
         this.next();
     }
 }, {
-    except: ['entrySignIn', 'entrySignUp', 'forgotPassword', 'resetPassword', 'emailVerification', 'viewerSeries']
+    except: ['entrySignIn', 'entrySignUp', 'forgotPassword', 'resetPassword', 'emailVerification', 'viewerSeries', 'importDicom']
 });
 
 Router.route('/', function() {
-    Router.go('studylist', {}, { replaceState: true });
+    Router.go('orderlist', {}, { replaceState: true });
 }, { name: 'home' });
 
-Router.route('/studylist', {
-    name: 'studylist',
+Router.route('/orderlist', {
+    name: 'orderlist',
     /* onBeforeAction: function() {
         const next = this.next;
 
@@ -40,7 +40,7 @@ Router.route('/studylist', {
         promise.then(() => next());
     },*/
     action: function() {
-        this.render('app', { data: { template: 'studylist' } });
+        this.render('app', { data: { template: 'orderlist' } });
     }
 });
 

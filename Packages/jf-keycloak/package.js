@@ -1,3 +1,7 @@
+Npm.depends({
+  'keycloak-js': '4.5.0'
+});
+
 Package.describe({
     name: 'jf:keycloak',
     summary: 'JF keycloak connector',
@@ -9,8 +13,7 @@ Package.onUse(function(api) {
 
     // Meteor packages
     api.use([
-        'ecmascript',
-        'keycloak-js'
+        'ecmascript'
     ]);
 
     // JF dependencies

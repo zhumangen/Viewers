@@ -18,12 +18,10 @@ Meteor.methods({
         OHIF.log.info('Storing Measurements on the Server');
         OHIF.log.info(JSON.stringify(measurementData, null, 2));
 
-        check(options, Match.Where(arg => {
-            check(arg.userId, JF.validation.NonEmptyString);
-            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
-            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
-            return true;
-        }));
+        const Checks = JF.validation.checks;
+        Checks.checkNonEmptyString(options.userId);
+        Checks.checkNonEmptyString(options.studyInstanceUid);
+        Checks.checkNonEmptyStringArray(options.seriesInstanceUids);
 
         let filter = {};
         filter.userId = options.userId;
@@ -50,13 +48,11 @@ Meteor.methods({
     },
 
     changeStatus(options) {
-        check(options, Match.Where(arg => {
-            check(arg.userId, JF.validation.NonEmptyString);
-            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
-            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
-            check(arg.status, JF.validation.PositiveNumber);
-            return true;
-        }));
+        const Checks = JF.validation.checks;
+        Checks.checkNonEmptyString(options.userId);
+        Checks.checkNonEmptyString(options.studyInstanceUid);
+        Checks.checkNonEmptyStringArray(options.seriesInstanceUids);
+        Checks.checkPositiveNumber(options.status);
 
         let filter = {};
         filter.studyInstanceUid = options.studyInstanceUid;
@@ -81,14 +77,12 @@ Meteor.methods({
         OHIF.log.info(JSON.stringify(options, null, 2));
         let measurementData = {};
 
-        check(options, Match.Where(arg => {
-            check(arg.userId, JF.validation.NonEmptyString);
-            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
-            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
-            check(arg.statusCode, JF.validation.NonEmptyString);
-            check(arg.permission, JF.validation.NonNegativeNumber);
-            return true;
-        }));
+        const Checks = JF.validation.checks;
+        Checks.checkNonEmptyString(options.userId);
+        Checks.checkNonEmptyString(options.studyInstanceUid);
+        Checks.checkNonEmptyStringArray(options.seriesInstanceUids);
+        Checks.checkNonEmptyString(options.statusCode);
+        Checks.checkNonNegativeNumber(optons.permission);
 
         let filter = {};
         filter.studyInstanceUid = options.studyInstanceUid;
@@ -130,12 +124,10 @@ Meteor.methods({
     retrieveUserName(options) {
         OHIF.log.info('Retrieving user name');
 
-        check(options, Match.Where(arg => {
-            check(arg.studyInstanceUid, JF.validation.NonEmptyString);
-            check(arg.seriesInstanceUids, JF.validation.NonEmptyStringArray);
-            check(arg.status, JF.validation.NonNegativeNumber);
-            return true;
-        }));
+        const Checks = JF.validation.checks;
+        Checks.checkNonEmptyString(options.studyInstanceUid);
+        Checks.checkNonEmptyStringArray(options.seriesInstanceUids);
+        Checks.checkPositiveNumber(options.status);
 
         let userName;
         const filter = {
@@ -160,11 +152,9 @@ Meteor.methods({
     retrieveLesions(options) {
         OHIF.log.info('Retrieving Lesions from the Server');
 
-        check(options, Match.Where(arg => {
-            check(arg.token, JF.validation.NonEmptyString);
-            check(arg.version, JF.validation.NonEmptyString);
-            return true;
-        }));
+        const Checks = JF.validation.checks;
+        Checks.checkNonEmptyString(options.token);
+        Checks.checkNonEmptyString(options.version);
 
         let lesions = [];
         let headers = { token: options.token, version: options.version };

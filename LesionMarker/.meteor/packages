@@ -38,8 +38,9 @@ ohif:core
 ohif:header
 ohif:cornerstone
 ohif:cornerstone-settings
-ohif:viewerbase
+jf:viewerbase
 jf:studies
+jf:organizations
 ohif:dicom-services
 jf:hanging-protocols
 jf:metadata
