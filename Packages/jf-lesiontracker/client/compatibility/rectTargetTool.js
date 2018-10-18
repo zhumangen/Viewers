@@ -27,7 +27,7 @@ function changeMeasurementLocationCallback(measurementData, eventData, doneCallb
     doneCallback(window.prompt('Change your lesion location:'));
 }
 
-const toolType = 'targetEllipse';
+const toolType = 'targetRect';
 const toolInterface = { toolType };
 
 ///////// BEGIN ACTIVE TOOL ///////
@@ -202,40 +202,27 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function pointNearEllipse (element, data, coords, distance) {
+function pointNearRect (element, data, coords, distance) {
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-  const minorEllipse = {
-    left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
-    top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
-    width: Math.abs(startCanvas.x - endCanvas.x) - distance,
-    height: Math.abs(startCanvas.y - endCanvas.y) - distance
+  const rect = {
+    left: Math.min(startCanvas.x, endCanvas.x),
+    top: Math.min(startCanvas.y, endCanvas.y),
+    width: Math.abs(startCanvas.x - endCanvas.x),
+    height: Math.abs(startCanvas.y - endCanvas.y)
   };
 
-  const majorEllipse = {
-    left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
-    top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
-    width: Math.abs(startCanvas.x - endCanvas.x) + distance,
-    height: Math.abs(startCanvas.y - endCanvas.y) + distance
-  };
-
-  const pointInMinorEllipse = cornerstoneTools.pointInEllipse(minorEllipse, coords);
-  const pointInMajorEllipse = cornerstoneTools.pointInEllipse(majorEllipse, coords);
-
-  if (pointInMajorEllipse && !pointInMinorEllipse) {
-    return true;
-  }
-
-  return false;
+  const distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
+  return (distanceToPoint < distance);
 }
 
 function pointNearTool (element, data, coords) {
-  return pointNearEllipse(element, data, coords, 6);
+  return pointNearRect(element, data, coords, 5);
 }
 
 function pointNearToolTouch (element, data, coords) {
-  return pointNearEllipse(element, data, coords, 15);
+  return pointNearRect(element, data, coords, 12);
 }
 
 function numberWithCommas (x) {
@@ -309,8 +296,8 @@ function onImageRendered (e) {
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
-        cornerstoneTools.drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
-        context.closePath();
+        context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
+        context.stroke();
 
         // If the tool configuration specifies to only draw the handles on hover / active,
         // Follow this logic

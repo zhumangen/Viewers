@@ -17,6 +17,9 @@ Meteor.startup(() => {
         id: 'targetEllipse',
         name: 'Ellipse Target'
     }, {
+        id: 'targetRect',
+        name: 'Rectangle Target'
+    }, {
         id: 'targetProbe',
         name: 'Probe Target'
     }, {

@@ -2,7 +2,7 @@ import { measurementTools } from './measurementTools';
 import { OHIF } from 'meteor/ohif:core';
 import { HTTP } from 'meteor/http';
 
-// const apiHost = 'http://192.168.10.50:8080';
+// const apiHost = 'http://101.132.45.197:8685';
 const apiHost = 'http://47.100.41.69:9090';
 
 export const retrieveMeasurements = (options) => {
@@ -21,7 +21,7 @@ export const retrieveMeasurements = (options) => {
 
 export const retrieveUserName = options => {
     OHIF.log.info('retrieveUserName');
-    
+
     return new Promise((resolve, reject) => {
         Meteor.call('retrieveUserName', options, (error, response) => {
             if (error) {
@@ -35,7 +35,7 @@ export const retrieveUserName = options => {
 
 export const storeMeasurements = (measurementData, filter) => {
     OHIF.log.info('storeMeasurements');
-    
+
     // Here is where we should do any required data transformation and API calls
 
     return new Promise((resolve, reject) => {
@@ -51,7 +51,7 @@ export const storeMeasurements = (measurementData, filter) => {
 
 export const changeStatus = options => {
     OHIF.log.info('changeStatus');
-    
+
     return new Promise((resolve, reject) => {
         Meteor.call('changeStatus', options, (error, result) => {
             if (error) {
@@ -65,7 +65,7 @@ export const changeStatus = options => {
 
 export const submitMeasurements = (options, measurementData) => {
     OHIF.log.info('Submit measurement data to main server.');
-    
+
     return new Promise((resolve, reject) => {
         let headers = { token: options.token, version: options.version };
         let data = { jsonValue: measurementData, labelAccnum: options.labelAccnum };

@@ -49,7 +49,7 @@ Template.toolbarSection.helpers({
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target',
             disabled: isToolDisabled
         });
-        
+
         targetSubTools.push({
             id: 'targetEllipse',
             title: '椭圆',
@@ -57,6 +57,14 @@ Template.toolbarSection.helpers({
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-cr',
             disabled: isToolDisabled
         });
+
+        targetSubTools.push({
+            id: 'targetRect',
+            title: '矩形',
+            classes: 'imageViewerTool',
+            svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target-un',
+            disabled: isToolDisabled
+       });
         /*
         targetSubTools.push({
             id: 'targetProbe',
@@ -147,7 +155,7 @@ Template.toolbarSection.helpers({
             classes: 'imageViewerTool',
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-elliptical-roi'
         });
-        
+
         extraTools.push({
             id: 'length',
             title: '直线',
@@ -218,7 +226,7 @@ Template.toolbarSection.helpers({
             svgLink: '/packages/ohif_viewerbase/assets/icons.svg#icon-tools-measure-target',
             disabled: isToolDisabled
         });
-*/        
+*/
         buttonData.push({
             id: 'nonTarget',
             title: '标签',

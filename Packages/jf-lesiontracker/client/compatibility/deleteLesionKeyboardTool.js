@@ -11,6 +11,7 @@ const keys = {
 const toolTypes = [
     'bidirectional',
     'targetEllipse',
+    'targetRect',
     'targetProbe',
     'targetPencil',
     'targetCR',
