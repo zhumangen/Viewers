@@ -6,15 +6,42 @@ export class DicomsManager {
 
   }
 
+  numberOfImported() {
+    const collection = JF.collections.importDicoms;
+    const filter = { imported: true };
+    return collection.find(filter).count();
+  }
+
+  unimportedDicoms() {
+    const collection = JF.collections.importDicoms;
+    const filter = { $or: [{
+      imported: { $exists: false }
+    }, {
+      imported: false
+    }] };
+    return collection.find(filter).fetch();
+  }
+
+  markImported(options) {
+    const dicoms = options.dicoms;
+    const collection = JF.collections.importDicoms;
+    dicoms.forEach(dicom => {
+      const filter = { _id: dicom._id };
+      const operation = { $set: { imported: true } }
+      collection.update(filter, operation, { upsert: false, multi: false });
+    });
+  }
+
   queryDicomInfo(options) {
     const org = options.organization;
     const filter = Object.assign({}, org.filter);
+    const level = org.queryLevel.toUpperCase();
     let qido;
-    if (org.queryLevel === 'study') {
+    if (level === 'STUDY') {
       filter.studyDateFrom = options.dateFrom;
       filter.studyDateTo = options.dateTo;
       qido = JF.studies.searchStudies;
-    } else if (org.queryLevel === 'series'){
+    } else if (Level === 'SERIES'){
       filter.seriesDateFrom = options.dateFrom;
       filter.seriesDateTo = options.dateTo;
       qido = JF.studies.searchSeries;
@@ -29,11 +56,27 @@ export class DicomsManager {
     });
   }
 
-  storeDicom(options) {
+  storeDicoms(options) {
     return new Promise((resolve, reject) => {
-      Meteor.call('storeDicom', options, (error, response) => {
+      Meteor.call('storeDicoms', options, (error, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response);
+        }
+      });
+    });
+  }
 
-      })
+  applyDicoms(options) {
+    return new Promise((resolve, reject) => {
+      Meteor.call('applyStudies', options, (error, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response);
+        }
+      });
     });
   }
 }

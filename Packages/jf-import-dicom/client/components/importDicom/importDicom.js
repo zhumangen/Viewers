@@ -8,21 +8,76 @@ import { $ } from 'meteor/jquery';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
 
-function search(organization, dateRange) {
+function search(organization, dateRange, offset, callback) {
   OHIF.log.info('dicom list search...');
   Session.set('showLoadingText', true);
   Session.set('serverError', false);
 
   const filter = Object.assign({}, organization.filter);
   const level = organization.qidoLevel.toUpperCase();
+  const modality = filter.modality?filter.modality.toUpperCase():'';
+  filter.offset = offset;
+
   if (dateRange) {
     const dates = dateRange.replace(/ /g, '').split('-');
     filter.studyDateFrom = dates[0];
     filter.studyDateTo = dates[1];
   }
 
-  JF.studies.searchDicoms(organization.serverId, organization.qidoLevel, filter).then(dicoms => {
-    console.log(dicoms);
+  const callbackData = {
+    nRecived: 0,
+    nRemaining: 0,
+    nOffset: offset,
+    errorMsg: ''
+  };
+
+  JF.studies.searchDicoms(organization.serverId, level, filter).then(result => {
+    OHIF.log.info('dicom list search finished')
+    Session.set('showLoadingText', false);
+    const dicoms = result.data;
+    OHIF.log.info('Remaining results: ', result.remaining);
+
+    if (_.isArray(dicoms)) {
+      dicoms.forEach(dicom => {
+        if (!modality || dicom.modality.indexOf(modality) > -1 || (dicom.modalities && dicom.modalities.indexOf(modality) > -1)) {
+          dicom.numberOfStudyRelatedInstances = !isNaN(dicom.numberOfStudyRelatedInstances) ? parseInt(dicom.numberOfStudyRelatedInstances) : undefined;
+          dicom.numberOfSeriesRelatedInstances = !isNaN(dicom.numberOfSSeriesRelatedInstances) ? parseInt(dicom.numberOfSSeriesRelatedInstances) : undefined;
+          dicom.serverId = organization.serverId;
+          dicom.qidoLevel = level;
+          dicom.organizationId = organization._id;
+          dicom.organizationName = organization.name.zh;
+          Tracker.nonreactive(() => {
+            JF.collections.importDicoms.insert(dicom);
+          });
+        }
+      });
+
+      callbackData.nRecived = dicoms.length;
+      callbackData.nRemaining = result.remaining;
+    }
+
+    if (_.isFunction(callback)) {
+      callback(callbackData);
+    }
+
+  }).catch(error => {
+    OHIF.log.info('dicom list search failed: ', error);
+    Session.set('showLoadingText', false);
+    Session.set('serverError', true);
+    const errorType = error.error;
+    if (errorType === 'server-connection-error') {
+        OHIF.log.error('There was an error connecting to the DICOM server, please verify if it is up and running.');
+    } else if (errorType === 'server-internal-error') {
+        OHIF.log.error('There was an internal error with the DICOM server');
+    } else {
+        OHIF.log.error('For some reason we could not list the studies.')
+    }
+    OHIF.log.error(error.stack);
+
+    if (_.isFunction(callback)) {
+      callbackData.errorMsg = 'dicoms metadata retrieving failed: ' + errorType;
+      callback(callbackData);
+    }
   });
 }
 
@@ -31,16 +86,37 @@ Template.importDicom.onCreated(() => {
   instance.items = new ReactiveVar([]);
   instance.dateRangeValue = new ReactiveVar('');
   instance.orgIndex = new ReactiveVar(0);
+  instance.paginationData = {
+    class: 'dicomlist-pagination',
+    currentPage: new ReactiveVar(0),
+    recordCount: new ReactiveVar(0),
+    rowsPerPage: new ReactiveVar(50)
+  };
+  instance.statusData = {
+    loadAll: new ReactiveVar(false),
+    loaded: new ReactiveVar(0),
+    total: new ReactiveVar(0),
+    errorMsg: new ReactiveVar('')
+  };
+  instance.searchCallback = data => {
+    const loaded = data.nOffset + data.nRecived;
+    const total = loaded + data.nRemaining;
+    instance.statusData.loaded.set(loaded);
+    instance.statusData.total.set(total);
+    instance.statusData.errorMsg.set(data.errorMsg);
+    instance.paginationData.recordCount.set(total);
+  };
 });
 
 Template.importDicom.onRendered(() => {
   const instance = Template.instance();
   const $dicomDate = instance.$('#dicomDate');
   const today = moment();
-  const lastWeek = moment().subtract(6, 'days');
-  const lastMonth = moment().subtract(29, 'days');
+  const lastWeek = moment().subtract(1, 'week');
+  const lastMonth = moment().subtract(1, 'month');
+  const lastThreeMonth = moment().subtract(3, 'month');
 
-  instance.datePicker = $dicomDate.daterangepicker({
+  const config = {
     maxDate: today,
     autoUpdateInput: true,
     startDate: today,
@@ -48,18 +124,12 @@ Template.importDicom.onRendered(() => {
     ranges: {
       '今天': [today, today],
       '最近一周': [lastWeek, today],
-      '最近一月': [lastMonth, today]
-    },
-    locale: {
-      format: 'YYYY/MM/DD',
-      weekLabel: '周',
-      daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
-      monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-      applyLabel: '确定',
-      cancelLabel: '取消',
-      customRangeLabel: '自定义'
+      '最近一月': [lastMonth, today],
+      '最近三月': [lastThreeMonth, today]
     }
-  }).data('daterangepicker');
+  }
+
+  instance.datePicker = $dicomDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
   JF.managers.organizations.retrieve().then(orgs => {
     instance.organizations = orgs;
@@ -77,7 +147,33 @@ Template.importDicom.onRendered(() => {
     if (index === 0) return;
     const org = instance.organizations && instance.organizations[index-1];
     if (!(org && dateRange)) return;
-    search(org, dateRange);
+    JF.collections.importDicoms.remove({});
+    Tracker.nonreactive(() => {
+      instance.paginationData.currentPage.set(0);
+      search(org, dateRange, 0, instance.searchCallback);
+    });
+  });
+
+  instance.autorun(() => {
+    const rowsPerPage = instance.paginationData.rowsPerPage.get();
+    const currentPage = instance.paginationData.currentPage.get();
+    const recordCount = instance.paginationData.recordCount.get();
+    const receivedCount = JF.collections.importDicoms.find().count();
+    const loadAll = instance.statusData.loadAll.get();
+
+    if (receivedCount < recordCount &&
+        ((recordCount > 0 && (currentPage+1) * rowsPerPage > receivedCount) || loadAll)) {
+      Tracker.nonreactive(() => {
+        const isLoading = Session.get('showLoadingText');
+        if (isLoading) return;
+        const index = instance.orgIndex.get();
+        const dateRange = instance.dateRangeValue.get();
+        if (index === 0) return;
+        const org = instance.organizations && instance.organizations[index-1];
+        if (!(org && dateRange)) return;
+        search(org, dateRange, receivedCount, instance.searchCallback);
+      });
+    }
   })
 });
 

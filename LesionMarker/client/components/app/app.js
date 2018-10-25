@@ -109,7 +109,7 @@ Template.app.events({
 Template.app.helpers({
     title() { return JF.managers.settings.systemTitle(); },
     version() { return JF.managers.settings.systemVersion(); },
-    userName() { return Session.get('userInfo').userName },
+    userName: OHIF.user.getName,
     hasReporter() {
         return !!Session.get('reporter');
     },

@@ -1,8 +1,8 @@
 import { Mongo } from 'meteor/mongo';
 import { JF } from 'meteor/jf:core';
 
-const StudyImportStatus = new Mongo.Collection('studyImportStatus');
-StudyImportStatus._debugName = 'StudyImportStatus';
-JF.studylist.collections.StudyImportStatus = StudyImportStatus;
+const Studies = new Mongo.Collection('studies');
+Studies._debugName = 'Studies';
+JF.collections.studies = Studies;
 
-export { StudyImportStatus };
+export { Studies };

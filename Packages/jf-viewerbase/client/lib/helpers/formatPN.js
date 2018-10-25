@@ -3,7 +3,7 @@ import { Blaze } from 'meteor/blaze';
  * Formats a patient name for display purposes
  */
 const formatPN = context => {
-    if (!context) {
+    if (!context || typeof context !== 'string') {
         return;
     }
 

@@ -7,9 +7,6 @@ import { moment } from 'meteor/momentjs:moment';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
 
-Session.setDefault('showLoadingText', true);
-Session.setDefault('serverError', false);
-
 Template.studylistResult.helpers({
     /**
      * Returns a ascending sorted instance of the Studies Collection by Patient name and Study Date
@@ -33,18 +30,13 @@ Template.studylistResult.helpers({
         const offset = rowsPerPage * currentPage;
         const limit = offset + rowsPerPage;
 
-        studies = JF.studylist.collections.Studies.find({}, {
+        studies = JF.collections.studies.find({}, {
             sort: sortOption
         }).fetch();
 
         if (!studies) {
             return;
         }
-
-        studies.forEach((study, idx) => {
-          study.number = idx;
-          study.markerImages = 0;
-        })
 
         // Update record count
         instance.paginationData.recordCount.set(studies.length);
@@ -77,262 +69,54 @@ Template.studylistResult.helpers({
     }
 });
 
-/**
- * Transforms an input string into a search filter for
- * the StudyList Search call
- *
- * @param filter The input string to be searched for
- * @returns {*}
- */
-function getFilter(filter) {
-    if (filter && filter.length) {
-        if (filter.substr(filter.length - 1) !== '*') {
-            filter += '*';
-        }
-        if (filter[0] !== '*') {
-            filter = '*' + filter;
-        }
-    }
-
-    return filter;
-}
-
-/**
- * Search for a value in a string
- */
-function isIndexOf(mainVal, searchVal) {
-    if (mainVal === undefined || mainVal === '' || mainVal.indexOf(searchVal) > -1){
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Replace object if undefined
- */
-function replaceUndefinedColumnValue(text) {
-    if (text === undefined || text === 'undefined') {
-        return '';
-    } else {
-        return text.toUpperCase();
-    }
-}
-
-/**
- * Convert string to study date
- */
-function convertStringToStudyDate(dateStr) {
-    const y = dateStr.substring(0, 4);
-    const m = dateStr.substring(4, 6);
-    const d = dateStr.substring(6, 8);
-    const newDateStr = m + '/' + d + '/' + y;
-    return new Date(newDateStr);
-}
-
-/**
- * Runs a search for studies matching the studylist query parameters
- * Inserts the identified studies into the Studies Collection
- */
-function search() {
-    OHIF.log.info('search()');
-
-    // Show loading message
-    Session.set('showLoadingText', true);
-
-    // Hiding error message
-    Session.set('serverError', false);
-
-    const filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-
-    // Create the filters to be used for the StudyList Search
-    let filter = {
-        patientName: getFilter(filterOptions.patNameFilter),
-        patientId: getFilter(filterOptions.patIdFilter),
-        accessionNumber: getFilter(filterOptions.accNumFilter),
-        studyDescription: getFilter(filterOptions.studyDescFilter),
-        modalitiesInStudy: filterOptions.modalityFilter
-    };
-    if (filterOptions.studyDateFilter !== '') {
-        const dates = filterOptions.studyDateFilter.replace(/ /g, '').split('-');
-        filter.studyDateFrom = dates[0];
-        filter.studyDateTo = dates[1];
-    };
-
-    // Make sure that modality has a reasonable value, since it is occasionally
-    // returned as 'undefined'
-    const modality = replaceUndefinedColumnValue($('input#modality').val());
-
-    Meteor.call('StudyListSearch', filter, (error, studies) => {
-        OHIF.log.info('StudyListSearch');
-        // Hide loading text
-
-        Session.set('showLoadingText', false);
-
-        // Clear all current studies
-        JF.studylist.collections.Studies.remove({});
-
-        if (error) {
-            Session.set('serverError', true);
-
-            const errorType = error.error;
-
-            if (errorType === 'server-connection-error') {
-                OHIF.log.error('There was an error connecting to the DICOM server, please verify if it is up and running.');
-            } else if (errorType === 'server-internal-error') {
-                OHIF.log.error('There was an internal error with the DICOM server');
-            } else {
-                OHIF.log.error('For some reason we could not list the studies.')
-            }
-
-            OHIF.log.error(error.stack);
-            return;
-        }
-
-        if (!studies) {
-            OHIF.log.warn('No studies found');
-            return;
-        }
-
-
-
-        // Loop through all identified studies
-        studies.forEach(study => {
-            // Search the rest of the parameters that aren't done via the server call
-            if (isIndexOf(study.modalities, modality)/* &&
-                (new Date(studyDateFrom).setHours(0, 0, 0, 0) <= convertStringToStudyDate(study.studyDate) || !studyDateFrom || studyDateFrom === '') &&
-                (convertStringToStudyDate(study.studyDate) <= new Date(studyDateTo).setHours(0, 0, 0, 0) || !studyDateTo || studyDateTo === '')*/) {
-
-                // Convert numberOfStudyRelatedInstance string into integer
-                study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
-
-                // Insert any matching studies into the Studies Collection
-                JF.studylist.collections.Studies.insert(study);
-            }
-        });
-    });
-}
-
-const getRowsPerPage = () => sessionStorage.getItem('rowsPerPage');
-
-// Wraps ReactiveVar equalsFunc function. Whenever ReactiveVar is
-// set to a new value, it will save it in the Session Storage.
-// The return is the default ReactiveVar equalsFunc if available
-// or values are === compared
-const setRowsPerPage = (oldValue, newValue) => {
-    sessionStorage.setItem('rowsPerPage', newValue);
-    return typeof ReactiveVar._isEqual === 'function' ? ReactiveVar._isEqual(oldValue, newValue) : oldValue === newValue;
-};
-
 Template.studylistResult.onCreated(() => {
     const instance = Template.instance();
-    instance.sortOption = new ReactiveVar();
+    instance.subscribe('studies');
+
+    instance.sortOptions = new ReactiveVar();
     instance.sortingColumns = new ReactiveDict();
-    instance.statusFilter = new ReactiveVar(0);
+    instance.filterOptions = new ReactiveDict();
 
-    if (!sessionStorage.getItem('filterOptions')) {
-        const filterOptions = {
-            statusFilter: 0,
-            patNameFilter: '',
-            patIdFilter: '',
-            accNumFilter: '',
-            studyDateFilter: '',
-            modalityFilter: '',
-            studyDescFilter: '',
-            firstInit: true
-        };
-
-        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
-    }
-
-    // Pagination parameters
-
-    // Rows per page
-    // Check session storage or set 25 as default
-    const cachedRowsPerPage = getRowsPerPage();
-    if (!cachedRowsPerPage) {
-        setRowsPerPage(0, 25);
-    }
-
-    const rowsPerPage = getRowsPerPage();
     instance.paginationData = {
         class: 'studylist-pagination',
         currentPage: new ReactiveVar(0),
-        rowsPerPage: new ReactiveVar(parseInt(rowsPerPage, 10), setRowsPerPage),
+        rowsPerPage: new ReactiveVar(50),
         recordCount: new ReactiveVar(0)
     };
 
-    // Set sortOption
-    const sortOptionSession = Session.get('sortOption');
-    if (sortOptionSession) {
-        instance.sortingColumns.set(sortOptionSession);
-    } else {
-        instance.sortingColumns.set({
-            patientName: 1,
-            studyDate: 1,
-            patientId: 0,
-            accessionNumber: 0,
-            studyDescription: 0,
-            modality: 0
-        });
-    }
+    instance.sortingColumns.set({
+        patientName: 1,
+        studyDate: 1,
+        patientId: 0,
+        accessionNumber: 0,
+        studyDescription: 0,
+        modality: 0
+    });
 });
 
 Template.studylistResult.onRendered(() => {
     const instance = Template.instance();
-    const filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-    console.log('on rendered ', filterOptions);
-
-    instance.statusFilter.set(filterOptions.statusFilter);
-    instance.$('#status-selector').val(filterOptions.statusFilter);
-    instance.$('#patientName').val(filterOptions.patNameFilter?filterOptions.patNameFilter:'');
-    instance.$('#patientId').val(filterOptions.patIdFilter?filterOptions.patIdFilter:'');
-    instance.$('#accessionNumber').val(filterOptions.accNumFilter?filterOptions.accNumFilter:'');
-    instance.$('#studyDate').val(filterOptions.studyDateFilter?filterOptions.studyDateFilter:'');
-    instance.$('#modality').val(filterOptions.modalityFilter?filterOptions.modalityFilter:'');
-    instance.$('#studyDescription').val(filterOptions.studyDescFilter?filterOptions.studyDescFiter:'');
 
     // Initialize daterangepicker
     const today = moment();
-    const lastWeek = moment().subtract(6, 'days');
-    const lastMonth = moment().subtract(29, 'days');
+    const lastWeek = moment().subtract(1, 'week');
+    const lastMonth = moment().subtract(1, 'month');
+    const lastThreeMonth = moment().subtract(3, 'month');
     const $studyDate = instance.$('#studyDate');
-    const dateFilterNumDays = OHIF.uiSettings.studyListDateFilterNumDays;
-    let startDate, endDate;
+    const config = {
+      maxDate: today,
+      autoUpdateInput: true,
+      startDate: lastWeek,
+      endDate: today,
+      ranges: {
+        '今天': [today, today],
+        '最近一周': [lastWeek, today],
+        '最近一月': [lastMonth, today],
+        '最近三月': [lastThreeMonth, today]
+      }
+    };
 
-    if (dateFilterNumDays) {
-        startDate = moment().subtract(dateFilterNumDays - 1, 'days');
-        endDate = today;
-    }
-
-    const validDate = filterOptions.studyDateFilter !== '';
-    if(validDate){
-        const dates = filterOptions.studyDateFilter.replace(/ /g, '').split('-');
-        startDate = moment(dates[0]);
-        endDate = moment(dates[1]);
-    }
-
-    const autoUpdate = validDate/* || filterOptions.firstInit */;
-    instance.datePicker = $studyDate.daterangepicker({
-        maxDate: today,
-        autoUpdateInput: autoUpdate,
-        startDate: startDate,
-        endDate: endDate,
-        ranges: {
-            Today: [today, today],
-            'Last 7 Days': [lastWeek, today],
-            'Last 30 Days': [lastMonth, today]
-        },
-        locale: {
-            applyLabel: '确定',
-            cancelLabel: '清除'
-        }
-    }).data('daterangepicker');
-
-    filterOptions.firstInit = false;
-    sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
-
-    if (!autoUpdate) search();
+    instance.datePicker = $studyDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
 });
 
@@ -352,60 +136,23 @@ function resetSortingColumns(instance, sortingColumn) {
 }
 
 Template.studylistResult.events({
-    'change #status-selector'(e) {
+    'change #status-selector'(event, instance) {
         const val = $(e.currentTarget).val();
-        Template.instance().statusFilter.set(val);
-        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-        filterOptions.statusFilter = val;
-        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+        instance.filterOptions.set('status', val);
     },
 
-    'keydown input'(event) {
+    'keydown input'(event, instance) {
         if (event.which === 13) { //  Enter
             const val = $(event.currentTarget).val();
-            const id = $(event.currentTarget)[0].id;
-            let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-            if (id === 'patientName') {
-                filterOptions.patNameFilter = val;
-            } else if (id === 'patientId') {
-                filterOptions.patIdFilter = val;
-            } else if (id === 'accessionNumber') {
-                filterOptions.accNumFilter = val;
-            } else if (id === 'modality') {
-                filterOptions.modalityFilter = val;
-            } else if (id === 'studyDescription') {
-                filterOptions.studyDescFilter = val;
-            }
-            sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
-            console.log('enter ', filterOptions);
-            search();
+            const key = $(event.currentTarget)[0].id;
+            instance.filterOptions.set(key, val);
         }
     },
 
-    'onsearch input'() {
-        search();
-    },
-
-    'change #studyDate'(event) {
-        let dateRange = $(event.currentTarget).val();
-        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-        filterOptions.studyDateFilter = dateRange;
-        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
-
-        setTimeout(()=>search(), 100);
-
-    },
-
-    'show.daterangepicker #studyDate'(event) {
-        Template.instance().datePicker.autoUpdateInput = true;
-    },
-
-    'cancel.daterangepicker #studyDate'(event) {
-        $(event.currentTarget).val('');
-        let dateRange = $(event.currentTarget).val();
-        let filterOptions = JSON.parse(sessionStorage.getItem('filterOptions'));
-        filterOptions.studyDateFilter = dateRange;
-        sessionStorage.setItem('filterOptions', JSON.stringify(filterOptions));
+    'change #studyDate'(event, instance) {
+        const val = $(event.currentTarget).val();
+        const key = $(event.currentTarget)[0].id;
+        instance.filterOptions.set(key, val);
     },
 
     'click div.sortingCell'(event, instance) {
@@ -427,6 +174,5 @@ Template.studylistResult.events({
         }
 
         instance.sortOption.set(sortOption);
-        Session.set('sortOption', sortOption);
     }
 });

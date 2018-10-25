@@ -1,8 +1,8 @@
 <template name="dicomListView">
     <div class="dicomListToolbar clearfix">
         <div class="header pull-left">影像列表</div>
-        <div class="dicomCount pull-right">{{numberOfSeries}}</div>
-        <!-- <div class="pull-right">{{>dicomListToolbar}}</div> -->
+        <div class="dicomCount pull-right">{{numberOfRecords}}</div>
+        <div class="pull-right">{{>dicomListToolbar statusData}}</div>
     </div>
     <div class="theadBackground">
     </div>
@@ -10,18 +10,37 @@
         <table id="tblStudyList" class="dicomListResult table noselect ">
             <thead>
                 <tr>
-                    <th class="numberColumn">
-                        <div id="_number" style='padding: 20px;'>
-                            <span style='font-size: 15px; font-weight: 400'>序号</span>
+                  <th class="status">
+                      <div id="_status" class="sortingCell">
+                          <span>状态</span>
+                          <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                      </div>
+                      <input type="text"
+                             class="form-control dicomList-search"
+                             id="status">
+                  </th>
+                    <th class="level">
+                        <div id="_level" class="sortingCell">
+                            <span>层级</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
-                               id="number">
+                               id="level">
+                    </th>
+                    <th class="patientId">
+                        <div id="_patientId" class="sortingCell">
+                            <span>患者ID</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control dicomList-search"
+                               id="patientId">
                     </th>
                     <th class="patientName">
                         <div id="_patientName" class="sortingCell">
-                            <span>患者名称</span>
-                            <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
+                            <span>患者姓名</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -39,7 +58,7 @@
                     <th class="patientAge">
                         <div id="_patientAge" class="sortingCell ">
                             <span>年龄</span>
-                            <i class="{{sortingColumnsIcons.patientAge}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -48,51 +67,60 @@
                     <th class="dicomDate">
                         <div id="_dicomDate" class="sortingCell">
                             <span>检查时间</span>
-                            <i class="{{sortingColumnsIcons.dicomDate}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
                                name="daterange"
                                id="dicomDate">
                     </th>
+                    <th class="institution">
+                        <div id="_institution" class="sortingCell">
+                            <span>机构名称</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control dicomList-search"
+                               id="institution">
+                    </th>
                     <th class="modality">
                         <div id="_modality" class="sortingCell">
-                            <span>检查类型</span>
-                            <i class="{{sortingColumnsIcons.modality}}">&nbsp;</i>
+                            <span>类型</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
                                id="modality">
                     </th>
-                    <th class="dicomDescription">
+                    <th class="bodyPart">
+                        <div id="_bodyPart" class="sortingCell">
+                            <span>部位</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control dicomList-search"
+                               id="bodyPart">
+                    </th>
+                    <th class="description">
                         <div id="_dicomDescription" class="sortingCell">
                             <span>检查描述</span>
-                            <i class="{{sortingColumnsIcons.dicomDescription}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
                                id="dicomDescription">
                     </th>
-                    <th class="imgCount">
-                        <div id="_imgCount" style='padding: 20px;'>
-                            <span style='font-size: 15px; font-weight: 400'>图像数量</span>
-                            <!-- <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i> -->
-                        </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="imgCount">
-                    </th>
                 </tr>
             </thead>
             <tbody id="dicomListData">
                 {{#each dicom in dicoms}}
-                    {{>dicomListRow (clone dicom this)}}
+                    {{>dicomListRow dicom}}
                 {{/each}}
             </tbody>
         </table>
 
         <!-- Pagination -->
-        <!-- {{>paginationArea instance.paginationData}} -->
+        {{>paginationArea this.paginationData}}
 
         {{#if session "showLoadingText"}}
             {{>loadingText}}
@@ -100,7 +128,7 @@
             {{#if session "serverError"}}
                 <div class="notFound">There was an error fetching dicoms</div>
             {{else}}
-                {{#unless numberOfDicoms}}
+                {{#unless numberOfRecords}}
                     <div class="notFound">No matching results</div>
                 {{/unless}}
             {{/if}}

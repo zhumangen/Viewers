@@ -1,6 +1,6 @@
 <template name="studylistResult">
     <div class="studyListToolbar clearfix">
-        <div class="header pull-left">工作列表</div>
+        <div class="header pull-left">申请列表</div>
         <div class="studyCount pull-right">{{numberOfStudies}}</div>
         <div class="pull-right">{{>studylistToolbar}}</div>
     </div>
@@ -10,59 +10,56 @@
         <table id="tblStudyList" class="studylistResult table noselect ">
             <thead>
                 <tr>
-                    <th class="numberColumn">
-                        <div id="_number" style='padding: 20px;'>
-                            <span style='font-size: 15px; font-weight: 400'>序号</span>
+                    <th class="status">
+                        <div id="_status" class="sortingCell">
+                            <span>状态</span>
+                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control studylist-search"
-                               id="number">                      
-                    </th>
-                    <th class="statusColumn">
-                        <div id="_status" style='padding: 20px;'>
-                            <span style='font-size: 15px; font-weight: 400'>状态</span>
-                            <!-- <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i> -->
-                        </div>
-                        <!-- <input type="text"
-                               class="form-control studylist-search"
-                               id="status"> -->
                         <select id="status-selector" class="form-control status-select">
-                            <option value="0">请选择</option>
-                            <option value="1">待完成</option>
-                            <option value="2">标注中</option>
-                            <option value="3">已完成</option>
+                            <option value="请选择">请选择</option>
+                            <option value="未申请">未申请</option>
+                            <option value="已申请">已申请</option>
                         </select>
-                    </th>
-                    <th class="patientName">
-                        <div id="_patientName" class="sortingCell">
-                            <span>患者名称</span>
-                            <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
-                        </div>
-                        <input type="text"
-                               class="form-control studylist-search"
-                               id="patientName">
                     </th>
                     <th class="patientId">
                         <div id="_patientId" class="sortingCell">
-                            <span>患者编号</span>
+                            <span>患者ID</span>
                             <i class="{{sortingColumnsIcons.patientId}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control studylist-search"
                                id="patientId">
                     </th>
-                    <th class="accessionNumber">
-                        <div id="_accessionNumber" class="sortingCell ">
-                            <span>流水号 #</span>
-                            <i class="{{sortingColumnsIcons.accessionNumber}}">&nbsp;</i>
+                    <th class="patientName">
+                        <div id="_patientName" class="sortingCell">
+                            <span>患者姓名</span>
+                            <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control studylist-search"
-                               id="accessionNumber">
+                               id="patientName">
+                    </th>
+                    <th class="patientSex">
+                        <div id="_patientSex" class="sortingCell">
+                            <span>性别</span>
+                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control studylist-search"
+                               id="patientSex">
+                    </th>
+                    <th class="patientAge">
+                        <div id="_patientAge" class="sortingCell ">
+                            <span>年龄</span>
+                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control studylist-search"
+                               id="patientAge">
                     </th>
                     <th class="studyDate">
                         <div id="_studyDate" class="sortingCell">
-                            <span>日期</span>
+                            <span>检查时间</span>
                             <i class="{{sortingColumnsIcons.studyDate}}">&nbsp;</i>
                         </div>
                         <input type="text"
@@ -70,38 +67,47 @@
                                name="daterange"
                                id="studyDate">
                     </th>
+                    <th class="institution">
+                        <div id="_institution" class="sortingCell">
+                            <span>机构名称</span>
+                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control studylist-search"
+                               id="institution">
+                    </th>
                     <th class="modalities">
                         <div id="_modalities" class="sortingCell">
-                            <span>检查类型</span>
+                            <span>类型</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control studylist-search"
                                id="modality">
                     </th>
+                    <th class="bodyPart">
+                        <div id="_bodyPart" class="sortingCell">
+                            <span>部位</span>
+                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control studylist-search"
+                               id="bodyPart">
+                    </th>
                     <th class="studyDescription">
                         <div id="_studyDescription" class="sortingCell">
-                            <span>描述</span>
+                            <span>检查描述</span>
                             <i class="{{sortingColumnsIcons.studyDescription}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control studylist-search"
                                id="studyDescription">
                     </th>
-                    <th class="imgCount">
-                        <div id="_imgCount" style='padding: 20px;'>
-                            <span style='font-size: 15px; font-weight: 400'>图像数量</span>
-                            <!-- <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i> -->
-                        </div>
-                        <input type="text"
-                               class="form-control studylist-search"
-                               id="imgCount">
-                    </th>
                 </tr>
             </thead>
             <tbody id="studyListData">
                 {{#each study in studies}}
-                    {{>studylistStudy (clone study this)}}
+                    {{>studylistStudy study}}
                 {{/each}}
             </tbody>
         </table>
@@ -109,16 +115,8 @@
         <!-- Pagination -->
         {{>paginationArea instance.paginationData}}
 
-        {{#if session "showLoadingText"}}
+        {{#if subscriptionsReady}}
             {{>loadingText}}
-        {{else}}
-            {{#if session "serverError"}}
-                <div class="notFound">There was an error fetching studies</div>
-            {{else}}
-                {{#unless numberOfStudies}}
-                    <div class="notFound">No matching results</div>
-                {{/unless}}
-            {{/if}}
         {{/if}}
     </div>
 </template>

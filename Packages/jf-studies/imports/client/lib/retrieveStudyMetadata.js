@@ -13,7 +13,7 @@ const StudyMetaDataPromises = new Map();
  * @param {String} studyInstanceUid The UID of the Study to be retrieved
  * @returns {Promise} that will be resolved with the metadata or rejected with the error
  */
-JF.studies.retrieveStudyMetadata = (studyInstanceUid, seriesInstanceUids) => {
+JF.studies.retrieveStudyMetadata = (serverId, studyInstanceUid, seriesInstanceUids) => {
 
     // @TODO: Whenever a study metadata request has failed, its related promise will be rejected once and for all
     // and further requests for that metadata will always fail. On failure, we probably need to remove the
@@ -33,7 +33,7 @@ JF.studies.retrieveStudyMetadata = (studyInstanceUid, seriesInstanceUids) => {
     const promise = new Promise((resolve, reject) => {
         // If no study metadata is in the cache variable, we need to retrieve it from
         // the server with a call.
-        Meteor.call('GetStudyMetadata', studyInstanceUid, function(error, study) {
+        Meteor.call('GetStudyMetadata', serverId, studyInstanceUid, function(error, study) {
             OHIF.log.timeEnd(timingKey);
 
             if (error) {

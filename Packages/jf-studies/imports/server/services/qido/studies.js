@@ -43,6 +43,7 @@ function filterToQIDOURL(server, filter) {
         ModalitiesInStudy: filter.modalitiesInStudy,
         InstitutionName: filter.institutionName,
         limit: filter.limit,
+        offset: filter.offset,
         includefield: server.qidoSupportsIncludeField ? 'all' : commaSeparatedFields
     };
 
@@ -91,7 +92,9 @@ function resultDataToStudies(resultData) {
         numberOfStudyRelatedSeries: DICOMWeb.getString(study['00201206']),
         numberOfStudyRelatedInstances: DICOMWeb.getString(study['00201208']),
         studyDescription: DICOMWeb.getString(study['00081030']),
-        // modality: DICOMWeb.getString(study['00080060']),
+        institutionName: DICOMWeb.getString(series['00080080']),
+        bodyPartExamined: DICOMWeb.getString(series['00180015']),
+        modality: DICOMWeb.getString(study['00080060']),
         // modalitiesInStudy: DICOMWeb.getString(study['00080061']),
         modalities: DICOMWeb.getString(DICOMWeb.getModalities(study['00080060'], study['00080061']))
     }));
@@ -105,7 +108,7 @@ JF.studies.services.QIDO.Studies = (server, filter) => {
     try {
         const result = DICOMWeb.getJSON(url, server.requestOptions);
 
-        return resultDataToStudies(result.data);
+        return { data: resultDataToStudies(result.data), remaining: result.remaining };
     } catch (error) {
         OHIF.log.trace();
 

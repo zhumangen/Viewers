@@ -23,7 +23,7 @@ Router.onBeforeAction(function() {
         this.next();
     }
 }, {
-    except: ['entrySignIn', 'entrySignUp', 'forgotPassword', 'resetPassword', 'emailVerification', 'viewerSeries', 'importDicom']
+    except: ['entrySignIn', 'entrySignUp', 'forgotPassword', 'resetPassword', 'emailVerification', 'viewerSeries', 'importDicom', 'studylist']
 });
 
 Router.route('/', function() {

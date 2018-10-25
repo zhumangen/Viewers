@@ -9,7 +9,8 @@ const JF = {
     collections: {},
     managers: {},
     viewer: {},
-    orderlist: {}
+    orderlist: {},
+    ui: {}
 };
 
 // Expose the OHIF object to the client if it is on development mode

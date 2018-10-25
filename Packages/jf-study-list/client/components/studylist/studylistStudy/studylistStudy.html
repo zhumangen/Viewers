@@ -1,31 +1,34 @@
 <template name="studylistStudy">
     <tr class="studylistStudy noselect {{#if this.selected}}active{{/if}}">
-        <td class="numberOf">
-            {{numberOf}}
-        </td>
         <td class="statusColumn">
             {{status}}
-        </td>
-        <td class="patientName">
-            {{formatPN patientName}}
         </td>
         <td class="patientId">
             {{patientId}}
         </td>
-        <td class="accessionNumber">
-            {{accessionNumber}}
+        <td class="patientName">
+            {{formatPatientName patientName}}
+        </td>
+        <td class="patientSex">
+            {{formatPatientSex patientSex}}
+        </td>
+        <td class="patientAge">
+            {{formatPatientAge patientAge patientBirthdate studyDate}}
         </td>
         <td class="studyDate">
-            {{formatDA studyDate}}
+            {{formatDA studyDate 'YYYY-MM-DD' true}}
         </td>
-        <td class="modalities">
-            {{modalities}}
+        <td class="institution">
+            {{institutionName}}
         </td>
-        <td class="studyDescription">
-            {{studyDescription}}
+        <td class="modality">
+            {{choose modality modalities}}
         </td>
-        <td class="imgCount">
-            {{numberOfStudyRelatedInstances}}
+        <td class="bodyPart">
+            {{bodyPartExamined}}
+        </td>
+        <td class="description">
+            {{description}}
         </td>
     </tr>
 </template>

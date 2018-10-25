@@ -7,12 +7,12 @@ Meteor.methods({
      * Retrieves Study metadata given a Study Instance UID
      * This Meteor method is available from both the client and the server
      */
-    GetStudyMetadata: function(studyInstanceUid) {
-        OHIF.log.info('GetStudyMetadata(%s)', studyInstanceUid);
+    GetStudyMetadata: function(serverId, studyInstanceUid) {
+        OHIF.log.info('GetStudyMetadata(%s, %s)', serverId, studyInstanceUid);
 
         // Get the server data. This is user-defined in the config.json files or through servers
         // configuration modal
-        const server = OHIF.servers.getCurrentServer();
+        const server = OHIF.servers.getServer(serverId);
 
         if (!server) {
             throw new Meteor.Error('improper-server-config', 'No properly configured server was available over DICOMWeb or DIMSE.');

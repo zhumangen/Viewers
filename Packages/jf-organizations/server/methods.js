@@ -1,12 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
+import { OHIF } from 'meteor/ohif:core';
 import { Organizations } from 'meteor/jf:organizations/both/collections/organizations';
-
-const writeCallback = (error, offected) => {
-  if (error) {
-    throw new Meteor.Error('data-write', error);
-  }
-}
 
 Meteor.methods({
   retriveOrganizations(options) {
@@ -27,6 +22,6 @@ Meteor.methods({
       delete org._id;
     }
 
-    return Organizations.update(query, org, {upsert: true}, writeCallback);
+    return Organizations.update(query, org, {upsert: true}, OHIF.MongoUtils.writeCallback);
   }
 })

@@ -103,7 +103,18 @@ Template.dicomListRow.onRendered(() => {
 });
 
 Template.dicomListRow.helpers({
-
+  status() {
+    const instance = Template.instance();
+    return instance.data.imported?'已导入':'未导入';
+  },
+  dicomDate() {
+    const instance = Template.instance();
+    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDate : instance.data.seriesDate;
+  },
+  description() {
+    const instance = Template.instance();
+    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDescription : instance.data.seriesDescription;
+  }
 });
 
 Template.dicomListRow.events({

@@ -87,15 +87,15 @@ $bodyCellHeight = 40px
           padding: 0
           border-bottom: solid 1px #6fbde2
           width: 100%
-          
-          &.statusColumn
-            width: 10%    
-            min-width: 95px        
+
+          &.status
+            width: 10%
+            min-width: 95px
 
             .status-select
               margin: 0 5px 20px 5px
               height: 40px
-              cursor: pointer    
+              cursor: pointer
               border: none
               background-color: #2c363f
               color: #d3d3d3
@@ -106,24 +106,17 @@ $bodyCellHeight = 40px
               font-weight: normal
               width: calc(100% - 10px)
 
-              option 
+              option
                 padding: 10px 0
 
-          &.numberColumn, &.imgCount, &.modalities
+          &.patientSex, &.patientAge
             width: 5%
-            
-          &.accessionNumber
-            width: 10%
 
-          &.patientId
-            width: 10%
-            max-width: 20%            
+          &.status, &.modalities, &.bodyPart
+            width: 5%
 
-          &.patientName, &.studyDescription
-            width: 20%
-            
-          &.studyDate
-            width: 30%
+          &.patientId, &.patientName, &.studyDate, &.institution
+            width: 15%
 
           &:first-child
             padding-left: $tablePadding
@@ -202,7 +195,7 @@ $bodyCellHeight = 40px
           overflow: hidden
           text-overflow: ellipsis
           white-space: nowrap
-          max-width: 200px         
+          max-width: 200px
 
           &.completed
             color: green
@@ -212,7 +205,7 @@ $bodyCellHeight = 40px
 
           &.completing
             color: yellow
-        
+
 
         &:hover, &:active, &.active
           background-color: $tableHoverColor

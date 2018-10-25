@@ -1,11 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Operations } from 'meteor/jf:operations/both/collections/operations';
-
-const writeCallback = (error, affected) => {
-  if (error) {
-    throw new Meteor.Error('data-write', error);
-  }
-}
+import { OHIF } from 'meteor/ohif:core';
 
 Meteor.methods({
   retrieveOperations(options) {
@@ -24,6 +19,6 @@ Meteor.methods({
     if (!op._id) {
       delete op._id
     }
-    return Operations.update(query, op, options, writeCallback);
+    return Operations.update(query, op, options, OHIF.MongoUtils.writeCallback);
   }
 })

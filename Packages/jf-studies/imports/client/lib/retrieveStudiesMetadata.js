@@ -10,14 +10,14 @@ import { OHIF } from 'meteor/ohif:core';
  * @param studyInstanceUids The UIDs of the Studies to be retrieved
  * @return Promise
  */
-JF.studies.retrieveStudiesMetadata = (studyInstanceUids, seriesInstanceUids) => {
+JF.studies.retrieveStudiesMetadata = (serverId, studyInstanceUids, seriesInstanceUids) => {
     // Create an empty array to store the Promises for each metaData retrieval call
     const promises = [];
 
     // Loop through the array of studyInstanceUids
     studyInstanceUids.forEach(function(studyInstanceUid) {
         // Send the call and resolve or reject the related promise based on its outcome
-        const promise = JF.studies.retrieveStudyMetadata(studyInstanceUid, seriesInstanceUids);
+        const promise = JF.studies.retrieveStudyMetadata(serverId, studyInstanceUid, seriesInstanceUids);
 
         // Add the current promise to the array of promises
         promises.push(promise);

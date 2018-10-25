@@ -46,7 +46,7 @@ function makeRequest(geturl, options, callback) {
     const req = requester(requestOpt, function(resp) {
         // TODO: handle errors with 400+ code
         const contentType = (resp.headers['content-type'] || '').split(';')[0];
-        if (jsonHeaders.indexOf(contentType) === -1) {
+        if (contentType && jsonHeaders.indexOf(contentType) === -1) {
             const errorMessage = `We only support json but "${contentType}" was sent by the server`;
             callback(new Error(errorMessage), null);
             return;
@@ -69,7 +69,14 @@ function makeRequest(geturl, options, callback) {
         });
 
         resp.on('end', function(){
-          callback(null, { data: JSON.parse(output) });
+          let remaining = 0;
+          if (resp.headers.warning) {
+            const vals = resp.headers.warning.split(' ');
+            if (vals.length > 4) {
+              remaining = parseInt(vals[4]);
+            }
+          }
+          callback(null, { data: output?JSON.parse(output):{}, remaining });
         });
     });
 

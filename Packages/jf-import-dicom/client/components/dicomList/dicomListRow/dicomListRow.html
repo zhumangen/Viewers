@@ -1,28 +1,37 @@
 <template name="dicomListRow">
     <tr class="dicomListRow noselect {{#if this.selected}}active{{/if}}">
-        <td class="numberOf">
-            {{numberOf}}
+        <td class="status">
+            {{status}}
+        </td>
+        <td class="level">
+            {{qidoLevel}}
+        </td>
+        <td class="patientId">
+            {{patientId}}
         </td>
         <td class="patientName">
-            {{formatPN patientName}}
+            {{formatPatientName patientName}}
         </td>
         <td class="patientSex">
-            {{patientSex}}
+            {{formatPatientSex patientSex}}
         </td>
         <td class="patientAge">
-            {{patientAge}}
+            {{formatPatientAge patientAge patientBirthdate dicomDate}}
+        </td>
+        <td class="dicomDate">
+            {{formatDA dicomDate 'YYYY-MM-DD' true}}
+        </td>
+        <td class="institution">
+            {{institutionName}}
         </td>
         <td class="modality">
-            {{modality}}
+            {{choose modality modalities}}
         </td>
         <td class="bodyPart">
-            {{bodyPart}}
+            {{bodyPartExamined}}
         </td>
-        <td class="dicomTime">
-            {{formatDT seriesTime}}
-        </td>
-        <td class="dicomDesc">
-            {{seriesDesc}}
+        <td class="description">
+            {{description}}
         </td>
     </tr>
 </template>

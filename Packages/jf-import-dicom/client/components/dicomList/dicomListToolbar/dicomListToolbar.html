@@ -1,0 +1,12 @@
+<template name="dicomListToolbar">
+  <div class='dicomListToolbar'>
+    {{#unless allImported}}
+      <div class="addNewStudy">
+        <label for="btnImport">
+            <i class="fa fa-plus"></i>一键导入
+        </label>
+        <input id="btnImport" class='js-import-dicoms' type="button">
+      </div>
+    {{/unless}}
+  </div>
+</template>

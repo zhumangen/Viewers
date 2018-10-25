@@ -99,32 +99,14 @@ function handleCtrlClick($studyRow, data) {
 }
 
 Template.studylistStudy.helpers({
-    numberOf() {
-        return Template.instance().data.number;
-    },
-    status() {
-        const instance = Template.instance();
-        const length = instance.data.markedImages;
-        if (length === 0) {
-            return '待完成';
-        } else if (length < instance.data.numberOfStudyRelatedInstances) {
-            return '标注中';
-        } else {
-            return '已完成';
-        }
-    },
-
-    statusStyle() {
-        const instance = Template.instance();
-        const length = instance.data.markedImages;
-        if (length === 0) {
-            return 'uncompleted';
-        } else if (length < instance.data.numberOfStudyRelatedInstances) {
-            return 'completing';
-        } else {
-            return 'completed';
-        }
-    }
+  studyDate() {
+    const instance = Template.instance();
+    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDate : instance.data.seriesDate;
+  },
+  description() {
+    const instance = Template.instance();
+    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDescription : instance.data.seriesDescription;
+  }
 });
 
 Template.studylistStudy.onRendered(() => {

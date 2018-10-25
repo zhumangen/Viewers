@@ -52,6 +52,7 @@ jf:select-form
 jf:report-sidebar
 jf:keycloak
 jf:order-list
+jf:study-list
 jf:import-dicom
 ohif:user
 ohif:user-management

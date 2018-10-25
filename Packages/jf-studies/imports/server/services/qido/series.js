@@ -44,6 +44,7 @@ function filterToQIDOURL(server, filter) {
         Modality: filter.modality,
         InstitutionName: filter.institutionName,
         limit: filter.limit,
+        offset: filter.offset,
         includefield: server.qidoSupportsIncludeField ? 'all' : commaSeparatedFields
     };
 
@@ -77,7 +78,7 @@ function resultDataToSeries(resultData) {
     if (!resultData || !resultData.length) return;
 
     resultData.forEach(series => seriesArr.push({
-        studyInstanceUid: DICOMWeb.getString(seriesArr['0020000D']),
+        studyInstanceUid: DICOMWeb.getString(series['0020000D']),
         // 00080005 = SpecificCharacterSet
         studyDate: DICOMWeb.getString(series['00080020']),
         studyTime: DICOMWeb.getString(series['00080030']),
@@ -85,7 +86,7 @@ function resultDataToSeries(resultData) {
         referringPhysicianName: DICOMWeb.getString(series['00080090']),
         // 00081190 = URL
         patientName: DICOMWeb.getName(series['00100010']),
-        patientId: DICOMWeb.getString(series['00100020']),
+        // patientId: DICOMWeb.getString(series['00100020']),
         patientBirthdate: DICOMWeb.getString(series['00100030']),
         patientSex: DICOMWeb.getString(series['00100040']),
         studyId: DICOMWeb.getString(series['00200010']),
@@ -97,6 +98,7 @@ function resultDataToSeries(resultData) {
         seriesNumber: DICOMWeb.getString(series['00200011']),
         seriesDescription: DICOMWeb.getString(series['0008103E']),
         institutionName: DICOMWeb.getString(series['00080080']),
+        bodyPartExamined: DICOMWeb.getString(series['00180015']),
         numberOfSeriesRelatedInstances: DICOMWeb.getString(series['00201209'])
     }));
 
@@ -108,8 +110,7 @@ JF.studies.services.QIDO.Series = (server, filter) => {
 
     try {
         const result = DICOMWeb.getJSON(url, server.requestOptions);
-
-        return resultDataToSeries(result.data);
+        return { data: resultDataToSeries(result.data), remaining: result.remaining };
     } catch (error) {
         OHIF.log.trace();
 

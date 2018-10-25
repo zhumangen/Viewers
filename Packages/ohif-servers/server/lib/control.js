@@ -3,12 +3,6 @@ import { OHIF } from 'meteor/ohif:core';
 import { Servers, CurrentServer } from 'meteor/ohif:servers/both/collections';
 
 OHIF.servers.control = {
-    writeCallback(error, affected) {
-        if (error) {
-            throw new Meteor.Error('data-write', error);
-        }
-    },
-
     resetCurrentServer() {
         const currentServer = CurrentServer.findOne();
         if (currentServer && Servers.find({ _id: currentServer.serverId }).count()) {
@@ -44,7 +38,7 @@ OHIF.servers.control = {
             delete serverSettings._id;
         }
 
-        return Servers.update(query, serverSettings, options, this.writeCallback);
+        return Servers.update(query, serverSettings, options, OHIF.MongoUtils.writeCallback);
     },
 
     setActive(serverId) {
@@ -59,7 +53,7 @@ OHIF.servers.control = {
             _id: serverId
         };
 
-        const removeStatus = Servers.remove(query, this.writeCallback);
+        const removeStatus = Servers.remove(query, OHIF.MongoUtils.writeCallback);
 
         OHIF.servers.control.resetCurrentServer();
 
