@@ -99,15 +99,30 @@ function handleCtrlClick($studyRow, data) {
 }
 
 Template.studylistStudy.helpers({
+  status() {
+    switch (this.status) {
+      case 0:
+        return '未申请';
+      case 1:
+        return '已申请';
+      default:
+        return '';
+    }
+  },
   studyDate() {
-    const instance = Template.instance();
-    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDate : instance.data.seriesDate;
+    return this.studyLevel? this.studyDate : this.seriesDate;
+  },
+  studyTime() {
+    return this.studyLevel? this.studyTime : this.seriesTime;
   },
   description() {
-    const instance = Template.instance();
-    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDescription : instance.data.seriesDescription;
+    return this.studyLevel? this.studyDescription : this.seriesDescription;
   }
 });
+
+Template.studylistStudy.onCreated(() => {
+  this.studyLevel = this.qidoLevel === 'STUDY';
+})
 
 Template.studylistStudy.onRendered(() => {
     const instance = Template.instance();

@@ -1,3 +1,3 @@
 import './base';
 import './collections/settings';
-import './lib/validation';
+import './lib';

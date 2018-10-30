@@ -29,4 +29,7 @@ Package.onUse(function(api) {
     ], 'client', {
         isImport: true
     });
+
+    // Main module definition
+    api.mainModule('main.js', 'client');
 });

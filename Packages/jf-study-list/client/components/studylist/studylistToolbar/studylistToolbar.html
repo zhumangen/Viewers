@@ -1,12 +1,10 @@
 <template name="studylistToolbar">
     <div class='studylistToolbar'>
-        {{#if importSupported}}
-            <div class="addNewStudy btn-file">
-                <label for="btnImport">
-                    <i class="fa fa-plus"></i> Import study
-                </label>
-                <input id="btnImport" class='js-import-files' type="file" webkitdirectory directory multiple>
-            </div>
-        {{/if}}
+      <div class="addNewStudy">
+        <label for="btnApply">
+            <i class="fa fa-plus"></i>一键导入
+        </label>
+        <input id="btnApply" class='js-apply-studies' type="button">
+      </div>
     </div>
 </template>

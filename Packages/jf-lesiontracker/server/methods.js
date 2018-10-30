@@ -7,7 +7,7 @@ import { measurementTools } from 'meteor/jf:lesiontracker/both/configuration/mea
 
 let MeasurementCollections = {};
 measurementTools.forEach(tool => {
-    MeasurementCollections[tool.id] = new Mongo.Collection(tool.id);
+    MeasurementCollections[tool.id] = new Mongo.Collection(tool.id, { idGeneration: 'MONGO'});
     MeasurementCollections[tool.id]._debugName = tool.id;
 });
 

@@ -3,8 +3,8 @@
         <td class="statusColumn">
             {{status}}
         </td>
-        <td class="patientId">
-            {{patientId}}
+        <td class="serialNumber">
+            {{serialNumber}}
         </td>
         <td class="patientName">
             {{formatPatientName patientName}}
@@ -16,10 +16,10 @@
             {{formatPatientAge patientAge patientBirthdate studyDate}}
         </td>
         <td class="studyDate">
-            {{formatDA studyDate 'YYYY-MM-DD' true}}
+            {{concat (formatDA studyDate) ' ' (formatTM studyTime)}}
         </td>
         <td class="institution">
-            {{institutionName}}
+            {{organizationName}}
         </td>
         <td class="modality">
             {{choose modality modalities}}

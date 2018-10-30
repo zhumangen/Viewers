@@ -1,14 +1,14 @@
 @import "{jf:design}/app"
 
 .import-dicom
-  margin: 20px 2%
 
   .filter-row
     display: flex
     align-items: center
-    padding: 5px
-    margin-bottom: 4px
     theme('background', '$uiGrayDarker')
+    height: $dicomListToolbarHeight
+    padding: 0 $studyListPadding
+    margin: 2px 0
     theme('color', '$textSecondaryColor')
 
     &>div

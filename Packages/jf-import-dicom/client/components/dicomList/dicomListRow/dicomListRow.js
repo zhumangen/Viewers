@@ -95,7 +95,7 @@ function handleCtrlClick($studyRow, data) {
 }
 
 Template.dicomListRow.onCreated(() => {
-
+  this.studyLevel = this.qidoLevel === 'STUDY';
 });
 
 Template.dicomListRow.onRendered(() => {
@@ -104,16 +104,16 @@ Template.dicomListRow.onRendered(() => {
 
 Template.dicomListRow.helpers({
   status() {
-    const instance = Template.instance();
-    return instance.data.imported?'已导入':'未导入';
+    return this.imported?'已导入':'未导入';
   },
   dicomDate() {
-    const instance = Template.instance();
-    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDate : instance.data.seriesDate;
+    return this.studyLevel? this.studyDate : this.seriesDate;
+  },
+  dicomTime() {
+    return this.studyLevel? this.studyTime : this.seriesTime;
   },
   description() {
-    const instance = Template.instance();
-    return instance.data.qidoLevel === 'STUDY'? instance.data.studyDescription : instance.data.seriesDescription;
+    return this.studyLevel? this.studyDescription : this.seriesDescription;
   }
 });
 

@@ -16,19 +16,19 @@
                             <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
                         </div>
                         <select id="status-selector" class="form-control status-select">
-                            <option value="请选择">请选择</option>
-                            <option value="未申请">未申请</option>
-                            <option value="已申请">已申请</option>
+                            <option value="0">请选择</option>
+                            <option value="1">未申请</option>
+                            <option value="2">已申请</option>
                         </select>
                     </th>
-                    <th class="patientId">
-                        <div id="_patientId" class="sortingCell">
-                            <span>患者ID</span>
-                            <i class="{{sortingColumnsIcons.patientId}}">&nbsp;</i>
+                    <th class="serialNumber">
+                        <div id="_serialNumber" class="sortingCell">
+                            <span>流水号</span>
+                            <i class="{{sortingColumnsIcons.serialNumber}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control studylist-search"
-                               id="patientId">
+                               id="serialNumber">
                     </th>
                     <th class="patientName">
                         <div id="_patientName" class="sortingCell">
@@ -115,7 +115,11 @@
         <!-- Pagination -->
         {{>paginationArea instance.paginationData}}
 
-        {{#if subscriptionsReady}}
+        {{#if instance.subscriptionsReady}}
+            {{#unless numberOfStudies}}
+                <div class="notFound">No matching results</div>
+            {{/unless}}
+        {{else}}
             {{>loadingText}}
         {{/if}}
     </div>

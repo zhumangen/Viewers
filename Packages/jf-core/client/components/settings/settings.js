@@ -182,6 +182,10 @@ class SettingsManager {
     });
   }
 
+  rowsPerPage() {
+    return 25;
+  }
+
   storeSettings() {
     return new Promise((resolve, reject) => {
       const data = this.data.get();

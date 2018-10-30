@@ -2,36 +2,32 @@ import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { $ } from 'meteor/jquery';
 
 Template.studylistToolbar.onCreated(() => {
-    Meteor.call('importSupported', (error, result) => {
-        if (error || !result) {
-            Session.set('importSupported', false);
-        } else {
-            Session.set('importSupported', true);
-        }
-    });
+    const instance = Template.instance();
+    instance.api = {
+      apply: () => {
+        const studies = JF.collections.studies.find().fetch();
+        return new Promise((resolve, reject) => {
+          Meteor.call('applyStudies', { studies }, (error, response) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(response);
+            }
+          });
+        });
+      }
+    }
 });
 
 Template.studylistToolbar.events({
-    'change .js-import-files'(event) {
-        //  Get selected files located in the client machine
-        const selectedFiles = $.map(event.currentTarget.files, value => value);
-
-        JF.studylist.importStudies(selectedFiles);
-    },
-
-    'click .js-import-files'(event) {
-        // Reset file input
-        $(event.currentTarget).val('');
+    'click .js-apply-studies'(event, instance) {
+        instance.api.apply();
     }
 });
 
 Template.studylistToolbar.helpers({
-    importSupported() {
-        const importSupported = Session.get('importSupported');
-        return (importSupported && OHIF.uiSettings.studyListFunctionsEnabled);
-    }
+
 });

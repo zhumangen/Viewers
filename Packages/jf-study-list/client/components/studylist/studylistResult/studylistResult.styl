@@ -89,8 +89,7 @@ $bodyCellHeight = 40px
           width: 100%
 
           &.status
-            width: 10%
-            min-width: 95px
+            width: 5%
 
             .status-select
               margin: 0 5px 20px 5px
@@ -112,10 +111,10 @@ $bodyCellHeight = 40px
           &.patientSex, &.patientAge
             width: 5%
 
-          &.status, &.modalities, &.bodyPart
+          &.modalities, &.bodyPart
             width: 5%
 
-          &.patientId, &.patientName, &.studyDate, &.institution
+          &.serialNumber, &.patientName, &.studyDate, &.institution
             width: 15%
 
           &:first-child
@@ -196,6 +195,7 @@ $bodyCellHeight = 40px
           text-overflow: ellipsis
           white-space: nowrap
           max-width: 200px
+          padding: 0 20px
 
           &.completed
             color: green
@@ -223,35 +223,11 @@ $bodyCellHeight = 40px
   #studyListContainer
     padding: 0 $tablePadding
 
-    table#tblStudyList
-      thead,
-      tbody
-        tr
-          th,
-          td
-            &:first-child
-              padding-left: $tablePadding
-
-            &:last-child
-              padding-right: $tablePadding
-
 @media only screen and (max-width: 1161px)
   $tablePadding = 3%
 
   #studyListContainer
     padding: 0 $tablePadding
-
-    table#tblStudyList
-      thead,
-      tbody
-        tr
-          th,
-          td
-            &:first-child
-              padding-left: $tablePadding
-
-            &:last-child
-              padding-right: $tablePadding
 
 @media only screen and (max-width: 1069px)
   $tablePaddingMediumScreen = 5px

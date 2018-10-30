@@ -1,37 +1,43 @@
 <template name="orderlistRow">
     <tr class="orderlistRow noselect {{#if this.selected}}active{{/if}}">
-        <td class="statusColumn">
+        <td class="status">
             {{status}}
         </td>
+        <td class="serialNumber">
+            {{serialNumber}}
+        </td>
         <td class="patientName">
-            {{formatPN patientName}}
+            {{formatPatientName patientName}}
         </td>
         <td class="patientSex">
-            {{patientSex}}
+            {{formatPatientSex patientSex}}
         </td>
         <td class="patientAge">
-            {{patientAge}}
+            {{formatPatientAge patientAge patientBirthdate studyDate}}
         </td>
         <td class="modalities">
-            {{modalities}}
+            {{choose modality modalities}}
         </td>
         <td class="bodyPart">
-            {{bodyPart}}
+            {{bodyPartExamined}}
         </td>
         <td class="orderTime">
-            {{formatDT orderTime}}
+            {{dateToString orderTime ''}}
+        </td>
+        <td class="institution">
+            {{organizationName}}
         </td>
         <td class="reportPhyscian">
             {{reportPhyscian}}
         </td>
         <td class="reportTime">
-            {{formatDT reportTime}}
+            {{dateToString reportTime ''}}
         </td>
         <td class="reviewPhyscian">
             {{reviewPhyscian}}
         </td>
         <td class="reviewTime">
-            {{formatDT reviewTime}}
+            {{dateToString reviewTime ''}}
         </td>
     </tr>
 </template>

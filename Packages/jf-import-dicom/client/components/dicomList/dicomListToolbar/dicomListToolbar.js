@@ -40,9 +40,6 @@ Template.dicomListToolbar.onCreated(() => {
           processed++;
           JF.managers.importDicom.markImported({dicoms: [dicom]});
           notify({ processed, total });
-          dicomIds.forEach(dicomId => {
-            JF.managers.importDicom.applyDicoms({dicomIds: [dicomId]});
-          })
         });
         promises.push(promise);
       });

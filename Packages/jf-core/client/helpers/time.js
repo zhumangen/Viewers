@@ -5,7 +5,7 @@ import { Template } from 'meteor/templating';
  */
 
 const SIGN_REGEXP = /([yMdhsm])(\1*)/g;
-const DEFAULT_PATTERN = 'yyyy-MM-dd hh:mm:ss';
+const DEFAULT_PATTERN = 'yyyy/MM/dd hh:mm:ss';
 
 const padding = (s, len) => {
     var len = len - (s + '').length;
@@ -15,6 +15,7 @@ const padding = (s, len) => {
 
 // convert date to string
 Template.registerHelper('dateToString', (dateObj, pattern) => {
+  if (!dateObj) return '';
   pattern = pattern || DEFAULT_PATTERN;
   return pattern.replace(SIGN_REGEXP, function ($0) {
       switch ($0.charAt(0)) {

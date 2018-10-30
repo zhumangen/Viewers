@@ -1,3 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
-JF.validation = {}
+Object.assign(JF, {
+  validation: {},
+  utils: {}
+});

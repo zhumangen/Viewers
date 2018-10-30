@@ -48,7 +48,7 @@ Template.app.onCreated(() => {
         const currentRoute = Router.current();
         if (!currentRoute) return;
         const routeName = currentRoute.route.getName();
-        const isViewer = true; // routeName.indexOf('viewer') === 0;
+        const isViewer = routeName.indexOf('viewer') === 0;
 
         // Add or remove the strech class from body
         $(document.body)[isViewer ? 'addClass' : 'removeClass']('stretch');

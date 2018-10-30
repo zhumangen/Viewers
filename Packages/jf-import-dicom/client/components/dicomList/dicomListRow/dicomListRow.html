@@ -19,7 +19,7 @@
             {{formatPatientAge patientAge patientBirthdate dicomDate}}
         </td>
         <td class="dicomDate">
-            {{formatDA dicomDate 'YYYY-MM-DD' true}}
+            {{concat (formatDA dicomDate) ' ' (formatTM dicomTime)}}
         </td>
         <td class="institution">
             {{institutionName}}

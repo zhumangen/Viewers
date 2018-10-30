@@ -6,10 +6,10 @@ Template.dicomListView.onCreated(() => {
 
   instance.sortingColumns = {
     patientName: 1,
-    studyDate: 1,
+    patientSex: 0,
+    patientAge: 0,
+    studyDate: -1,
     patientId: 0,
-    accessionNumber: 0,
-    studyDescription: 0,
     modality: 0
   }
 })
@@ -20,7 +20,7 @@ Template.dicomListView.helpers({
     let dicoms;
     let sortOption = {
         patientName: 1,
-        studyDate: 1
+        studyDate: -1
     };
 
     // Pagination parameters

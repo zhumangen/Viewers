@@ -5,15 +5,12 @@ import { moment } from 'meteor/momentjs:moment';
  * A global Blaze UI helper function to format DICOM Dates using the Moment library
  */
 
-const formatDA = (context, format, options) => {
+const formatDA = context => {
     if (!context) {
         return undefined;
     }
     var dateAsMoment = moment(context, "YYYYMMDD");
-    var strFormat = "MMM D, YYYY";
-    if (options) {
-        strFormat = format;
-    }
+    var strFormat = "YYYY/MM/DD";
     return dateAsMoment.format(strFormat);
 };
 

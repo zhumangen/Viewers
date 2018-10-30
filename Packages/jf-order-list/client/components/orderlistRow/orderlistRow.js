@@ -103,7 +103,24 @@ Template.orderlistRow.onRendered(() => {
 });
 
 Template.orderlistRow.helpers({
-
+  status() {
+    const s = this.status;
+    switch (s) {
+      case 0:
+        return '待标注';
+      case 1:
+        return '标注中';
+      case 2:
+        return '待审核';
+      case 3:
+        return '审核中';
+      case 4:
+        return '已审核';
+    }
+  },
+  studyDate() {
+    return this.qidoLevel === 'STUDY'? this.studyDate : this.seriesDate;
+  },
 });
 
 Template.orderlistRow.events({

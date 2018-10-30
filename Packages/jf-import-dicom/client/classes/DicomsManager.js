@@ -67,16 +67,4 @@ export class DicomsManager {
       });
     });
   }
-
-  applyDicoms(options) {
-    return new Promise((resolve, reject) => {
-      Meteor.call('applyStudies', options, (error, response) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(response);
-        }
-      });
-    });
-  }
 }

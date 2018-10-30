@@ -14,7 +14,7 @@ $bodyCellHeight = 40px
   theme('background', '$uiGrayDarker')
   height: $dicomListToolbarHeight
   margin-bottom: 2px
-  padding: 0 $dicomListPadding
+  padding: 0 $studyListPadding
 
   &>div
     display: inline-block
@@ -24,7 +24,6 @@ $bodyCellHeight = 40px
     font-weight: 300
     color: $tableTextSecondaryColor
     line-height: $dicomListToolbarHeight
-    padding-left: 20px
 
   .dicomListToolbar
     height: $dicomListToolbarHeight
@@ -35,7 +34,6 @@ $bodyCellHeight = 40px
     font-size: 40px
     font-weight: 100
     line-height: $dicomListToolbarHeight
-    padding-right: 20px
 
 .theadBackground
   height: 121px
@@ -63,7 +61,7 @@ $bodyCellHeight = 40px
 
 #dicomListContainer
   width: 100%
-  padding: 0 $dicomListPadding
+  padding: 0 $studyListPadding
   position: absolute
   z-index: 2
 
@@ -77,7 +75,7 @@ $bodyCellHeight = 40px
     font-weight: 200
     text-align: center
 
-  table#tblStudyList
+  table#tblDicomList
     tr
       height: 20px
 
@@ -197,85 +195,61 @@ $bodyCellHeight = 40px
             border-top: 1px solid #436270
             border-bottom: 1px solid #436270
             background-color: $tableHoverColor
-//
-// @media only screen and (max-width: 1362px)
-//   $tablePadding = 5%
-//
-//   #dicomListContainer
-//     padding: 0 $tablePadding
-//
-//     table#tblStudyList
-//       thead,
-//       tbody
-//         tr
-//           th,
-//           td
-//             &:first-child
-//               padding-left: $tablePadding
-//
-//             &:last-child
-//               padding-right: $tablePadding
-//
-// @media only screen and (max-width: 1161px)
-//   $tablePadding = 3%
-//
-//   #dicomListContainer
-//     padding: 0 $tablePadding
-//
-//     table#tblStudyList
-//       thead,
-//       tbody
-//         tr
-//           th,
-//           td
-//             &:first-child
-//               padding-left: $tablePadding
-//
-//             &:last-child
-//               padding-right: $tablePadding
-//
-// @media only screen and (max-width: 1069px)
-//   $tablePaddingMediumScreen = 5px
-//
-//   .theadBackground
-//     height: 101px
-//
-//   .dicomListToolbar
-//     padding: 0 $tablePaddingMediumScreen
-//
-//   #dicomListContainer
-//     padding: 0
-//
-//     table#tblStudyList
-//       thead > tr > th
-//
-//         &:first-child
-//           padding-left: $tablePaddingMediumScreen
-//
-//         &:last-child
-//           padding-right: $tablePaddingMediumScreen
-//
-//         input.worklist-search
-//           padding: 10px
-//
-//         div.sortingCell
-//           padding: 10px 5px
-//
-//           i
-//             width: auto
-//
-//       tbody > tr > td
-//         &:first-child
-//           padding-left: $tablePaddingMediumScreen
-//
-//         &:last-child
-//           padding-right: $tablePaddingMediumScreen
-//
-//     .worklistPagination
-//       .row
-//         margin-left: 0
-//         margin-right: 0
-//
-// @media only screen and (max-width: 1069px)
-//   .dicomList-pagination > .row
-//     margin-right: 0;
+
+@media only screen and (max-width: 1362px)
+  $tablePadding = 5%
+
+  #dicomListContainer
+    padding: 0 $tablePadding
+
+@media only screen and (max-width: 1161px)
+  $tablePadding = 3%
+
+  #dicomListContainer
+    padding: 0 $tablePadding
+
+@media only screen and (max-width: 1069px)
+  $tablePaddingMediumScreen = 5px
+
+  .theadBackground
+    height: 101px
+
+  .dicomListToolbar
+    padding: 0 $tablePaddingMediumScreen
+
+  #dicomListContainer
+    padding: 0
+
+    table#tblDicomList
+      thead > tr > th
+
+        &:first-child
+          padding-left: $tablePaddingMediumScreen
+
+        &:last-child
+          padding-right: $tablePaddingMediumScreen
+
+        input.worklist-search
+          padding: 10px
+
+        div.sortingCell
+          padding: 10px 5px
+
+          i
+            width: auto
+
+      tbody > tr > td
+        &:first-child
+          padding-left: $tablePaddingMediumScreen
+
+        &:last-child
+          padding-right: $tablePaddingMediumScreen
+
+    .worklistPagination
+      .row
+        margin-left: 0
+        margin-right: 0
+
+@media only screen and (max-width: 1069px)
+  .dicomList-pagination > .row
+    margin-right: 0;

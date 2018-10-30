@@ -90,7 +90,7 @@ Template.importDicom.onCreated(() => {
     class: 'dicomlist-pagination',
     currentPage: new ReactiveVar(0),
     recordCount: new ReactiveVar(0),
-    rowsPerPage: new ReactiveVar(50)
+    rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage())
   };
   instance.statusData = {
     loadAll: new ReactiveVar(false),

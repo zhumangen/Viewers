@@ -17,8 +17,10 @@ Meteor.methods({
       const studies = collection.find(filter).fetch();
       if (studies.length === 0) {
         delete dicom._id;
-        dicom.status = '未申请';
-        dicom.createdAt = new Date();
+        const t = new Date();
+        dicom.status = 0;
+        dicom.createdAt = t;
+        dicom.serialNumber = '1' + t.getTime() + JF.utils.randomString();
         dicom._id = collection.insert(dicom);
         ids.push(dicom._id);
       } else {

@@ -80,7 +80,7 @@ Template.studylistResult.onCreated(() => {
     instance.paginationData = {
         class: 'studylist-pagination',
         currentPage: new ReactiveVar(0),
-        rowsPerPage: new ReactiveVar(50),
+        rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage()),
         recordCount: new ReactiveVar(0)
     };
 
@@ -88,7 +88,7 @@ Template.studylistResult.onCreated(() => {
         patientName: 1,
         studyDate: 1,
         patientId: 0,
-        accessionNumber: 0,
+        serialNumber: 0,
         studyDescription: 0,
         modality: 0
     });
