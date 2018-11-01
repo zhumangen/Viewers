@@ -9,7 +9,6 @@ const JF = {
     collections: {},
     managers: {},
     viewer: {},
-    orderlist: {},
     ui: {}
 };
 

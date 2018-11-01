@@ -5,100 +5,10 @@ import Hammer from 'hammerjs';
 import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 
-// Clear all selected studies
-function doClearStudySelections() {
-    JF.studylist.collections.Studies.update({}, {
-        $set: { selected: false }
-    }, { multi: true });
-}
-
-function doSelectRow($studyRow, data) {
-    // Mark the current study as selected if it's not marked yet
-    if (!data.selected) {
-        const filter = { studyInstanceUid: data.studyInstanceUid };
-        const modifiers = { $set: { selected: true } };
-        JF.studylist.collections.Studies.update(filter, modifiers);
-    }
-
-    // Set it as the previously selected row, so the user can use Shift to select from this point on
-    JF.studylist.$lastSelectedRow = $studyRow;
-}
-
-function doSelectSingleRow($studyRow, data) {
-    // Clear all selected studies
-    doClearStudySelections();
-
-    // Add selected row to selection list
-    doSelectRow($studyRow, data);
-}
-
-function doUnselectRow($studyRow, data) {
-    // Find the current studyInstanceUid in the stored list and mark as unselected
-    const filter = { studyInstanceUid: data.studyInstanceUid };
-    const modifiers = { $set: { selected: false } };
-    JF.studylist.collections.Studies.update(filter, modifiers);
-}
-
-function handleShiftClick($studyRow, data) {
-    let study;
-    let $previousRow = JF.studylist.$lastSelectedRow;
-    if ($previousRow && $previousRow.length > 0) {
-        study = Blaze.getData($previousRow.get(0));
-        if (!study.selected) {
-            $previousRow = $(); // undefined
-            JF.studylist.$lastSelectedRow = $previousRow;
-        }
-    }
-
-    // Select all rows in between these two rows
-    if ($previousRow.length) {
-        let $rowsInBetween;
-        if ($previousRow.index() < $studyRow.index()) {
-            // The previously selected row is above (lower index) the
-            // currently selected row.
-
-            // Fill in the rows upwards from the previously selected row
-            $rowsInBetween = $previousRow.nextAll('tr');
-        } else if ($previousRow.index() > $studyRow.index()) {
-            // The previously selected row is below the currently
-            // selected row.
-
-            // Fill in the rows upwards from the previously selected row
-            $rowsInBetween = $previousRow.prevAll('tr');
-        } else {
-            // nothing to do since $previousRow.index() === $studyRow.index()
-            // the user is shift-clicking the same row...
-            return;
-        }
-
-        // Loop through the rows in between current and previous selected studies
-        $rowsInBetween.each((index, row) => {
-            const $row = $(row);
-
-            // Retrieve the data context through Blaze
-            const data = Blaze.getData(row);
-
-            // If we find one that is already selected, do nothing
-            if (data.selected) return;
-
-            // Set the current study as selected
-            doSelectRow($row, data);
-
-            // When we reach the currently clicked-on $row, stop the loop
-            return !$row.is($studyRow);
-        });
-    } else {
-        // Set the current study as selected
-        doSelectSingleRow($studyRow, data);
-    }
-}
-
-function handleCtrlClick($studyRow, data) {
-    const handler = data.selected ? doUnselectRow : doSelectRow;
-    handler($studyRow, data);
-}
-
 Template.studylistStudy.helpers({
+  selected() {
+    return JF.ui.rowSelect.isRowSelected.call(JF.studylist, this._id);
+  },
   status() {
     switch (this.status) {
       case 0:
@@ -149,17 +59,14 @@ Template.studylistStudy.onRendered(() => {
 Template.studylistStudy.events({
     'click tr.studylistStudy'(event, instance) {
         const $studyRow = $(event.currentTarget);
-        const data = instance.data;
-
-        // Remove the ID so we can directly insert this into our client-side collection
-        delete data._id;
+        const rowId = instance.data._id;
 
         if (event.shiftKey) {
-            handleShiftClick($studyRow, data);
+            JF.ui.rowSelect.handleShiftClick.call(JF.studylist, $studyRow, { rowId });
         } else if (event.ctrlKey || event.metaKey) {
-            handleCtrlClick($studyRow, data);
+            JF.ui.rowSelect.handleCtrlClick.call(JF.studylist, $studyRow, { rowId });
         } else {
-            doSelectSingleRow($studyRow, data);
+            JF.ui.rowSelect.doSelectSingleRow.call(JF.studylist, $studyRow, { rowId });
         }
     },
 
@@ -171,7 +78,7 @@ Template.studylistStudy.events({
 
         const middleClickOnStudy = JF.studylist.callbacks.middleClickOnStudy;
         if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
-            middleClickOnStudy(instance.data);
+            middleClickOnStudy([instance.data]);
         }
     },
 
@@ -183,15 +90,16 @@ Template.studylistStudy.events({
         const dblClickOnStudy = JF.studylist.callbacks.dblClickOnStudy;
 
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
-            dblClickOnStudy(instance.data);
+            dblClickOnStudy([instance.data]);
         }
     },
 
     'contextmenu tr.studylistStudy, press tr.studylistStudy'(event, instance) {
         const $studyRow = $(event.currentTarget);
+        const rowId = instance.data._id;
 
-        if (!instance.data.selected) {
-            doSelectSingleRow($studyRow, instance.data);
+        if (!JF.ui.rowSelect.isRowSelected.call(JF.studylist, rowId)) {
+            JF.ui.rowSelect.doSelectSingleRow.call(JF.studylist, $studyRow, { rowId });
         }
 
         event.preventDefault();

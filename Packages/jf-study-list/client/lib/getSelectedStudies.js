@@ -1,9 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
 JF.studylist.getSelectedStudies = () => {
-    return JF.studylist.collections.Studies.find({ selected: true }, {
-        sort: {
-            studyDate: 1
-        }
-    }).fetch() || [];
+  const rowIds = JF.ui.rowSelect.getSelectedRows.call(JF.studylist);
+  return rowIds.map(rowId => JF.collections.studies.find({ _id: rowId }).fetch()[0]);
 };

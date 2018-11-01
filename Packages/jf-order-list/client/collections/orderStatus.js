@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
-// Define the Studies Collection. This is a client-side only Collection which stores the list of
-// studies in the StudyList
+// Define the Selection Collection. This is a client-side only Collection which stores the list of
+// status in the OrderList
 Meteor.startup(() => {
-    const OrderStatus = new Meteor.Collection(null);
-    OrderStatus._debugName = 'OrderStatus';
+  const SelectStatus = new Mongo.Collection(null);
+  SelectStatus._debugName = 'OrderlistSelectionStatus';
 
-    JF.collections.orderStatus = OrderStatus;
+  JF.orderlist.selectStatus = SelectStatus;
 });

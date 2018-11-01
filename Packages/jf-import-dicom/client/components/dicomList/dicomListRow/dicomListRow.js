@@ -1,99 +1,6 @@
 import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 
-// Clear all selected studies
-function doClearStudySelections() {
-    JF.collections.orderStatus.update({}, {
-        $set: { selected: false }
-    }, { multi: true });
-}
-
-function doSelectRow($studyRow, data) {
-    // Mark the current study as selected if it's not marked yet
-    if (!data.selected) {
-        const filter = { studyInstanceUid: data.studyInstanceUid };
-        const modifiers = { $set: { selected: true } };
-        JF.collections.orderStatus.update(filter, modifiers);
-    }
-
-    // Set it as the previously selected row, so the user can use Shift to select from this point on
-    OHIF.studylist.$lastSelectedRow = $studyRow;
-}
-
-function doSelectSingleRow($studyRow, data) {
-    // Clear all selected studies
-    doClearStudySelections();
-
-    // Add selected row to selection list
-    doSelectRow($studyRow, data);
-}
-
-function doUnselectRow($studyRow, data) {
-    // Find the current studyInstanceUid in the stored list and mark as unselected
-    const filter = { studyInstanceUid: data.studyInstanceUid };
-    const modifiers = { $set: { selected: false } };
-    JF.collections.orderStatus.update(filter, modifiers);
-}
-
-function handleShiftClick($studyRow, data) {
-    let study;
-    let $previousRow = OHIF.studylist.$lastSelectedRow;
-    if ($previousRow && $previousRow.length > 0) {
-        study = Blaze.getData($previousRow.get(0));
-        if (!study.selected) {
-            $previousRow = $(); // undefined
-            OHIF.studylist.$lastSelectedRow = $previousRow;
-        }
-    }
-
-    // Select all rows in between these two rows
-    if ($previousRow.length) {
-        let $rowsInBetween;
-        if ($previousRow.index() < $studyRow.index()) {
-            // The previously selected row is above (lower index) the
-            // currently selected row.
-
-            // Fill in the rows upwards from the previously selected row
-            $rowsInBetween = $previousRow.nextAll('tr');
-        } else if ($previousRow.index() > $studyRow.index()) {
-            // The previously selected row is below the currently
-            // selected row.
-
-            // Fill in the rows upwards from the previously selected row
-            $rowsInBetween = $previousRow.prevAll('tr');
-        } else {
-            // nothing to do since $previousRow.index() === $studyRow.index()
-            // the user is shift-clicking the same row...
-            return;
-        }
-
-        // Loop through the rows in between current and previous selected studies
-        $rowsInBetween.each((index, row) => {
-            const $row = $(row);
-
-            // Retrieve the data context through Blaze
-            const data = Blaze.getData(row);
-
-            // If we find one that is already selected, do nothing
-            if (data.selected) return;
-
-            // Set the current study as selected
-            doSelectRow($row, data);
-
-            // When we reach the currently clicked-on $row, stop the loop
-            return !$row.is($studyRow);
-        });
-    } else {
-        // Set the current study as selected
-        doSelectSingleRow($studyRow, data);
-    }
-}
-
-function handleCtrlClick($studyRow, data) {
-    const handler = data.selected ? doUnselectRow : doSelectRow;
-    handler($studyRow, data);
-}
-
 Template.dicomListRow.onCreated(() => {
   this.studyLevel = this.qidoLevel === 'STUDY';
 });
@@ -103,6 +10,9 @@ Template.dicomListRow.onRendered(() => {
 });
 
 Template.dicomListRow.helpers({
+  selected() {
+    return JF.ui.rowSelect.isRowSelected.call(JF.dicomlist, this._id);
+  },
   status() {
     return this.imported?'已导入':'未导入';
   },
@@ -120,53 +30,51 @@ Template.dicomListRow.helpers({
 Template.dicomListRow.events({
   'click tr.dicomListRow'(event, instance) {
         const $studyRow = $(event.currentTarget);
-        const data = instance.data;
-
-        // Remove the ID so we can directly insert this into our client-side collection
-        delete data._id;
+        const rowId = instance.data._id;
 
         if (event.shiftKey) {
-            handleShiftClick($studyRow, data);
+            JF.ui.rowSelect.handleShiftClick.call(JF.dicomlist, $studyRow, { rowId });
         } else if (event.ctrlKey || event.metaKey) {
-            handleCtrlClick($studyRow, data);
+            JF.ui.rowSelect.handleCtrlClick.call(JF.dicomlist, $studyRow, { rowId });
         } else {
-            doSelectSingleRow($studyRow, data);
+            JF.ui.rowSelect.doSelectSingleRow.call(JF.dicomlist, $studyRow, { rowId });
         }
     },
 
-    'mousedown tr.studylistStudy'(event, instance) {
+    'mousedown tr.dicomListRow'(event, instance) {
         // This event handler is meant to handle middle-click on a study
         if (event.which !== 2) {
             return;
         }
 
-        const middleClickOnStudy = OHIF.studylist.callbacks.middleClickOnStudy;
+        const middleClickOnStudy = JF.dicomlist.callbacks.middleClickOnStudy;
         if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
-            middleClickOnStudy(instance.data);
+            middleClickOnStudy([instance.data]);
         }
     },
 
-    'dblclick tr.studylistStudy, doubletap tr.studylistStudy'(event, instance) {
+    'dblclick tr.dicomListRow, doubletap tr.dicomListRow'(event, instance) {
         if (event.which !== undefined && event.which !== 1) {
             return;
         }
 
-        const dblClickOnStudy = OHIF.studylist.callbacks.dblClickOnStudy;
+        const dblClickOnStudy = JF.dicomlist.callbacks.dblClickOnStudy;
 
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
-            dblClickOnStudy(instance.data);
+            dblClickOnStudy([instance.data]);
         }
     },
 
-    'contextmenu tr.studylistStudy, press tr.studylistStudy'(event, instance) {
+    'contextmenu tr.dicomListRow, press tr.dicomListRow'(event, instance) {
         const $studyRow = $(event.currentTarget);
+        const rowId = instance.data._id;
 
-        if (!instance.data.selected) {
-            doSelectSingleRow($studyRow, instance.data);
+        if (!JF.ui.rowSelect.isRowSelected.call(JF.dicomlist, rowId)) {
+            JF.ui.rowSelect.doSelectSingleRow.call(JF.dicomlist, $studyRow, { rowId });
         }
 
         event.preventDefault();
-        OHIF.ui.showDropdown(OHIF.studylist.dropdown.getItems(), {
+        OHIF.ui.showDropdown(JF.dicomlist.dropdown.getItems(), {
             event,
             menuClasses: 'dropdown-menu-left'
         });

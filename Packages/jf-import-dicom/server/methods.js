@@ -2,8 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
 Meteor.methods({
-  storeDicoms(options) {
-    const dicoms = options.dicoms;
+  storeDicoms(dicoms, options) {
     const ids = [];
     const collection = JF.collections.studies;
     dicoms.forEach(dicom => {
@@ -19,6 +18,7 @@ Meteor.methods({
         delete dicom._id;
         const t = new Date();
         dicom.status = 0;
+        dicom.removed = false;
         dicom.createdAt = t;
         dicom.serialNumber = '1' + t.getTime() + JF.utils.randomString();
         dicom._id = collection.insert(dicom);

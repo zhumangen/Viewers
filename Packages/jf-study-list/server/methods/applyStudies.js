@@ -2,13 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
 Meteor.methods({
-  applyStudies(options) {
-    const studies = options.studies;
+  applyStudies(studies, options) {
     const collection = JF.collections.orders;
     studies.forEach(study => {
       const t = new Date();
       const order = {
         status: 0,
+        removed: false,
         dicomId: study._id,
         patientName: study.patientName,
         patientSex: study.patientSex,

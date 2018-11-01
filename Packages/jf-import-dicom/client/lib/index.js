@@ -1,1 +1,6 @@
- import './routes';
+import './viewDicoms';
+import './getSelectedDicoms';
+import './loadDicoms'
+import './importDicoms';
+import './importSelectedDicoms';
+import './viewSelectedDicoms';

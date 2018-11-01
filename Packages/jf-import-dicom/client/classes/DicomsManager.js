@@ -22,8 +22,7 @@ export class DicomsManager {
     return collection.find(filter).fetch();
   }
 
-  markImported(options) {
-    const dicoms = options.dicoms;
+  markImported(dicoms) {
     const collection = JF.collections.importDicoms;
     dicoms.forEach(dicom => {
       const filter = { _id: dicom._id };
@@ -56,9 +55,9 @@ export class DicomsManager {
     });
   }
 
-  storeDicoms(options) {
+  storeDicoms(dicoms) {
     return new Promise((resolve, reject) => {
-      Meteor.call('storeDicoms', options, (error, response) => {
+      Meteor.call('storeDicoms', dicoms, {}, (error, response) => {
         if (error) {
           reject(error);
         } else {

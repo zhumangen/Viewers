@@ -1,23 +1,20 @@
 import { JF } from 'meteor/jf:core';
 
-/**
- * Loads multiple unassociated studies in the Viewer
- */
-JF.studylist.viewStudies = studies => {
-  if (!studies || !studies.length) return;
+JF.dicomlist.viewDicoms = dicoms => {
+  if (!dicoms || !dicoms.length) return;
 
   JF.managers.settings.viewerApis().then(api => {
     const rootPath = api.root + api.viewer;
     const studyUids = [], seriesUids = [];
     const studyLevel = false;
 
-    studies.forEach(study => {
-      if (study.qidoLevel === 'STUDY') {
+    dicoms.forEach(dicom => {
+      if (dicom.qidoLevel === 'STUDY') {
         studyLevel = true;
       } else {
-        seriesUids.push(study.seriesInstanceUid);
+        seriesUids.push(dicom.seriesInstanceUid);
       }
-      studyUids.push(study.studyInstanceUid);
+      studyUids.push(dicom.studyInstanceUid);
     });
 
     let path = rootPath + '/studies/' + studyUids.join(';');
@@ -26,7 +23,7 @@ JF.studylist.viewStudies = studies => {
     }
     open(path, api.window.name, api.window.features, api.window.replace);
   })
-};
+}
 
-JF.studylist.callbacks.dblClickOnStudy = JF.studylist.viewStudies;
-JF.studylist.callbacks.middleClickOnStudy = JF.studylist.viewStudies;
+JF.dicomlist.callbacks.dblClickOnStudy = JF.dicomlist.viewDicoms;
+JF.dicomlist.callbacks.middleClickOnStudy = JF.dicomlist.viewDicoms;

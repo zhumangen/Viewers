@@ -10,7 +10,7 @@ Template.studylistToolbar.onCreated(() => {
       apply: () => {
         const studies = JF.collections.studies.find().fetch();
         return new Promise((resolve, reject) => {
-          Meteor.call('applyStudies', { studies }, (error, response) => {
+          Meteor.call('applyStudies', studies, {}, (error, response) => {
             if (error) {
               reject(error);
             } else {

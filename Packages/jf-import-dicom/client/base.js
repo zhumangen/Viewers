@@ -1,6 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
-JF.studylist = {
+JF.dicomlist = {
   actions: {},
   callbacks: {}
-};
+}

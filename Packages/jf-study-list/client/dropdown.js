@@ -6,21 +6,17 @@ Meteor.startup(() => {
     JF.studylist.dropdown = new OHIF.ui.Dropdown();
 
     JF.studylist.dropdown.setItems([{
-        action: JF.studylist.viewSeriesDetails,
-        text: 'View Series Details'
+      action: JF.studylist.applySelectedStudies,
+      text: '申请',
     }, {
-        text: 'Anonymize',
-        disabled: true
+      action: JF.studylist.viewSelectedStudies,
+      text: '查看'
     }, {
-        text: 'Send',
-        disabled: true,
-        separatorAfter: true
+      action: JF.studylist.exportSelectedStudies,
+      text: '导出',
+      separatorAfter: true
     }, {
-        text: 'Delete',
-        disabled: true
-    }, {
-        action: JF.studylist.exportSelectedStudies,
-        text: 'Export',
-        title: 'Export Selected Studies'
+      action: JF.studylist.removeSelectedStudies,
+      text: '删除'
     }]);
 });

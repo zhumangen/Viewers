@@ -61,6 +61,10 @@ class SettingsManager {
     return this.promise.then(data => data.public.apis.ai);
   }
 
+  viewerApis() {
+    return this.promise.then(data => data.public.apis.viewer);
+  }
+
   lesionCode() {
     return this.data.get()?this.data.get().public.lesion.current:'';
   }
