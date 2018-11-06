@@ -14,9 +14,10 @@ Template.viewerSection.onCreated(() => {
         instance.loading = new ReactiveVar(true);
         instance.studiesInformation = new ReactiveVar([]);
         const filter = { studyInstanceUid: JF.viewer.data.studyInstanceUids };
-        JF.studies.searchStudies(filter).then(studiesData => {
+        const serverId = JF.viewer.data.serverId;
+        JF.studies.searchDicoms(serverId, 'STUDY', filter).then(studiesData => {
             instance.loading.set(false);
-            instance.studiesInformation.set(studiesData);
+            instance.studiesInformation.set(studiesData.data);
         }).catch(error => {
             instance.loading.set(false);
             const text = 'An error has occurred while retrieving studies information';

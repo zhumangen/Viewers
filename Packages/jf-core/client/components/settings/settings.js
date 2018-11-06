@@ -193,9 +193,9 @@ class SettingsManager {
   storeSettings() {
     return new Promise((resolve, reject) => {
       const data = this.data.get();
-      const user = Session.get('userInfo');
-      if (user && user.userId) {
-        data.userId = user.userId;
+      const userId = Meteor.userId;
+      if (userId) {
+        data.userId = userId;
         Meteor.call('storeSettings', data, (error, response) => {
           if (error) {
             OHIF.log.error('Save user settings failed: ', error);

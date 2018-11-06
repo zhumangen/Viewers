@@ -5,5 +5,5 @@ import { JF } from 'meteor/jf:core';
  */
 JF.orderlist.viewSelectedOrder = () => {
   const orders = JF.orderlist.getSelectedOrders();
-  JF.orderlist.viewOrders(orders.length?orders[0]:undefined);
+  JF.orderlist.viewOrder(orders.length?orders[0]:undefined);
 };

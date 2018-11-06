@@ -12,7 +12,7 @@ JF.studies.loadingDict = new ReactiveDict();
  * @param {String} studyInstanceUid The UID of the Study to be loaded
  * @returns {Promise} that will be resolved with the study metadata or rejected with an error
  */
-JF.studies.loadStudy = studyInstanceUid => new Promise((resolve, reject) => {
+JF.studies.loadStudy = (serverId, studyInstanceUid) => new Promise((resolve, reject) => {
     // Disable reactivity to get the current loading state
     let currentLoadingState;
     Tracker.nonreactive(() => {
@@ -24,7 +24,7 @@ JF.studies.loadStudy = studyInstanceUid => new Promise((resolve, reject) => {
         JF.studies.loadingDict.set(studyInstanceUid, 'loading');
     }
 
-    return JF.studies.retrieveStudyMetadata(studyInstanceUid).then(study => {
+    return JF.studies.retrieveStudyMetadata(serverId, studyInstanceUid).then(study => {
         // Add the display sets to the study if not present
         if (!study.displaySets) {
             const displaySets = JF.viewerbase.sortingManager.getDisplaySets(study);

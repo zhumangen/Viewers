@@ -173,27 +173,6 @@ class MeasurementApi {
         });
     }
 
-    retrieveUserName(options) {
-        const retrievalFn = configuration.dataExchange.retrieveUserName;
-        if (!_.isFunction(retrievalFn)) {
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            retrievalFn(options).then(userName => {
-                if (options.status === 1) {
-                    Session.set('reporter', userName);
-                } else if (options.status === 2) {
-                    Session.set('reviewer', userName);
-                }
-                resolve(userName);
-            }).catch(error => {
-                OHIF.log.error('Retrieve user name failed: ', error);
-                reject(error);
-            });
-        });
-    }
-
     storeMeasurements(options) {
         const storeFn = configuration.dataExchange.store;
         if (!_.isFunction(storeFn)) {
@@ -215,24 +194,15 @@ class MeasurementApi {
         }
 
         return new Promise((resolve, reject) => {
-            storeFn(measurementData, options).then((measurementData) => {
+            storeFn(measurementData, options).then(response => {
                 OHIF.log.info('Measurement storage completed');
-
-                let measurements = [];
-                if (!options.abandoned) {
-                    configuration.measurementTools.forEach(toolGroup => {
-                        measurements = measurements.concat(measurementData[toolGroup.id]);
-                    });
-                }
-
-                measurements.forEach(measurement => {
-                    measurement.location = JSON.stringify(measurement.location);
-                });
-
-                resolve(measurements);
+                resolve(response);
+            }, error => {
+              OHIF.log.error('Measurement storage error: ', error);
+              reject(error);
             }).catch(error => {
-                OHIF.log.error('Measurement storage error: ', error);
-                reject(error);
+              OHIF.log.error('Measurement storage error: ', error);
+              reject(error);
             });
         });
     }
@@ -249,60 +219,6 @@ class MeasurementApi {
                 resolve(result);
             }).catch(error => {
                 OHIF.log.error('Change measurements status failed: ', error);
-                reject(error);
-            });
-        });
-    }
-
-    submitMeasurements(options, measurementData) {
-        const storeFn = configuration.dataExchange.submitMeasurements;
-        if (!_.isFunction(storeFn)) {
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            for (let i = 0; i < measurementData.length; ++i) {
-                measurementData[i].status = options.status;
-            }
-            storeFn(options, measurementData).then(result => {
-                OHIF.log.info('Submit measurements completed');
-                resolve(result);
-            }).catch(error => {
-                OHIF.log.error('Submit measurements failed: ', error);
-                reject(error);
-            });
-        });
-    }
-
-    submitResult(options) {
-        const submitFn = configuration.dataExchange.submitResult;
-        if (!_.isFunction(submitFn)) {
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            submitFn(options).then(result => {
-                OHIF.log.info('Submit result: ', result.code);
-                resolve(result);
-            }).catch(error => {
-                OHIF.log.error('Submit result error: ', error);
-                reject(error);
-            });
-        });
-    }
-
-    queryUserInfo(options) {
-        const queryFn = configuration.dataExchange.queryUserInfo;
-        if (!_.isFunction(queryFn)) {
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            queryFn(options).then(result => {
-                OHIF.log.info('Query user info: ', result);
-                resolve(result);
-            }).catch(error => {
-                OHIF.log.error('Query user error: ', error);
                 reject(error);
             });
         });

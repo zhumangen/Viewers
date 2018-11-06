@@ -1,0 +1,16 @@
+<template name="jfViewer">
+    {{#header brandHref='javascript:void(0)' headerClasses=instance.headerClasses}}
+        {{#section 'brand'}}
+            <div class="logo-image"><img type="image/png" src="/images/logo-transparent.png"/></div>
+            <div class="logo-text">九峰阅片工作站</div>
+        {{/section}}
+        {{#section 'headerMenu'}}
+            <div class="menu-toggle pull-right">
+                <i class="fa fa-cog"></i>
+                <span class="caret-down"></span>
+            </div>
+        {{/section}}
+    {{/header}}
+
+    {{>Template.dynamic template=this.template data=this}}
+</template>

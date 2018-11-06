@@ -8,3 +8,4 @@ import './exportSelectedStudies.js';
 import './getSelectedStudies.js';
 import './removeSelectedStudies.js';
 import './viewSelectedStudies.js';
+import './retrieveStudies.js';

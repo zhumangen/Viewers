@@ -183,37 +183,11 @@ Template.viewer.onCreated(() => {
     //  Enable/Disable Lesion Tracker Tools if the opened study is associated or not
     // JF.lesiontracker.toggleLesionTrackerToolsButtons(!!currentTimepointId);
 
-    let params = Session.get('queryParams');
-    measurementApi.queryUserInfo(params).then(user => {
-        user.status =  0;
-        if ((params.statusCode === '7001' || params.statusCode === '7002') && user.permission > 0) {
-            user.status = 1;
-        } else if ((params.statusCode === '7003' || params.statusCode === '7004') && user.permission > 1) {
-            user.status = 2;
-        }
-        Object.assign(params, user);
-        Session.set('userInfo', user);
-
-        const measurementsPromise = measurementApi.retrieveMeasurements(params);
-        measurementsPromise.then(() => {
-            Session.set('MeasurementsReady', true);
-            measurementApi.syncMeasurementsAndToolData();
-        });
+    const measurementsPromise = measurementApi.retrieveMeasurements();
+    measurementsPromise.then(() => {
+        Session.set('MeasurementsReady', true);
+        measurementApi.syncMeasurementsAndToolData();
     });
-
-    if (params.statusCode === '7003' || params.statusCode === '7004' || params.statusCode === '7005') {
-        const options = {
-            studyInstanceUid: params.studyInstanceUid,
-            seriesInstanceUids: params.seriesInstanceUids,
-            status: 1
-        }
-        measurementApi.retrieveUserName(options);
-        if (params.statusCode === '7005') {
-            const options2 = _.clone(options);
-            options2.status = 2;
-            measurementApi.retrieveUserName(options2);
-        }
-    }
 
     let firstMeasurementActivated = false;
     instance.autorun(() => {

@@ -10,27 +10,14 @@ import { JF } from 'meteor/jf:core';
  * @param {Object} timepointsFilter An object containing the filter to retrieve the timepoints
  * @return {Promise} Promise that will be resolved with the studies when the metadata is loaded
  */
-export const prepareViewerData = ({ studyInstanceUids, seriesInstanceUids, timepointId, timepointsFilter={} }) => {
+export const prepareViewerData = ({ serverId, studyInstanceUids, seriesInstanceUids, orderId, timepointId, timepointsFilter={} }) => {
     // Clear the cornerstone tool data to sync the measurements with the measurements API
     cornerstoneTools.globalImageIdSpecificToolStateManager.restoreToolState({});
 
     // Retrieve the studies metadata
     const promise = new Promise((resolve, reject) => {
         const processData = viewerData => {
-            JF.studies.retrieveStudiesMetadata(viewerData.studyInstanceUids, viewerData.seriesInstanceUids).then(studies => {
-                // Add additional metadata to our study from the studylist
-                studies.forEach(study => {
-                    const studylistStudy = JF.studylist.collections.Studies.findOne({
-                        studyInstanceUid: study.studyInstanceUid
-                    });
-
-                    if (!studylistStudy) {
-                        return;
-                    }
-
-                    Object.assign(study, studylistStudy);
-                });
-
+            JF.studies.retrieveStudiesMetadata(viewerData.serverId, viewerData.studyInstanceUids, viewerData.seriesInstanceUids).then(studies => {
                 resolve({
                     studies,
                     viewerData
@@ -43,8 +30,11 @@ export const prepareViewerData = ({ studyInstanceUids, seriesInstanceUids, timep
             const viewerData = {
                 studyInstanceUids,
                 seriesInstanceUids,
+                serverId
             };
             processData(viewerData);
+        } else if (orderId){
+          buildViewerDataFromOrderId(orderId).then(viewerData => processData(viewerData));
         } else {
             // Find the timepoint by ID and load the studies from it
             JF.studylist.timepointApi.retrieveTimepoints(timepointsFilter).then(() => {
@@ -56,6 +46,47 @@ export const prepareViewerData = ({ studyInstanceUids, seriesInstanceUids, timep
 
     return promise;
 };
+
+const buildViewerDataFromOrderId = orderId => {
+  return new Promise((resolve, reject) => {
+    let viewerData = {
+      orderId,
+      serverId: '',
+      studyInstanceUids: [],
+      seriesInstanceUids: []
+    };
+
+    JF.orderlist.queryOrders([orderId]).then(orders => {
+      if (!orders || !orders.length) {
+        reject(new Error(`Cannot find order data for ID ${orderId}.`));
+      };
+
+      const order = orders[0];
+      JF.studylist.retrieveStudies([order.dicomId]).then(studies => {
+        if (!studies || !studies.length) {
+          reject(new Error(`Cannot find study data for ID ${order.dicomId}`));
+        }
+
+        let studyLevel = false;
+        studies.forEach(study => {
+          if (study.qidoLevel === 'STUDY') {
+            studyLevel = true;
+          } else {
+            viewerData.seriesInstanceUids.push(study.seriesInstanceUid);
+          }
+          viewerData.studyInstanceUids.push(study.studyInstanceUid);
+          viewerData.serverId = study.serverId;
+        });
+
+        if (studyLevel) {
+          delete viewerData.seriesInstanceUids;
+        }
+
+        resolve(viewerData);
+      });
+    });
+  });
+}
 
 const buildViewerDataFromTimepointId = timepointId => {
     const timepoint = JF.studylist.timepointApi.timepoints.findOne({ timepointId });

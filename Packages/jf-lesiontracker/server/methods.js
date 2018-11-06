@@ -77,6 +77,8 @@ Meteor.methods({
         OHIF.log.info(JSON.stringify(options, null, 2));
         let measurementData = {};
 
+        return measurementData;
+
         const Checks = JF.validation.checks;
         Checks.checkNonEmptyString(options.userId);
         Checks.checkNonEmptyString(options.studyInstanceUid);
@@ -119,57 +121,6 @@ Meteor.methods({
         });
 
         return measurementData;
-    },
-
-    retrieveUserName(options) {
-        OHIF.log.info('Retrieving user name');
-
-        const Checks = JF.validation.checks;
-        Checks.checkNonEmptyString(options.studyInstanceUid);
-        Checks.checkNonEmptyStringArray(options.seriesInstanceUids);
-        Checks.checkPositiveNumber(options.status);
-
-        let userName;
-        const filter = {
-            studyInstanceUid: options.studyInstanceUid,
-            status: options.status
-        }
-        filter.$or = [];
-        options.seriesInstanceUids.forEach(seriesInstanceUid => filter.$or.push({seriesInstanceUid}));
-
-        let measurements = [];
-        measurementTools.forEach(tool => {
-            measurements = measurements.concat(MeasurementCollections[tool.id].find(filter).fetch());
-        });
-
-        if (measurements.length > 0) {
-            userName = measurements[0].userName;
-        }
-
-        return userName;
-    },
-
-    retrieveLesions(options) {
-        OHIF.log.info('Retrieving Lesions from the Server');
-
-        const Checks = JF.validation.checks;
-        Checks.checkNonEmptyString(options.token);
-        Checks.checkNonEmptyString(options.version);
-
-        let lesions = [];
-        let headers = { token: options.token, version: options.version };
-        let data = { othervalue2: 'CHEST' };
-        try {
-            result = HTTP.call('POST', 'http://172.16.86.145/v2/rmis/sysop/dictDtl/one', { headers, data });
-            OHIF.log.info('Retrieved Lesions: ', result.data.data);
-            result.data.data.forEach( ele => {
-                lesions.push(ele.othervalue);
-            });
-        } catch (error) {
-            OHIF.log.info('Retrieving lesions error: ', error);
-        }
-
-        return lesions;
     },
 
     postMeasurements(measurementData, token) {

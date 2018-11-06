@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
-import { Accounts } from 'meteor/accounts-base';
+// import { Accounts } from 'meteor/accounts-base';
 import { OHIF } from 'meteor/ohif:core';
 import { Servers } from 'meteor/ohif:servers/both/collections';
 

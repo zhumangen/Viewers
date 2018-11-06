@@ -44,6 +44,11 @@ Router.route('/orderlist', {
     }
 });
 
+Router.route('/viewer/orders/:orderId', function() {
+  const orderId = this.params.orderId;
+  JF.viewerbase.renderViewer(this, { orderId });
+}, { name: 'viewerOrder'});
+
 Router.route('/viewer/timepoints/:timepointId', function() {
     const timepointId = this.params.timepointId;
     JF.viewerbase.renderViewer(this, { timepointId });
@@ -58,10 +63,5 @@ Router.route('/viewer/studies/:studyInstanceUids', function() {
 Router.route('/viewer/study/:studyInstanceUid/series/:seriesInstanceUids', function () {
     const studyInstanceUid = this.params.studyInstanceUid;
     const seriesInstanceUids = this.params.seriesInstanceUids.split(';');
-    let queryParams = this.params.query;
-    Object.assign(queryParams, { studyInstanceUid, seriesInstanceUids });
-    Session.set('queryParams', queryParams);
-    Session.set('userInfo', {userId: '', userName: '未知用户', permission: 0})
-    console.log(Session.get('queryParams'));
     JF.viewerbase.renderViewer(this, { studyInstanceUids: [studyInstanceUid], seriesInstanceUids });
 }, { name: 'viewerSeries' });
