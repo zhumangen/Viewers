@@ -54,8 +54,8 @@ jf:keycloak
 jf:order-list
 jf:study-list
 jf:import-dicom
-ohif:user
-ohif:user-management
+jf:user
+jf:user-management
 
 accounts-base@1.4.0
 accounts-password@1.5.0

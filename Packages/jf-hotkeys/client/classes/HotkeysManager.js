@@ -94,7 +94,7 @@ export class HotkeysManager {
             if (this.storeFunction) {
                 this.storeFunction.call(this, contextName, definitions).then(resolve).catch(reject);
             } else if (Meteor.userId()) {
-                OHIF.user.setData(storageKey, definitions).then(resolve).catch(reject);
+                JF.user.setData(storageKey, definitions).then(resolve).catch(reject);
             } else {
                 Session.setPersistent(storageKey, definitions);
                 resolve();
@@ -107,9 +107,9 @@ export class HotkeysManager {
         return new Promise((resolve, reject) => {
             if (this.retrieveFunction) {
                 this.retrieveFunction(contextName).then(resolve).catch(reject);
-            } else if (OHIF.user) {
+            } else if (JF.user) {
                 try {
-                    resolve(OHIF.user.getData(storageKey));
+                    resolve(JF.user.getData(storageKey));
                 } catch(error) {
                     reject(error);
                 }

@@ -10,7 +10,7 @@ Template.app.onCreated(() => {
     instance.headerClasses = new ReactiveVar('');
 
     OHIF.header.dropdown.setItems([{
-        action: OHIF.user.audit,
+        action: JF.user.audit,
         text: 'View Audit Log',
         iconClasses: 'log',
         iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#log',
@@ -33,12 +33,12 @@ Template.app.onCreated(() => {
         icon: 'fa fa-user',
         separatorAfter: true
     }, {
-        action: OHIF.user.changePassword,
+        action: JF.user.changePassword,
         text: 'Change Password',
         iconClasses: 'password',
         iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#password'
     }, {
-        action: OHIF.user.logout,
+        action: JF.user.logout,
         text: 'Logout',
         iconClasses: 'logout',
         iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#logout'
@@ -109,7 +109,7 @@ Template.app.events({
 Template.app.helpers({
     title() { return JF.managers.settings.systemTitle(); },
     version() { return JF.managers.settings.systemVersion(); },
-    userName: OHIF.user.getName,
+    userName: JF.user.getName,
     hasReporter() {
         return !!Session.get('reporter');
     },

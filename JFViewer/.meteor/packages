@@ -33,7 +33,6 @@ jf:design
 ohif:core
 jf:commands
 jf:hotkeys
-ohif:header
 ohif:cornerstone
 ohif:cornerstone-settings
 jf:viewerbase

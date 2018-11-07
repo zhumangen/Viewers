@@ -1,5 +1,6 @@
 import { Session } from 'meteor/session';
 import { $ } from 'meteor/jquery';
+import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
 import { getInstanceClassDefaultViewport } from '../instanceClassSpecificViewport';
 

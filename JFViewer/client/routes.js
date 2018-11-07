@@ -8,7 +8,7 @@ Router.configure({
 
 Router.onBeforeAction('loading');
 
-Router.route('/viewer/:studyInstanceUids', function() {
+Router.route('/viewer/studies/:studyInstanceUids', function() {
     const studyInstanceUids = this.params.studyInstanceUids.split(';');
     const serverId = this.params.query.serverId;
     JF.viewerbase.renderViewer(this, { serverId, studyInstanceUids }, 'jfViewer');

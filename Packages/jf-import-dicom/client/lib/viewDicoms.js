@@ -7,6 +7,7 @@ JF.dicomlist.viewDicoms = dicoms => {
     const rootPath = api.root + api.viewer;
     const studyUids = [], seriesUids = [];
     const studyLevel = false;
+    const serverId = '';
 
     dicoms.forEach(dicom => {
       if (dicom.qidoLevel === 'STUDY') {
@@ -15,13 +16,14 @@ JF.dicomlist.viewDicoms = dicoms => {
         seriesUids.push(dicom.seriesInstanceUid);
       }
       studyUids.push(dicom.studyInstanceUid);
+      serverId = dicom.serverId;
     });
 
-    let path = rootPath + '/studies/' + studyUids.join(';');
+    let uri = rootPath + '/studies/' + studyUids.join(';');
     if (!studyLevel) {
-      path += '/series/' + seriesUids.join(';');
+      uri += '/series/' + seriesUids.join(';');
     }
-    open(path, api.window.name, api.window.features, api.window.replace);
+    open(`${uri}?serverId=${serverId}`, api.window.name, api.window.features, api.window.replace);
   })
 }
 

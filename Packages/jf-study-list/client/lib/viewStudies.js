@@ -10,6 +10,7 @@ JF.studylist.viewStudies = studies => {
     const rootPath = api.root + api.viewer;
     const studyUids = [], seriesUids = [];
     const studyLevel = false;
+    const serverId = '';
 
     studies.forEach(study => {
       if (study.qidoLevel === 'STUDY') {
@@ -18,13 +19,14 @@ JF.studylist.viewStudies = studies => {
         seriesUids.push(study.seriesInstanceUid);
       }
       studyUids.push(study.studyInstanceUid);
+      serverId = study.serverId;
     });
 
-    let path = rootPath + '/studies/' + studyUids.join(';');
+    let uri = rootPath + '/studies/' + studyUids.join(';');
     if (!studyLevel) {
-      path += '/series/' + seriesUids.join(';');
+      uri += '/series/' + seriesUids.join(';');
     }
-    open(path, api.window.name, api.window.features, api.window.replace);
+    open(`${uri}?serverId=${serverId}`, api.window.name, api.window.features, api.window.replace);
   })
 };
 

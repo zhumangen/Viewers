@@ -1,6 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
-JF.studylist = {
+Object.assign(JF.studylist, {
   actions: {},
   callbacks: {}
-};
+});

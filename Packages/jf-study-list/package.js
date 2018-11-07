@@ -38,6 +38,8 @@ Package.onUse(function(api) {
     api.use('jf:studies');
     api.use('jf:core');
 
+    api.mainModule('main.js', ['client', 'server']);
+
     // Client and server imports
     api.addFiles('both/index.js', [ 'client', 'server' ]);
 

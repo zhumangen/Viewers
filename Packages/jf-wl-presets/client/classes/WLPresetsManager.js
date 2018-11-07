@@ -134,7 +134,7 @@ export class WindowLevelPresetsManager {
             if (this.storeFunction) {
                 this.storeFunction.call(this, wlPresets).then(resolve).catch(reject);
             } else if (Meteor.userId()) {
-                OHIF.user.setData(WL_STORAGE_KEY, wlPresets).then(resolve).catch(reject);
+                JF.user.setData(WL_STORAGE_KEY, wlPresets).then(resolve).catch(reject);
             } else {
                 Session.setPersistent(WL_STORAGE_KEY, wlPresets);
                 resolve();
@@ -146,9 +146,9 @@ export class WindowLevelPresetsManager {
         return new Promise((resolve, reject) => {
             if (this.retrieveFunction) {
                 this.retrieveFunction.call(this).then(resolve).catch(reject);
-            } else if (OHIF.user) {
+            } else if (JF.user) {
                 try {
-                    resolve(OHIF.user.getData(WL_STORAGE_KEY));
+                    resolve(JF.user.getData(WL_STORAGE_KEY));
                 } catch(error) {
                     reject(error);
                 }
