@@ -30,7 +30,7 @@ Template.orderlistRow.helpers({
   },
   studyDate() {
     return this.qidoLevel === 'STUDY'? this.studyDate : this.seriesDate;
-  },
+  }
 });
 
 Template.orderlistRow.events({

@@ -20,13 +20,9 @@ export default function ({ instance, eventData, tool }) {
     OHIF.log.info('CornerstoneToolsMeasurementAdded');
 
     const imageAttributes = getImageAttributes(eventData.element);
-    const userInfo = Session.get('userInfo');
-
     const measurement = _.extend({}, measurementData, imageAttributes, {
         measurementNumber: measurementData.measurementNumber,
-        userId: userInfo.userId,
-        userName: userInfo.userName,
-        permission: userInfo.permission,
+        userId: Meteor.userId(),
         status: 0,
         version: JF.managers.settings.systemVersion(),
         lesionCode: JF.managers.settings.lesionCode()

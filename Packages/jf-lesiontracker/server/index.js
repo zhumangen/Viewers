@@ -1,1 +1,2 @@
-import './methods.js';
+import './collections';
+import './methods';

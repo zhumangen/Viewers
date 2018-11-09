@@ -5,7 +5,7 @@ import { CollectionName as SettingsName } from 'meteor/jf:core/both/collections/
 
 Meteor.startup(() => {
   Tracker.autorun(() => {
-    const user = Session.get('userInfo');
-    Meteor.subscribe(SettingsName, user&&user.userId?user.userId:'');
+    const userId = Meteor.userId();
+    Meteor.subscribe(SettingsName, userId);
   });
 });

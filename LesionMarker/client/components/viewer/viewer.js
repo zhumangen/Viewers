@@ -40,6 +40,20 @@ Template.viewer.onCreated(() => {
     // Define the JF.viewer.data global object
     JF.viewer.data = JF.viewer.data || Session.get('ViewerData') || {};
 
+    if (JF.viewer.data.order) {
+      const order = JF.viewer.data.order;
+      if (order.status > 1) {
+        JF.user.getUserName(order.reporterId).then(name => {
+          Session.set('reporterName', name);
+        });
+      }
+      if (order.status > 3) {
+        JF.user.getUserName(order.reviewerId).then(name => {
+          Session.set('reviewerName', name);
+        })
+      }
+    }
+
     const { TimepointApi, MeasurementApi, ConformanceCriteria } = JF.measurements;
     const currentTimepointId = JF.viewer.data.currentTimepointId;
     const timepointApi = new TimepointApi(currentTimepointId);

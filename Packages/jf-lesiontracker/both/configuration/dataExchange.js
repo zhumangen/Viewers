@@ -33,12 +33,13 @@ export const storeMeasurements = (measurementData, filter) => {
     });
 };
 
-export const changeStatus = options => {
-    OHIF.log.info('changeStatus');
+export const submitOrder = options => {
+    OHIF.log.info('submit order.');
 
     return new Promise((resolve, reject) => {
-        Meteor.call('changeStatus', options, (error, result) => {
+        Meteor.call('endOrder', options, (error, result) => {
             if (error) {
+                OHIF.log.error(error);
                 reject(error);
             } else {
                 resolve(result);

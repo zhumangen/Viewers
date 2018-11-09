@@ -8,7 +8,7 @@ Meteor.methods({
      * This Meteor method is available from both the client and the server
      */
     GetStudyMetadata: function(serverId, studyInstanceUid) {
-        OHIF.log.info('GetStudyMetadata(%s, %s)', serverId, studyInstanceUid);
+        OHIF.log.info('GetStudyMetadata(%s)', serverId + ', ' + studyInstanceUid);
 
         // Get the server data. This is user-defined in the config.json files or through servers
         // configuration modal

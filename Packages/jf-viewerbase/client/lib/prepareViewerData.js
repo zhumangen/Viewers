@@ -47,21 +47,22 @@ export const prepareViewerData = ({ serverId, studyInstanceUids, seriesInstanceU
     return promise;
 };
 
-const buildViewerDataFromOrderId = orderId => {
+const buildViewerDataFromOrderId = serialNumber => {
   return new Promise((resolve, reject) => {
     let viewerData = {
-      orderId,
+      serialNumber,
       serverId: '',
       studyInstanceUids: [],
       seriesInstanceUids: []
     };
 
-    JF.orderlist.queryOrders([orderId]).then(orders => {
+    JF.orderlist.queryOrders([serialNumber]).then(orders => {
       if (!orders || !orders.length) {
         reject(new Error(`Cannot find order data for ID ${orderId}.`));
       };
 
       const order = orders[0];
+      viewerData.order = order;
       JF.studylist.retrieveStudies([order.dicomId]).then(studies => {
         if (!studies || !studies.length) {
           reject(new Error(`Cannot find study data for ID ${order.dicomId}`));

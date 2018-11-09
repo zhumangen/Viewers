@@ -1,11 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 
 /*
- * Defines the base OHIF object
+ * Defines the base JF object
  */
 
 const JF = {
     lesiontracker: {},
+    measurements: {},
     collections: {},
     managers: {},
     viewer: {},

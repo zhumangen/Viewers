@@ -1,6 +1,6 @@
 import { JF } from 'meteor/jf:core';
 
-JF.orderlist = {
+Object.assign(JF.orderlist, {
   actions: {},
   callbacks: {}
-};
+});

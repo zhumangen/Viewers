@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { Template } from 'meteor/templating';
 
 JF.user.getUserName = userId => {
   return new Promise((resolve, reject) => {
@@ -18,3 +19,11 @@ JF.user.getUserName = userId => {
     }
   });
 }
+
+JF.user.getUserNameSync = userId => {
+  const Users = JF.user.users;
+  const user = Users.findOne({ _id: userId });
+  return user && user.userName;
+}
+
+Template.registerHelper('getUserName', userId => JF.user.getUserNameSync(userId));

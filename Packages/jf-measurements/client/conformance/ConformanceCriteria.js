@@ -149,7 +149,7 @@ class ConformanceCriteria {
                 measurements.forEach(measurement => {
                     const { studyInstanceUid } = measurement;
 
-                    const promise = JF.studies.loadStudy(studyInstanceUid);
+                    const promise = JF.studies.loadStudy(JF.viewer.data.serverId, studyInstanceUid);
                     promise.then(study => {
                         const studyMetadata = JF.viewerbase.getStudyMetadata(study);
 

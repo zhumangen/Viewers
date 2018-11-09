@@ -28,16 +28,16 @@
             {{organizationName}}
         </td>
         <td class="reportPhyscian">
-            {{reportPhyscian}}
+            {{getUserName reporterId}}
         </td>
         <td class="reportTime">
-            {{dateToString reportTime ''}}
+            {{dateToString reportEnd ''}}
         </td>
         <td class="reviewPhyscian">
-            {{reviewPhyscian}}
+            {{getUserName reviewerId}}
         </td>
         <td class="reviewTime">
-            {{dateToString reviewTime ''}}
+            {{dateToString reviewEnd ''}}
         </td>
     </tr>
 </template>

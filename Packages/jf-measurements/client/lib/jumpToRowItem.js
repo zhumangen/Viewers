@@ -75,7 +75,7 @@ let lastActivatedRowItem;
  */
 JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
     const { isZoomed, zoomedViewportIndex } = JF.viewerbase.layoutManager;
-    
+
     lastActivatedRowItem = rowItem;
 
     // Retrieve the list of available viewports
@@ -118,7 +118,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
         }
 
         measurementsData.push(measurementData);
-        const promise = JF.studies.loadStudy(measurementData.studyInstanceUid);
+        const promise = JF.studies.loadStudy(JF.viewer.data.serverId, measurementData.studyInstanceUid);
         promise.then(() => JF.measurements.syncMeasurementAndToolData(measurement));
         promises.add(promise);
     }
@@ -139,7 +139,7 @@ JF.measurements.jumpToRowItem = (rowItem, timepoints, childToolKey) => {
         for (let viewportIndex = 0; viewportIndex < numViewportsToUpdate; viewportIndex++) {
             const measurementData = measurementsData[viewportIndex];
             if (!measurementData) continue;
-                
+
             activatedViewportIndexes.push(viewportIndex);
 
             const element = $viewports.get(viewportIndex);

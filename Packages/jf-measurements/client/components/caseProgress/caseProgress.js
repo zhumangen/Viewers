@@ -16,49 +16,40 @@ Template.caseProgress.onCreated(() => {
     instance.saveObserver = new Tracker.Dependency();
     instance.saveOnly = true;
     instance.noChanges = new ReactiveVar(true);
-    instance.options = Object.assign({}, Session.get('queryParams'), Session.get('userInfo'));
 
     instance.api = {
         save() {
             // Clear signaled unsaved changes...
-            const successHandler = (measurementData) => {
+            const successHandler = () => {
                 OHIF.ui.unsavedChanges.clear(`${instance.path}.*`);
                 instance.saveObserver.changed();
-                
+
                 if (!instance.saveOnly) {
-                    // save measurements to main server.
-                    const promise = instance.data.measurementApi.submitMeasurements(instance.options, measurementData);
-                    promise.then(() => {
-                        const options = Object.assign({}, instance.options, { actionCode: '0' });
-                        const promise = instance.data.measurementApi.submitResult(options);
-                        promise.then(() => {
-                            const promise = instance.data.measurementApi.changeStatus(options);
-                            promise.then(() => {
-                                instance.data.measurementApi.retrieveUserName(options);
-                            }).catch(instance.errorHandler);
-                            OHIF.ui.showDialog('dialogLoading', {
-                                promise,
-                                text: 'changing measurements status.'
-                            });
-                            instance.isLocked.set(true);
-                        }).catch(instance.errorHandler);
-                        OHIF.ui.showDialog('dialogLoading', {
-                            promise,
-                            text: 'Committing data to main server.'
-                        });
-                    }).catch(instance.errorHandler);
+                    const promise = instance.data.measurementApi.submitOrder({ action: 1 });
                     OHIF.ui.showDialog('dialogLoading', {
                         promise,
-                        text: 'Saving measurement data to main server.'
+                        text: '正在提交...'
+                    });
+                    promise.then(result => {
+                      if (result.code !== 200) {
+                        let reason = '错误的请求。';
+                        if (result.code === 403) {
+                          reason = '当前病例不在编辑状态。'
+                        }
+                        OHIF.ui.showDialog('dialogInfo', {
+                          title: '访问受限',
+                          reason,
+                        });
+                      }
                     });
                 }
             };
 
-            const promise = instance.data.measurementApi.storeMeasurements(instance.options);
+            const promise = instance.data.measurementApi.storeMeasurements({ abandoned: false });
             promise.then(successHandler).catch(instance.errorHandler);
             OHIF.ui.showDialog('dialogLoading', {
                 promise,
-                text: 'Saving measurement data'
+                text: '正在保存标注数据...'
             });
 
             return promise;
@@ -75,24 +66,37 @@ Template.caseProgress.onCreated(() => {
                 cancelLabel: '取消',
                 confirmLabel: '确定'
             };
-            OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {                
-                const options = Object.assign({}, instance.options, { abandoned: true });
-                const promise = instance.data.measurementApi.storeMeasurements(options);
-                promise.then(() => {
-                    const options = Object.assign({}, instance.options, { actionCode: '1' });
-                    instance.data.measurementApi.submitResult(options).then(() => {
-                        instance.isLocked.set(true);
-                    }).catch(instance.errorHandler);
+            OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
+              const promise = instance.data.measurementApi.storeMeasurements({ abandoned: true });
+              promise.then(() => {
+                const promise = instance.data.measurementApi.submitOrder({ action: 0 });
+                promise.then(result => {
+                  if (result.code === 200) {
+                    instance.isLocked.set(true);
+                  } else {
+                    let reason = '错误的请求。';
+                    if (result.code === 403) {
+                      reason = '当前病例不在编辑状态。'
+                    }
+                    OHIF.ui.showDialog('dialogInfo', {
+                      title: '访问受限',
+                      reason,
+                    });
+                  }
                 }).catch(instance.errorHandler);
                 OHIF.ui.showDialog('dialogLoading', {
                     promise,
-                    text: 'Saving measurement data'
+                    text: '正在放弃...'
                 });
+              }).catch(instance.errorHandler);
+              OHIF.ui.showDialog('dialogLoading', {
+                  promise,
+                  text: '正在放弃更改...'
+              });
             });
-            
         }
     };
-    
+
     instance.errorHandler = data => {
         OHIF.ui.showDialog('dialogInfo', Object.assign({ class: 'themed' }, data));
     };
@@ -134,8 +138,9 @@ Template.caseProgress.onRendered(() => {
     } else {
         instance.isLocked.set(false);
     }
-    
-    instance.isLocked.set(instance.options.status === 0);
+
+    const orderStatus = JF.viewer.data.order.status;
+    instance.isLocked.set(orderStatus !== 1 || orderStatus !== 3);
 
     // Stop here if no current or prior timepoint was found
     if (!current || !prior || !current.timepointId) {
@@ -227,11 +232,6 @@ Template.caseProgress.helpers({
         return Template.instance().progressText.get();
     },
 
-    isLocked() {
-        const instance = Template.instance();
-        return instance.isLocked.get();
-    },
-
     progressComplete() {
         const instance = Template.instance();
         if (!instance.data.timepointApi) {
@@ -249,10 +249,10 @@ Template.caseProgress.helpers({
         OHIF.ui.unsavedChanges.depend();
         instance.saveObserver.depend();
         Session.get('LayoutManagerUpdated');
-        
+
         instance.noChanges.set(OHIF.ui.unsavedChanges.probe('viewer.*') === 0);
-     
-        return instance.isLocked.get() || instance.noChanges.get();        
+
+        return instance.isLocked.get() || instance.noChanges.get();
     }
 });
 
@@ -260,7 +260,7 @@ Template.caseProgress.events({
     'click #save'(event, instance) {
         instance.saveOnly = true;
     },
-    
+
     'click #commit'(event, instance){
         const dialogSettings = {
             class: 'themed',
@@ -273,10 +273,10 @@ Template.caseProgress.events({
             cancelLabel: '取消',
             confirmLabel: '确定'
         };
-        OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {            
+        OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
             instance.saveOnly = false;
             instance.api.save();
         });
-        
+
     }
 });

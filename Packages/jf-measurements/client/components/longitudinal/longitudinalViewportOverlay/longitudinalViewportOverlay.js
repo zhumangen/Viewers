@@ -35,7 +35,7 @@ Template[defaultTemplate].onRendered(() => {
         if (computation.firstRun) return;
         computation.stop();
         const imageIndex = instance.getImageIndex();
-        JF.studies.loadStudy(studyInstanceUid).then(studyMetadata => {
+        JF.studies.loadStudy(JF.viewer.data.serverId, studyInstanceUid).then(studyMetadata => {
             const seriesMetadata = studyMetadata.getSeriesByUID(seriesInstanceUid);
             const instanceMetadata = seriesMetadata.getInstanceByIndex(imageIndex);
             if (!instanceMetadata) return;

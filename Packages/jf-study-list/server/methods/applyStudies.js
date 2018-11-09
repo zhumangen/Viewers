@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { Meteor } from 'meteor/meteor';
 
 export default function applyStudies(studies, options) {
   const Orders = JF.collections.orders;
@@ -25,9 +26,7 @@ export default function applyStudies(studies, options) {
       institutionName: study.institutionName,
       qidoLevel: study.qidoLevel,
       orderTime: t,
-      serialNumber: '2' + t.getTime() + JF.utils.randomString(),
-      reporters: [],
-      reviewers: []
+      serialNumber: '2' + t.getTime() + JF.utils.randomString()
     };
 
     Orders.insert(order);

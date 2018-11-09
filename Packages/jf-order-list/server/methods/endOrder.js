@@ -1,0 +1,68 @@
+import { JF } from 'meteor/jf:core';
+import { OHIF } from 'meteor/ohif:core';
+
+export default function endOrder(orderId, options) {
+  const result = { code: 400 };
+  if (!orderId) return result;
+  OHIF.MongoUtils.validateUser();
+
+  // 0: abort, 1: submit
+  const action = options.action;
+  JF.validation.checks.checkNonNegativeNumber(action);
+
+  const Orders = JF.collections.orders;
+  const order = Orders.findOne({ _id: orderId });
+  if (order) {
+    let ops;
+    let userId = Meteor.userId();
+    switch (order.status) {
+      case 0:
+      case 2:
+      case 4:
+        result.code = 403;
+        break;
+      case 1:
+        if (order.reporterId === userId) {
+          result.code = 200;
+          if (action === 0) {
+            ops = { $set: {
+              status: 0,
+              reporterId: '',
+              reportStart: null
+            }};
+          } else if (action === 1) {
+            ops = { $set: {
+              status: 2,
+              reportEnd: new Date()
+            }};
+            JF.measurements.updateMeasurementStatus(order._id, 1);
+          }
+        }
+        break;
+      case 3:
+        if (order.reviewerId === userId) {
+          result.code = 200;
+          if (action === 0) {
+            ops = { $set: {
+              status: 2,
+              reviewerId: '',
+              reviewStart: null
+            }};
+          } else if (action === 1) {
+            ops = { $set: {
+              status: 4,
+              reviewEnd: new Date()
+            }};
+            JF.measurements.updateMeasurementStatus(order._id, 2);
+          }
+        }
+        break;
+    }
+
+    if (ops) {
+      Orders.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+    }
+
+    return result;
+  }
+}

@@ -1,7 +1,7 @@
 import { JF } from 'meteor/jf:core';
 
 import { measurementTools } from './measurementTools';
-import { retrieveMeasurements, storeMeasurements, changeStatus } from './dataExchange';
+import { retrieveMeasurements, storeMeasurements, submitOrder } from './dataExchange';
 import { validateMeasurements } from './dataValidation';
 
 JF.measurements.MeasurementApi.setConfiguration({
@@ -14,7 +14,7 @@ JF.measurements.MeasurementApi.setConfiguration({
     dataExchange: {
         retrieve: retrieveMeasurements,
         store: storeMeasurements,
-        changeStatus
+        submitOrder
     },
     dataValidation: {
         validation: validateMeasurements

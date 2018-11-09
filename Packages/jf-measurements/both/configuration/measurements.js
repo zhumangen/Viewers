@@ -125,7 +125,7 @@ class MeasurementApi {
         }
 
         return new Promise((resolve, reject) => {
-            retrievalFn(options).then(measurementData => {
+            retrievalFn(JF.viewer.data.order).then(measurementData => {
                 OHIF.log.info('Measurement data retrieval');
 
                 const toolsGroupsMap = MeasurementApi.getToolsGroupsMap();
@@ -138,9 +138,7 @@ class MeasurementApi {
                         const { toolType } = measurement;
                         if (toolType && this.tools[toolType]) {
                             delete measurement._id;
-                            measurement.userId = options.userId;
-                            measurement.userName = options.userName;
-                            measurement.permission = options.permission;
+                            measurement.userId = Meteor.userId();
                             measurement.status = 0;
                             measurement.active = false;
                             const toolGroup = toolsGroupsMap[toolType];
@@ -182,19 +180,19 @@ class MeasurementApi {
         let measurementData = {};
 
         if (!options.abandoned) {
-            configuration.measurementTools.forEach(toolGroup => {
-                toolGroup.childTools.forEach(tool => {
-                    if (!measurementData[toolGroup.id]) {
-                        measurementData[toolGroup.id] = [];
-                    }
+          configuration.measurementTools.forEach(toolGroup => {
+              toolGroup.childTools.forEach(tool => {
+                  if (!measurementData[toolGroup.id]) {
+                      measurementData[toolGroup.id] = [];
+                  }
 
-                    measurementData[toolGroup.id] = measurementData[toolGroup.id].concat(this.tools[tool.id].find().fetch());
-                });
-            });
+                  measurementData[toolGroup.id] = measurementData[toolGroup.id].concat(this.tools[tool.id].find().fetch());
+              });
+          });
         }
 
         return new Promise((resolve, reject) => {
-            storeFn(measurementData, options).then(response => {
+            storeFn(measurementData, JF.viewer.data.order).then(response => {
                 OHIF.log.info('Measurement storage completed');
                 resolve(response);
             }, error => {
@@ -207,18 +205,18 @@ class MeasurementApi {
         });
     }
 
-    changeStatus(options) {
-        const changeFn = configuration.dataExchange.changeStatus;
+    submitOrder(options) {
+        const changeFn = configuration.dataExchange.submitOrder;
         if (!_.isFunction(changeFn)) {
             return;
         }
 
         return new Promise((resolve, reject) => {
             changeFn(options).then(result => {
-                OHIF.log.info('Change measurements status completed');
+                OHIF.log.info('Submit order completed');
                 resolve(result);
             }).catch(error => {
-                OHIF.log.error('Change measurements status failed: ', error);
+                OHIF.log.error('Submit order failed: ', error);
                 reject(error);
             });
         });

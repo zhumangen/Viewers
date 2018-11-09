@@ -85,7 +85,7 @@ Template.studyBrowserItem.events({
             triggerClick();
         } else {
             instance.loading.set(true);
-            JF.studies.loadStudy(studyInformation.studyInstanceUid).then(() => {
+            JF.studies.loadStudy(JF.viewer.data.serverId, studyInformation.studyInstanceUid).then(() => {
                 instance.loaded.set(true);
                 instance.loading.set(false);
                 $element.trigger('ohif.studies.study.load', studyInformation);

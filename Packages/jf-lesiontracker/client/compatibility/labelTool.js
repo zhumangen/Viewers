@@ -19,12 +19,9 @@ function createNewMeasurement () {
   const imageAttributes = getImageAttributes(element);
   const viewport = cornerstone.getViewport(element);
   delete viewport.voiLUT;
-  const userInfo = Session.get('userInfo');
 
   const measurement = _.extend({}, measurementData, imageAttributes, {viewport}, {
-    userId: userInfo.userId,
-    userName: userInfo.userName,
-    permission: userInfo.permission,
+    userId: Meteor.userId(),
     status: 0
   });
 

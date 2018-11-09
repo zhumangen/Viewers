@@ -111,16 +111,16 @@ Template.app.helpers({
     version() { return JF.managers.settings.systemVersion(); },
     userName: JF.user.getName,
     hasReporter() {
-        return !!Session.get('reporter');
+        return !!Session.get('reporterName');
     },
     hasReviewer() {
-        return !!Session.get('reviewer');
+        return !!Session.get('reviewerName');
     },
     getReporter() {
-        return Session.get('reporter');
+        return Session.get('reporterName');
     },
     getReviewer() {
-        return Session.get('reviewer');
+        return Session.get('reviewerName');
     },
     studyListToggleText() {
         const isViewer = Session.get('ViewerOpened');

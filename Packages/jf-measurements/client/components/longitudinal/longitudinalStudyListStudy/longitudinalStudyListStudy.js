@@ -55,7 +55,7 @@ if (OHIF.studylist) {
         }
 
         const newReviewers = reviewers.filter(function(reviewer) {
-            return reviewer.userId !== Session.get('userInfo').userId;
+            return reviewer.userId !== Meteor.userId();
         });
 
         if (!newReviewers.length) {
@@ -64,7 +64,7 @@ if (OHIF.studylist) {
 
         let tipText = 'The study is being reviewed by ';
         newReviewers.forEach(function(reviewer, index) {
-            if (reviewer.userId === Session.get('userInfo').userId) {
+            if (reviewer.userId === Meteor.userId()) {
                 return;
             }
 
