@@ -5,7 +5,7 @@ import { OHIF } from 'meteor/ohif:core';
 
 Meteor.methods({
   storeSettings(privateSettings) {
-    check(privateSettings.userId, JF.validation.NonEmptyString);
+    JF.validation.checks.checkNonEmptyString(privateSettings.userId);
     const filter = { userId: privateSettings.userId };
     const data = {
       userId: privateSettings.userId,

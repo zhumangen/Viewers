@@ -7,6 +7,7 @@ export default function retrieveMeasurements(options) {
 
     OHIF.MongoUtils.validateUser();
 
+    const Measurements = JF.collections.measurements;
     const userId = Meteor.userId();
     const orderId = options.orderId;
     const orderStatus = options.status;
@@ -46,7 +47,7 @@ export default function retrieveMeasurements(options) {
     }
 
     measurementTools.forEach(tool => {
-        measurementData[tool.id] = MeasurementCollections[tool.id].find(filter).fetch();
+        measurementData[tool.id] = Measurements[tool.id].find(filter).fetch();
     });
 
     return measurementData;

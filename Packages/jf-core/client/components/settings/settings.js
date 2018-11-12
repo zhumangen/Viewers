@@ -193,7 +193,7 @@ class SettingsManager {
   storeSettings() {
     return new Promise((resolve, reject) => {
       const data = this.data.get();
-      const userId = Meteor.userId;
+      const userId = Meteor.userId();
       if (userId) {
         data.userId = userId;
         Meteor.call('storeSettings', data, (error, response) => {

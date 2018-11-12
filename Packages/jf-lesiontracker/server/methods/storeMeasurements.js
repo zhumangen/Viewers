@@ -7,6 +7,7 @@ export default function storeMeasurements(measurementData, options) {
 
     OHIF.MongoUtils.validateUser();
 
+    const Measurements = JF.collections.measurements;
     const orderId = options.orderId;
     const orderStatus = options.status;
 
@@ -17,20 +18,20 @@ export default function storeMeasurements(measurementData, options) {
     };
 
     measurementTools.forEach(tool => {
-        MeasurementCollections[tool.id].remove(filter);
+        Measurements[tool.id].remove(filter);
     });
 
     Object.keys(measurementData).forEach(toolId => {
-        if (!MeasurementCollections[toolId]) {
+        if (!Measurements[toolId]) {
             return;
         }
 
         const measurements = measurementData[toolId];
         measurements.forEach(measurement => {
             delete measurement._id;
-            MeasurementCollections[toolId].insert(measurement);
+            Measurements[toolId].insert(measurement);
         });
     });
 
-    return JF.orderlist.updateEditStatus(orderId, status, true);
+    return JF.orderlist.updateEditStatus(orderId, orderStatus, true);
 }

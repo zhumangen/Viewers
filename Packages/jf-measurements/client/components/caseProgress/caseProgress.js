@@ -140,7 +140,7 @@ Template.caseProgress.onRendered(() => {
     }
 
     const orderStatus = JF.viewer.data.order.status;
-    instance.isLocked.set(orderStatus !== 1 || orderStatus !== 3);
+    instance.isLocked.set(orderStatus !== 1 && orderStatus !== 3);
 
     // Stop here if no current or prior timepoint was found
     if (!current || !prior || !current.timepointId) {
