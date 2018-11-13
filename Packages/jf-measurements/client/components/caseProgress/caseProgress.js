@@ -40,6 +40,8 @@ Template.caseProgress.onCreated(() => {
                           title: '访问受限',
                           reason,
                         });
+                      } else {
+                        instance.isLocked.set(true);
                       }
                     });
                 }

@@ -10,6 +10,6 @@ export default function updateEditStatus(orderId, status, edited) {
     ops = { $set: { reviewEdited: true }};
   }
   if (ops) {
-    Orders.update({ _id: orderId }, ops);
+    Orders.update({ _id: orderId }, ops, { multi: false });
   }
 }

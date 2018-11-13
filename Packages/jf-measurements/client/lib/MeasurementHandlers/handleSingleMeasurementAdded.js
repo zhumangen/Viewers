@@ -25,7 +25,8 @@ export default function ({ instance, eventData, tool }) {
         userId: Meteor.userId(),
         status: 0,
         version: JF.managers.settings.systemVersion(),
-        lesionCode: JF.managers.settings.lesionCode()
+        lesionCode: JF.managers.settings.lesionCode(),
+        orderId: JF.viewer.data.order._id
     });
 
     // Get the related timepoint by the measurement number and use its location if defined

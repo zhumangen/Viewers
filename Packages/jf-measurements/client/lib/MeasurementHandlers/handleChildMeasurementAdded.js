@@ -23,12 +23,12 @@ export default function ({ instance, eventData, tool, toolGroupId, toolGroup }) 
     const measurement = {
         toolType: tool.parentTool,
         measurementNumber: measurementData.measurementNumber,
-        userId: Meteor.userId(),
         patientId: imageAttributes.patientId,
         studyInstanceUid: imageAttributes.studyInstanceUid
     };
 
     const additionalProperties = _.extend(imageAttributes, {
+        orderId: JF.viewer.data.order._id,
         userId: Meteor.userId()
     });
 

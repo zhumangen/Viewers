@@ -8,7 +8,12 @@ export default function updateMeasurementStatus(orderId, status) {
   if (!orderId) return;
 
   const Measurements = JF.collections.measurements;
+  const filter = {
+    orderId,
+    userId: Meteor.userId(),
+    status: 0
+  };
   measurementTools.forEach(tool => {
-    Measurements[tool.id].update({ orderId }, { $set: { status }}, { multi: true }, OHIF.MongoUtils.writeCallback);
+    Measurements[tool.id].update(filter, { $set: { status }}, { multi: true }, OHIF.MongoUtils.writeCallback);
   });
 }

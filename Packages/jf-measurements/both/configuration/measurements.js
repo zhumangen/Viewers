@@ -212,7 +212,7 @@ class MeasurementApi {
         }
 
         return new Promise((resolve, reject) => {
-            changeFn(options).then(result => {
+            changeFn(JF.viewer.data.order._id, options).then(result => {
                 OHIF.log.info('Submit order completed');
                 resolve(result);
             }).catch(error => {

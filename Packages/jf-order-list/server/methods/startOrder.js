@@ -2,7 +2,11 @@ import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 
 export default function startOrder(orderId, options) {
-  if (!orderId) return { code: 400 };
+  const result = { code: 200 };
+  if (!orderId) {
+    result.code = 400;
+    return result;
+  }
 
   OHIF.MongoUtils.validateUser();
 
@@ -21,10 +25,10 @@ export default function startOrder(orderId, options) {
         }};
         break;
       case 1:
-        if (order.reporterId === Meteor.userId()) {
-          return { code : 200 };
+        if (order.reporterId !== Meteor.userId()) {
+          result.code = 403;
         }
-        userId = order.reporterId;
+        result.userId = order.reporterId;
         break;
       case 2:
         ops = { $set: {
@@ -35,18 +39,17 @@ export default function startOrder(orderId, options) {
         }};
         break;
       case 3:
-        if (order.reviewerId === Meteor.userId()) {
-          return { code : 200 };
+        if (order.reviewerId !== Meteor.userId()) {
+          result.code = 403;
         }
-        userId = order.reviewerId;
+        result.userId = order.reviewerId;
         break;
     }
 
     if (ops) {
       Orders.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
-      return { code: 200 }
-    } else {
-      return { code: 403, status: order.status, userId }
     }
+
+    return result;
   }
 }

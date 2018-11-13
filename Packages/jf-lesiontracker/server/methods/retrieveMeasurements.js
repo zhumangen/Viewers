@@ -9,7 +9,7 @@ export default function retrieveMeasurements(options) {
 
     const Measurements = JF.collections.measurements;
     const userId = Meteor.userId();
-    const orderId = options.orderId;
+    const orderId = options._id;
     const orderStatus = options.status;
     const reportEdited = options.reportEdited;
     const reviewEdited = options.reviewEdited;

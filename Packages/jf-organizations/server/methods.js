@@ -4,24 +4,29 @@ import { OHIF } from 'meteor/ohif:core';
 import { Organizations } from 'meteor/jf:organizations/both/collections/organizations';
 
 Meteor.methods({
-  retriveOrganizations(options) {
+  retriveOrganizations(organizationIds, options) {
     const filter = {};
-    if (options && options.organizationId) {
-      filter._id = options.organizationId;
+    if (organizationIds && organizationIds.length > 0) {
+      filter.$or = [];
+      organizationIds.forEach(_id => filter.$or.push({ _id }));
     }
     return Organizations.find(filter).fetch();
   },
 
-  storeOrganizations(options) {
-    const org = options.organization;
+  storeOrganization(organization, options) {
     const query = {
-      _id: org._id
+      _id: organization._id
     };
-
-    if (!org._id) {
-      delete org._id;
+    if (!organization._id) {
+      delete organization._id;
     }
+    Organizations.update(query, organization, { upsert: true }, OHIF.MongoUtils.writeCallback);
+  },
 
-    return Organizations.update(query, org, {upsert: true}, OHIF.MongoUtils.writeCallback);
+  getOrganizationName(organizationId) {
+    if (!organizationId) return '';
+
+    const org = Organizations.findOne({ _id: organizationId });
+    return org?org.name.zh:'';
   }
 })

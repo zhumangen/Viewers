@@ -45,7 +45,6 @@ function search(organization, dateRange, offset, callback) {
           dicom.serverId = organization.serverId;
           dicom.qidoLevel = level;
           dicom.organizationId = organization._id;
-          dicom.organizationName = organization.name.zh;
           Tracker.nonreactive(() => {
             JF.collections.importDicoms.insert(dicom);
           });
@@ -131,7 +130,7 @@ Template.importDicom.onRendered(() => {
 
   instance.datePicker = $dicomDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
-  JF.managers.organizations.retrieve().then(orgs => {
+  JF.organization.retrieveOrganizations().then(orgs => {
     instance.organizations = orgs;
     const items = [];
     for (const org of orgs) {

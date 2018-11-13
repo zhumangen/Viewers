@@ -19,7 +19,7 @@
             {{concat (formatDA studyDate) ' ' (formatTM studyTime)}}
         </td>
         <td class="institution">
-            {{organizationName}}
+            {{getOrganizationName organizationId}}
         </td>
         <td class="modality">
             {{choose modality modalities}}

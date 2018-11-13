@@ -8,7 +8,7 @@ export default function storeMeasurements(measurementData, options) {
     OHIF.MongoUtils.validateUser();
 
     const Measurements = JF.collections.measurements;
-    const orderId = options.orderId;
+    const orderId = options._id;
     const orderStatus = options.status;
 
     let filter = {

@@ -22,7 +22,7 @@ export default function applyStudies(studies, options) {
       seriesTime:study.seriesTime,
       studyDescription: study.studyDescription,
       seriesDescription: study.seriesDescription,
-      organizationName: study.organizationName,
+      organizationId: study.organizationId,
       institutionName: study.institutionName,
       qidoLevel: study.qidoLevel,
       orderTime: t,

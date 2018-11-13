@@ -1,8 +1,14 @@
 import { JF } from 'meteor/jf:core';
 import { Template } from 'meteor/templating';
 
+const UserPromises = new Map();
+
 JF.user.getUserName = userId => {
-  return new Promise((resolve, reject) => {
+  if (UserPromises.has(userId)) {
+    return UserPromises.get(userId);
+  }
+
+  const promise = new Promise((resolve, reject) => {
     const Users = JF.user.users;
     const user = Users.findOne({ _id: userId });
     if (user) {
@@ -18,12 +24,23 @@ JF.user.getUserName = userId => {
       });
     }
   });
+
+  UserPromises.set(userId, promise);
+  return promise;
 }
 
 JF.user.getUserNameSync = userId => {
+  if (!userId) return '';
+
   const Users = JF.user.users;
   const user = Users.findOne({ _id: userId });
-  return user && user.userName;
+  if (user) {
+    return user.userName;
+  } else {
+    JF.user.getUserName(userId);
+  }
+
+  return '';
 }
 
 Template.registerHelper('getUserName', userId => JF.user.getUserNameSync(userId));
