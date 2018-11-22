@@ -24,6 +24,7 @@ Package.onUse(function(api) {
     api.use('jf:design');
     api.use('jf:core');
     api.use('jf:user');
+    api.use('jf:active-entry');
 
     // Load icons
     api.addAssets('assets/user-menu-icons.svg', 'client');

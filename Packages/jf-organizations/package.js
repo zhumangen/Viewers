@@ -20,7 +20,6 @@ Package.onUse(function(api) {
 
     // JF dependencies
     api.use('jf:core');
-    api.use('jf:design');
 
     // Main module definition
     api.mainModule('main.js', 'client');

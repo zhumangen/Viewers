@@ -1,0 +1,79 @@
+<template name="organizationlistView">
+    <div class="organizationListToolbar clearfix">
+        <div class="header pull-left">机构列表</div>
+        <div class="studyCount pull-right">{{numberOfOrganizations}}</div>
+        <div class="pull-right">{{>organizationlistToolbar}}</div>
+    </div>
+    <div class="theadBackground">
+    </div>
+    <div id="organizationlistContainer">
+        <table id="tblOrganizationList" class="organizationlistResult table noselect ">
+            <thead>
+                <tr>
+                    <th class="serialNumber">
+                        <div id="_serialNumber" class="sortingCell ">
+                            <span>机构编号</span>
+                            <i class="{{sortingColumnsIcons.serialNumber}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control organizationlist-search"
+                               id="serialNumber">
+                    </th>
+                    <th class="organizationName">
+                        <div id="_organizationName" class="sortingCell">
+                            <span>机构名称</span>
+                            <i class="{{sortingColumnsIcons.organizationName}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control organizationlist-search"
+                               id="organizationName">
+                    </th>
+                    <th class="organizationType">
+                        <div id="_organizationType" class="sortingCell">
+                            <span>机构类型</span>
+                            <i class="{{sortingColumnsIcons.organizationType}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control organizationlist-search"
+                               id="organizationType">
+                    </th>
+                    <th class="organizationTime">
+                        <div id="_organizationTime" class="sortingCell">
+                            <span>创建时间</span>
+                            <i class="{{sortingColumnsIcons.organizationTime}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control organizationlist-search"
+                               name="daterange"
+                               id="organizationTime">
+                    </th>
+                    <th class="organizationFullName">
+                        <div id="_organizationFullName" class="sortingCell">
+                            <span>机构全称</span>
+                            <i class="{{sortingColumnsIcons.organizationFullFullName}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control organizationlist-search"
+                               id="organizationFullName">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="organizationlistData">
+                {{#each organization in organizations}}
+                    {{>organizationlistRow (clone organization this)}}
+                {{/each}}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        {{>paginationArea instance.paginationData}}
+
+        {{#if instance.subscriptionsReady}}
+            {{#unless numberOfOrganizations}}
+                <div class="notFound">No matching results</div>
+            {{/unless}}
+        {{else}}
+            {{>loadingText}}
+        {{/if}}
+    </div>
+</template>

@@ -1,0 +1,19 @@
+<template name="organizationlistRow">
+    <tr class="organizationlistRow noselect {{#if selected}}active{{/if}}">
+        <td class="serialNumber">
+            {{serialNumber}}
+        </td>
+        <td class="organizationName">
+            {{name}}
+        </td>
+        <td class="organizationType">
+            {{type}}
+        </td>
+        <td class="organizationTime">
+            {{dateToString createdAt ''}}
+        </td>
+        <td class="organizationFullName">
+            {{fullName}}
+        </td>
+    </tr>
+</template>

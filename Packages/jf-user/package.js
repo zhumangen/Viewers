@@ -11,7 +11,8 @@ Package.onUse(function(api) {
     api.use([
         'ecmascript',
         'accounts-base',
-        'accounts-password'
+        'accounts-password',
+        'alanning:roles'
     ]);
 
     // Meteor client-only packages

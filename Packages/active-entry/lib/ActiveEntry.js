@@ -26,7 +26,7 @@ if (Meteor.isClient) {
     passwordOptions: {
       showPasswordStrengthIndicator: true,
       requireRegexValidation: true,
-      //requireStrongPasswords: false
+      requireStrongPasswords: false,
       passwordHistoryCount: 6,
       failedAttemptsLimit: 5,
       passwordExpirationDays: 90,
@@ -64,7 +64,7 @@ ActiveEntry.configure = function (configObject) {
       configObject.passwordOptions = {
         showPasswordStrengthIndicator: true,
         requireRegexValidation: false,
-        //requireStrongPasswords: false
+        requireStrongPasswords: false,
         passwordHistoryCount: 6,
         failedAttemptsLimit: 5,
         passwordExpirationDays: 90,

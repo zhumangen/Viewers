@@ -15,6 +15,8 @@ Package.onUse(function(api) {
     api.use('templating');
     api.use('reactive-var');
 
+    api.use('ohif:core');
+
     // Router dependencies
     // api.use('iron:router@1.0.13', 'client');
 

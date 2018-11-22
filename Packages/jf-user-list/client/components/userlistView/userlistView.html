@@ -1,0 +1,79 @@
+<template name="userlistView">
+    <div class="userListToolbar clearfix">
+        <div class="header pull-left">用户列表</div>
+        <div class="userCount pull-right">{{numberOfUsers}}</div>
+        <div class="pull-right">{{>userlistToolbar}}</div>
+    </div>
+    <div class="theadBackground">
+    </div>
+    <div id="userlistContainer">
+        <table id="tblUserList" class="userlistResult table noselect ">
+            <thead>
+                <tr>
+                    <th class="userId">
+                        <div id="_userId" class="sortingCell ">
+                            <span>用户ID</span>
+                            <i class="{{sortingColumnsIcons.userId}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control userlist-search"
+                               id="userId">
+                    </th>
+                    <th class="userName">
+                        <div id="_userName" class="sortingCell">
+                            <span>用户名</span>
+                            <i class="{{sortingColumnsIcons.userName}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control userlist-search"
+                               id="userName">
+                    </th>
+                    <th class="userTime">
+                        <div id="_userTime" class="sortingCell">
+                            <span>创建时间</span>
+                            <i class="{{sortingColumnsIcons.userTime}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control userlist-search"
+                               name="daterange"
+                               id="userTime">
+                    </th>
+                    <th class="lastLogin">
+                        <div id="_lastLogin" class="sortingCell">
+                            <span>最近登录</span>
+                            <i class="{{sortingColumnsIcons.lastLogin}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control userlist-search"
+                               id="lastLogin">
+                    </th>
+                    <th class="userRoles">
+                        <div id="_userRoles" class="sortingCell">
+                            <span>用户权限</span>
+                            <i class="{{sortingColumnsIcons.userRoles}}">&nbsp;</i>
+                        </div>
+                        <input type="text"
+                               class="form-control userlist-search"
+                               id="userRoles">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="userlistData">
+                {{#each user in users}}
+                    {{>userlistRow (clone user this)}}
+                {{/each}}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        {{>paginationArea instance.paginationData}}
+
+        {{#if instance.subscriptionsReady}}
+            {{#unless numberOfUsers}}
+                <div class="notFound">No matching results</div>
+            {{/unless}}
+        {{else}}
+            {{>loadingText}}
+        {{/if}}
+    </div>
+</template>

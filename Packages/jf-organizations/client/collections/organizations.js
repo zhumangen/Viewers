@@ -6,6 +6,5 @@ import { JF } from 'meteor/jf:core';
 Meteor.startup(() => {
   const Organizations = new Mongo.Collection(null);
   Organizations._debugName = 'ClientSideOrganizations';
-
   JF.organization.organizations = Organizations;
 });

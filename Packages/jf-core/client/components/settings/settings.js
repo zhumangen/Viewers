@@ -85,6 +85,10 @@ class SettingsManager {
     return this.data.get()?this.data.get().private.ui.theme:'tide';
   }
 
+  passwordOptions() {
+    return this.promise.then(data => data.public.password);
+  }
+
   hotkeys(contextName) {
     return new Promise((resolve, reject) => {
       this.userPromise.then(data => {

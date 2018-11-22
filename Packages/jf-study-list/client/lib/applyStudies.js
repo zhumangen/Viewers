@@ -4,12 +4,13 @@ import { OHIF } from 'meteor/ohif:core';
 
 JF.studylist.applyStudies = (studies, options) => {
   let processed = 0;
-  const notify = (options || {}).notify || function() { /* noop */ };
+  options = options || {};
+  const notify = options.notify || function() { /* noop */ };
   const promises = [];
   const total = studies.length;
   studies.forEach(study => {
     const promise = new Promise((resolve, reject) => {
-      Meteor.call('applyStudies', [study], {}, (error, response) => {
+      Meteor.call('applyStudies', [study], { orderOrgId: options.orgId }, (error, response) => {
         if (error) {
           reject(error);
         } else {
