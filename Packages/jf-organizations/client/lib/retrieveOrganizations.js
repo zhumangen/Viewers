@@ -6,11 +6,15 @@ JF.organization.retrieveOrganizations = (organizationIds, options) => {
   OHIF.log.info('retrieving organizations...');
 
   return new Promise((resolve, reject) => {
-    Meteor.call('retriveOrganizations', organizationIds, options, (error, response) => {
+    const Organizations = JF.organization.organizations;
+    Meteor.call('retriveOrganizations', organizationIds, options, (error, orgs) => {
       if (error) {
         reject(error);
       } else {
-        resolve(response);
+        orgs.forEach(org => {
+          Organizations.update({ _id: org._id }, org, { upsert: true });
+        });
+        resolve(orgs);
       }
     });
   });

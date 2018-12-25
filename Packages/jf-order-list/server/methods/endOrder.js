@@ -3,8 +3,16 @@ import { OHIF } from 'meteor/ohif:core';
 
 export default function endOrder(orderId, options) {
   const result = { code: 400 };
-  if (!orderId) return result;
-  OHIF.MongoUtils.validateUser();
+  const userId = this.userId;
+
+  if (!orderId || typeof orderId !== 'string') {
+    return result;
+  }
+
+  if (!userId) {
+    result.code = 401;
+    return result;
+  }
 
   // 0: abort, 1: submit
   const action = options.action;
@@ -14,12 +22,11 @@ export default function endOrder(orderId, options) {
   const order = Orders.findOne({ _id: orderId });
   if (order) {
     let ops;
-    let userId = Meteor.userId();
     switch (order.status) {
       case 0:
       case 2:
       case 4:
-        result.code = 403;
+        result.code = 409;
         break;
       case 1:
         if (order.reporterId === userId) {
@@ -37,6 +44,8 @@ export default function endOrder(orderId, options) {
             }};
             JF.measurements.updateMeasurementStatus(order._id, 1);
           }
+        } else {
+          result.code = 403;
         }
         break;
       case 3:
@@ -55,6 +64,8 @@ export default function endOrder(orderId, options) {
             }};
             JF.measurements.updateMeasurementStatus(order._id, 2);
           }
+        } else {
+          result.code = 403;
         }
         break;
     }

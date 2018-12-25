@@ -24,6 +24,9 @@ Template.dicomListRow.helpers({
   },
   description() {
     return this.studyLevel? this.studyDescription : this.seriesDescription;
+  },
+  statusClass() {
+    return this.imported?'imported':'unimported';
   }
 });
 

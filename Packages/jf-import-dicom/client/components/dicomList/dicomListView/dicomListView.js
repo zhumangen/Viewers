@@ -4,24 +4,31 @@ import { JF } from 'meteor/jf:core';
 Template.dicomListView.onCreated(() => {
   const instance = Template.instance();
 
-  instance.sortingColumns = {
-    patientName: 1,
+  instance.filterOptions = new ReactiveVar();
+
+  instance.sortingColumns = new ReactiveVar({
+    status: 0,
+    qidoLevel: 0,
+    patientId: 0,
+    patientName: 0,
     patientSex: 0,
     patientAge: 0,
-    studyDate: -1,
-    patientId: 0,
-    modality: 0
-  }
+    dicomDate: -1,
+    institution: 0,
+    modality: 0,
+    bodyPart: 0,
+    description: 0
+  });
 })
 
 Template.dicomListView.helpers({
   dicoms() {
     const instance = Template.instance();
     let dicoms;
-    let sortOption = {
-        patientName: 1,
-        studyDate: -1
-    };
+    let sort = {};
+    let filter = {};
+    // const sort = instance.sortOptions.get();
+    // const filter = instance.filterOptions.get();
 
     // Pagination parameters
     const rowsPerPage = instance.data.paginationData.rowsPerPage.get();
@@ -29,7 +36,7 @@ Template.dicomListView.helpers({
     const offset = rowsPerPage * currentPage;
     const limit = offset + rowsPerPage;
 
-    dicoms = JF.collections.importDicoms.find().fetch();
+    dicoms = JF.collections.importDicoms.find(filter, sort).fetch();
 
     if (!dicoms) {
         return;
@@ -47,8 +54,9 @@ Template.dicomListView.helpers({
     const instance = Template.instance();
 
     let sortingColumnsIcons = {};
-    Object.keys(instance.sortingColumns).forEach(key => {
-        const value = instance.sortingColumns[key];
+    const sortingColumns = instance.sortingColumns.get();
+    Object.keys(sortingColumns).forEach(key => {
+        const value = sortingColumns[key];
 
         if (value === 1) {
             sortingColumnsIcons[key] = 'fa fa-fw fa-sort-up';
@@ -60,5 +68,12 @@ Template.dicomListView.helpers({
         }
     });
     return sortingColumnsIcons;
+  }
+})
+
+Template.dicomListView.events({
+  'change #status-select'(event, instance) {
+    const index = event.currentTarget.options.selectedIndex;
+
   }
 })

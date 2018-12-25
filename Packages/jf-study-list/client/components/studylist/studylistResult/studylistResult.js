@@ -136,7 +136,7 @@ function resetSortingColumns(instance, sortingColumn) {
 }
 
 Template.studylistResult.events({
-    'change #status-selector'(event, instance) {
+    'change #status-selector'(e, instance) {
         const val = $(e.currentTarget).val();
         instance.filterOptions.set('status', val);
     },

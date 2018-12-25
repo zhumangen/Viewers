@@ -5,7 +5,7 @@ ActiveEntry = {};
 
 Session.setDefault('Photonic.ActiveEntry', {
   logo: {
-    url: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Photon-photon_scattering.png",
+    url: OHIF.utils.absoluteUrl('/images/logo.png'),
     displayed: true
   },
   signIn: {

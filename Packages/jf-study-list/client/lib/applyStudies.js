@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
+import { resolveSoa } from 'dns';
 
 JF.studylist.applyStudies = (studies, options) => {
   let processed = 0;
@@ -9,8 +10,13 @@ JF.studylist.applyStudies = (studies, options) => {
   const promises = [];
   const total = studies.length;
   studies.forEach(study => {
+    const org = JF.organization.getLocalOrganizations([study.organizationId])[0];
+    const options2 = {
+      orderOrgId: org.orderOrgId,
+      lesionCode: org.lesionCode
+    };
     const promise = new Promise((resolve, reject) => {
-      Meteor.call('applyStudies', [study], { orderOrgId: options.orgId }, (error, response) => {
+      Meteor.call('applyStudies', [study], options2, (error, response) => {
         if (error) {
           reject(error);
         } else {
@@ -29,6 +35,41 @@ JF.studylist.applyStudies = (studies, options) => {
 }
 
 JF.studylist.applyStudiesProgress = studies => {
+  if (!studies || studies.length === 0) {
+    return;
+  }
+
+  // check permissions
+  let msg;
+  for (let study of studies) {
+    const orgId = study.organizationId;
+    if (!Roles.userIsInRole(Meteor.user(), 'js', orgId)) {
+      msg = '未授权的操作！';
+    }
+    if (!msg && !JF.user.isSuperAdmin()) {
+      const orgs = JF.organization.getLocalOrganizations([orgId]);
+      if (orgs.length > 0) {
+        const org = orgs[0];
+        if (!org.orderOrgId) {
+          msg = org.name + '未配置申请目标机构！';
+        } else if (!org.lesionCode) {
+          msg = org.name + '未配置申请目标标注类型！';
+        }
+      } else {
+        // something went wrong, shouldn't be here.
+        msg = '未找到的机构：' + orgId;
+      }
+    }
+
+    if (msg) {
+      OHIF.ui.showDialog('dialogInfo', {
+        title: '申请失败',
+        reason: msg,
+      });
+      return;
+    }
+  }
+
   OHIF.ui.showDialog('dialogProgress', {
     title: '正在处理申请...',
     total: studies.length,

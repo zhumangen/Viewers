@@ -1,10 +1,30 @@
 import { JF } from 'meteor/jf:core';
 
 export default function removeStudies(studyIds, options) {
-  if (!studyIds || !studyIds.length) return;
+  const result = { code: 200 };
+  const userId = this.userId;
+
+  if (!studyIds || !studyIds.length) {
+    result.code = 400;
+    return result;
+  }
+
+  if (!userId) {
+    result.code = 401;
+    return result;
+  }
 
   const Studies = JF.collections.studies;
   studyIds.forEach(studyId => {
-    Studies.update({ _id: studyId }, { $set: { removed: true }});
+    const ops = {
+      $set: {
+        removed: true,
+        removedAt: new Date(),
+        removedBy: userId
+      }
+    };
+    Studies.update({ _id: studyId }, ops);
   });
+
+  return result;
 }

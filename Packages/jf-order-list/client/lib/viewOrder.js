@@ -15,6 +15,8 @@ JF.orderlist.viewOrder = order => {
         if (response.code === 200) {
           resolve();
         } else if (response.code === 403) {
+          reject('未授权的操作！');
+        } else if (response.code === 409) {
           const userId = response.userId;
           const status = '标注';
           if (response.status === 3) {
@@ -22,9 +24,9 @@ JF.orderlist.viewOrder = order => {
           }
           JF.user.getUserName(userId).then(userName => {
             reject(`该病例正在由${userName}${status}中`);
-          })
+          });
         } else {
-          reject('错误的请求。');
+          reject('服务器内部错误。');
         }
       }
     });
@@ -36,8 +38,8 @@ JF.orderlist.viewOrder = order => {
   }, reason => {
       OHIF.ui.showDialog('dialogInfo', {
         title: '访问受限',
-        reason,
-      })
+        reason
+      });
   });
 };
 

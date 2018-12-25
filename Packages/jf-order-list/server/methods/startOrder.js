@@ -3,12 +3,17 @@ import { OHIF } from 'meteor/ohif:core';
 
 export default function startOrder(orderId, options) {
   const result = { code: 200 };
-  if (!orderId) {
+
+  if (!orderId || typeof orderId !== 'string') {
     result.code = 400;
     return result;
   }
 
-  OHIF.MongoUtils.validateUser();
+  const _userId = this.userId;
+  if (!_userId) {
+    result.code = 401;
+    return result;
+  }
 
   const Orders = JF.collections.orders;
   const order = Orders.findOne({ _id: orderId });
@@ -17,30 +22,38 @@ export default function startOrder(orderId, options) {
     let userId;
     switch (order.status) {
       case 0:
-        ops = { $set: {
-          status: 1,
-          reporterId: Meteor.userId(),
-          reportStart: new Date(),
-          reportEdited: false
-        }};
+        if (Roles.userIsInRole(_userId, ['bg','sh'])) {
+          ops = { $set: {
+            status: 1,
+            reporterId: _userId,
+            reportStart: new Date(),
+            reportEdited: false
+          }};
+        } else {
+          result.code = 403;
+        }
         break;
       case 1:
-        if (order.reporterId !== Meteor.userId()) {
-          result.code = 403;
+        if (order.reporterId !== _userId) {
+          result.code = 409;
         }
         result.userId = order.reporterId;
         break;
       case 2:
-        ops = { $set: {
-          status: 3,
-          reviewerId: Meteor.userId(),
-          reviewStart: new Date(),
-          reviewEdited: false
-        }};
+        if (Roles.userIsInRole(_userId, 'sh')) {
+          ops = { $set: {
+            status: 3,
+            reviewerId: _userId,
+            reviewStart: new Date(),
+            reviewEdited: false
+          }};
+        } else {
+          result.code = 403;
+        }
         break;
       case 3:
-        if (order.reviewerId !== Meteor.userId()) {
-          result.code = 403;
+        if (order.reviewerId !== _userId) {
+          result.code = 409;
         }
         result.userId = order.reviewerId;
         break;

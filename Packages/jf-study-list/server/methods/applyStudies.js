@@ -2,16 +2,35 @@ import { JF } from 'meteor/jf:core';
 import { Meteor } from 'meteor/meteor';
 
 export default function applyStudies(studies, options) {
-  JF.validation.checks.CheckNonEmptyString(options.orderOrgId);
+  JF.validation.checks.checkNonEmptyString(options.orderOrgId);
+  JF.validation.checks.checkNonEmptyString(options.lesionCode);
+
+  const result = { code: 200 };
+  const userId = this.userId;
+
+  if (!studies || !studies.length) {
+    result.code = 400;
+    return result;
+  }
+
+  if (!userId) {
+    result.code = 401;
+    return result;
+  }
+
+  if (!Roles.userIsInRole(userId, 'js', studies[0].organizationId)) {
+    result.code = 403;
+    return result;
+  }
 
   const Orders = JF.collections.orders;
-  const orderOrgId = options.orderOrgId;
   studies.forEach(study => {
     const t = new Date();
     const order = {
       status: 0,
       removed: false,
-      orderOrgId,
+      orderOrgId: options.orderOrgId,
+      lesionCode: options.lesionCode,
       dicomId: study._id,
       patientName: study.patientName,
       patientSex: study.patientSex,
@@ -30,10 +49,13 @@ export default function applyStudies(studies, options) {
       institutionName: study.institutionName,
       qidoLevel: study.qidoLevel,
       orderTime: t,
+      userId,
       serialNumber: '2' + t.getTime() + JF.utils.randomString()
     };
 
     Orders.insert(order);
     JF.studylist.updateStudyStatus(study._id, 1);
   });
+
+  return result;
 }

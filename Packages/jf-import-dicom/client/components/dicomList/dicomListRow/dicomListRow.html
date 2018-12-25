@@ -1,6 +1,6 @@
 <template name="dicomListRow">
     <tr class="dicomListRow noselect {{#if selected}}active{{/if}}">
-        <td class="status">
+        <td class="status {{statusClass}}">
             {{status}}
         </td>
         <td class="level">

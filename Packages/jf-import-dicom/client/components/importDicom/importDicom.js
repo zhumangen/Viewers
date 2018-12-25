@@ -130,14 +130,18 @@ Template.importDicom.onRendered(() => {
 
   instance.datePicker = $dicomDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
-  JF.organization.retrieveOrganizations().then(orgs => {
+  instance.autorun(() => {
+    const user = Meteor.user();
+    if (!user || !user.roles) return;
+
+    const orgIds = JF.user.getAllGroups('js');
+    const orgs = JF.organization.getLocalOrganizations(orgIds, { type: 'SCU' });
+
     instance.organizations = orgs;
     const items = [];
-    for (const org of orgs) {
-      items.push({value: org.name.zh, label: org.name.zh})
-    }
+    _.each(orgs, org => items.push({value: org.name, label: org.name}));
     instance.items.set(items);
-  });
+  })
 
   instance.autorun(() => {
     const instance = Template.instance();

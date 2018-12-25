@@ -13,16 +13,17 @@
                   <th class="status">
                       <div id="_status" class="sortingCell">
                           <span>状态</span>
-                          <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                          <i class="{{sortingColumnsIcons.status}}">&nbsp;</i>
                       </div>
-                      <input type="text"
-                             class="form-control dicomList-search"
-                             id="status">
+                      <select id="status-selector" class="form-control status-select">
+                        <option value="0">未导入</option>
+                        <option value="1">已导入</option>
+                      </select>
                   </th>
                     <th class="level">
                         <div id="_level" class="sortingCell">
                             <span>层级</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.qidoLevel}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -31,7 +32,7 @@
                     <th class="patientId">
                         <div id="_patientId" class="sortingCell">
                             <span>患者ID</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.patientId}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -40,7 +41,7 @@
                     <th class="patientName">
                         <div id="_patientName" class="sortingCell">
                             <span>患者姓名</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -58,7 +59,7 @@
                     <th class="patientAge">
                         <div id="_patientAge" class="sortingCell ">
                             <span>年龄</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.patientAge}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -67,7 +68,7 @@
                     <th class="dicomDate">
                         <div id="_dicomDate" class="sortingCell">
                             <span>检查时间</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.dicomDate}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -77,7 +78,7 @@
                     <th class="institution">
                         <div id="_institution" class="sortingCell">
                             <span>机构名称</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.institution}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -86,7 +87,7 @@
                     <th class="modality">
                         <div id="_modality" class="sortingCell">
                             <span>类型</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.modality}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -95,7 +96,7 @@
                     <th class="bodyPart">
                         <div id="_bodyPart" class="sortingCell">
                             <span>部位</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.bodyPart}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"
@@ -104,7 +105,7 @@
                     <th class="description">
                         <div id="_dicomDescription" class="sortingCell">
                             <span>检查描述</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.description}}">&nbsp;</i>
                         </div>
                         <input type="text"
                                class="form-control dicomList-search"

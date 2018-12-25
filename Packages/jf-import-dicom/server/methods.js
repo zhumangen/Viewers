@@ -5,6 +5,7 @@ Meteor.methods({
   storeDicoms(dicoms, options) {
     const ids = [];
     const collection = JF.collections.studies;
+    const userId = this.userId;
     dicoms.forEach(dicom => {
       const filter = {
         serverId: dicom.serverId,
@@ -18,6 +19,7 @@ Meteor.methods({
         delete dicom._id;
         const t = new Date();
         dicom.status = 0;
+        dicom.userId = userId;
         dicom.removed = false;
         dicom.createdAt = t;
         dicom.serialNumber = '1' + t.getTime() + JF.utils.randomString();

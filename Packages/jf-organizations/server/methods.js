@@ -6,6 +6,10 @@ import { Organizations } from 'meteor/jf:organizations/both/collections/organiza
 Meteor.methods({
   retriveOrganizations(organizationIds, options) {
     const filter = {};
+    if (options && options.type) {
+      JF.validation.checks.checkNonEmptyString(options.type);
+      filter.type = options.type;
+    }
     if (organizationIds && organizationIds.length > 0) {
       filter.$or = [];
       organizationIds.forEach(_id => filter.$or.push({ _id }));

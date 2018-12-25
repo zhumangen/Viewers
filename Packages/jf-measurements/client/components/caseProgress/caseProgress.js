@@ -33,8 +33,10 @@ Template.caseProgress.onCreated(() => {
                     promise.then(result => {
                       if (result.code !== 200) {
                         let reason = '错误的请求。';
-                        if (result.code === 403) {
+                        if (result.code === 409) {
                           reason = '当前病例不在编辑状态。'
+                        } else if (result.code === 403) {
+                            reason = '未授权的操作！';
                         }
                         OHIF.ui.showDialog('dialogInfo', {
                           title: '访问受限',

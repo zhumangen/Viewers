@@ -29,6 +29,8 @@ Package.onUse(function(api) {
     // Load icons
     api.addAssets('assets/user-menu-icons.svg', 'client');
 
+    api.addFiles('both/index.js', ['server', 'client']);
+
     // Client imports
     api.addFiles('client/index.js', 'client');
 

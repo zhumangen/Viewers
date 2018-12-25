@@ -20,14 +20,27 @@ Router.onBeforeAction(function() {
     } else if (verifyEmail && Meteor.user().emails && !Meteor.user().emails[0].verified) {
         this.render('emailVerification');
     } else {
-        this.next();
+      const next = this.next;
+      Tracker.autorun(c => {
+        const user = Meteor.user();
+        if (user && user.roles) {
+          c.stop();
+          JF.organization.retrieveOrganizations(JF.user.getAllGroups()).then(() => {
+            next();
+          });
+        }
+      });
     }
 }, {
     except: ['entrySignIn', 'entrySignUp', 'forgotPassword', 'resetPassword', 'emailVerification']
 });
 
 Router.route('/', function() {
+  if (JF.user.hasScuRoles()) {
+    Router.go('studylist', {}, { replaceState: true });
+  } else {
     Router.go('orderlist', {}, { replaceState: true });
+  }
 }, { name: 'home' });
 
 Router.route('/orderlist', {
@@ -40,7 +53,8 @@ Router.route('/orderlist', {
         promise.then(() => next());
     },*/
     action: function() {
-        this.render('app', { data: { template: 'orderlist' } });
+      console.log('options', this.options);
+      this.render('app', { data: { template: 'orderlist' } });
     }
 });
 

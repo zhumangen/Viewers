@@ -19,6 +19,19 @@ JF.dicomlist.importDicoms = (dicoms, options) => {
 }
 
 JF.dicomlist.importDicomsProgress = dicoms => {
+  if (dicoms.length > 0) {
+    orgId = dicoms[0].organizationId;
+    if (!Roles.userIsInRole(Meteor.user(), 'js', orgId)) {
+      OHIF.ui.showDialog('dialogInfo', {
+        title: '导入失败',
+        reason: '未授权的操作！',
+      });
+      return;
+    }
+  } else {
+    return;
+  }
+
   OHIF.ui.showDialog('dialogProgress', {
     title: '正在导入...',
     total: dicoms.length,
