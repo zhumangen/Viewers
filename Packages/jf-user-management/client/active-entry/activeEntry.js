@@ -21,7 +21,7 @@ Meteor.startup(function() {
   };
 
   JF.managers.settings.passwordOptions().then(options => {
-    Object.assign(config, options);
+    config.passwordOptions = options;
     JF.activeEntry.configure(config);
   });
 });

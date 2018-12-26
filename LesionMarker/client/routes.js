@@ -25,9 +25,12 @@ Router.onBeforeAction(function() {
         const user = Meteor.user();
         if (user && user.roles) {
           c.stop();
-          JF.organization.retrieveOrganizations(JF.user.getAllGroups()).then(() => {
+          const orgIds = JF.user.getAllGroups();
+          if (orgIds.length > 0) {
+            JF.organization.retrieveOrganizations(orgIds).then(() => next());
+          } else {
             next();
-          });
+          }
         }
       });
     }
@@ -36,25 +39,32 @@ Router.onBeforeAction(function() {
 });
 
 Router.route('/', function() {
-  if (JF.user.hasScuRoles()) {
-    Router.go('studylist', {}, { replaceState: true });
+  if (JF.user.hasScpRoles()) {
+    Router.go('orderlist-scp', {}, { replaceState: true });
+  } else if (JF.user.hasScuRoles()) {
+    Router.go('orderlist-scu', {}, { replaceState: true });
   } else {
-    Router.go('orderlist', {}, { replaceState: true });
+    Router.go('studylist', {}, { replaceState: true });
   }
 }, { name: 'home' });
 
-Router.route('/orderlist', {
-    name: 'orderlist',
+Router.route('/orderlist-scp', {
+    name: 'orderlist-scp',
     /* onBeforeAction: function() {
         const next = this.next;
-
-        // Retrieve the timepoints data to display in studylist
-        const promise = JF.studylist.timepointApi.retrieveTimepoints({});
-        promise.then(() => next());
     },*/
     action: function() {
-      console.log('options', this.options);
-      this.render('app', { data: { template: 'orderlist' } });
+      this.render('app', { data: { template: 'orderlist', type: 'SCP' } });
+    }
+});
+
+Router.route('/orderlist-scu', {
+    name: 'orderlist-scu',
+    /* onBeforeAction: function() {
+        const next = this.next;
+    },*/
+    action: function() {
+      this.render('app', { data: { template: 'orderlist', type: 'SCU' } });
     }
 });
 

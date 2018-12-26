@@ -3,9 +3,7 @@ import { JF } from 'meteor/jf:core';
 
 Template.organizationlistView.onCreated(() => {
   const instance = Template.instance();
-  instance.autorun(() => {
-    instance.subscribe('organizations');
-  });
+  instance.subscribe('organizations');
 
   instance.sortOptions = new ReactiveVar();
   instance.sortingColumns = new ReactiveDict();

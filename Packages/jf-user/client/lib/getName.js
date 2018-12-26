@@ -3,7 +3,7 @@ import { JF } from 'meteor/jf:core';
 
 JF.user.getName = () => {
     const user = Meteor.user();
-    if (!user) return '';
+    if (!user || !user.profile) return '';
     const fullName = user.profile.fullName;
 
     if (fullName.indexOf(' ') >= 0) {

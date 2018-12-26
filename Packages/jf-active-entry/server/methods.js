@@ -17,6 +17,11 @@ Meteor.methods({
     });
   },
 
+  initializeUserRoles: function() {
+    var userId = this.userId;
+    Roles.setUserRoles(userId, 'guest', Roles.GLOBAL_GROUP);
+  },
+
   insertHashedPassword: function(passwordParameters) {
     var hashedPassword = passwordParameters[0];
     var passwordHistoryCount = passwordParameters[1];
@@ -39,13 +44,13 @@ Meteor.methods({
   },
 
   checkPasswordExistence: function(hashedPassword) {
-    var previousPasswords = Meteor.users.find({_id: Meteor.userId()}).fetch()[0].previousPasswords;
-    for(var i=0; i< previousPasswords.length; i++) {
-        var recordedHashedPassword = previousPasswords[i].hashedPassword;
-        if (recordedHashedPassword == hashedPassword) {
-            return true;
-        }
-    }
+    // var previousPasswords = Meteor.users.find({_id: Meteor.userId()}).fetch()[0].previousPasswords;
+    // for(var i=0; i< previousPasswords.length; i++) {
+    //     var recordedHashedPassword = previousPasswords[i].hashedPassword;
+    //     if (recordedHashedPassword == hashedPassword) {
+    //         return true;
+    //     }
+    // }
     return false;
   },
 

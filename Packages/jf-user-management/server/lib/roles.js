@@ -18,3 +18,7 @@ JF.user.getScuGroupsForUser = userId => {
 JF.user.getScpGroupsForUser = userId => {
   return JF.user.getGroupsForUser(userId, ['admin', 'bg', 'sh']);
 }
+
+JF.user.getAdminGroupsForUser = userId => {
+  return JF.user.getGroupsForUser(userId, ['admin']);
+}

@@ -4,6 +4,10 @@ import { JF } from 'meteor/jf:core';
 Meteor.methods({
   getUserName(userId) {
     JF.validation.checks.checkNonEmptyString(userId);
-    return Meteor.users.findOne({ _id: userId }).profile.fullName;
+    const user = Meteor.users.findOne({ _id: userId });
+    if (user && user.profile) {
+      return user.profile;
+    }
+    return '';
   }
 })

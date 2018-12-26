@@ -369,9 +369,14 @@ ActiveEntry.signUp = function (emailValue, passwordValue, confirmPassword, fullN
     // Update last login time
     Meteor.call("updateLastLoginDate");
 
-    var ActiveEntryConfig = Session.get('Photonic.ActiveEntry');
-    Router.go(ActiveEntryConfig.signUp.destination);
-
+    Meteor.call('initializeUserRoles', (error, response) => {
+      if (error) {
+        console.error('setUserRoles: ', error);
+      } else {
+        var ActiveEntryConfig = Session.get('Photonic.ActiveEntry');
+        Router.go(ActiveEntryConfig.signUp.destination);
+      }
+    });
   });
 };
 

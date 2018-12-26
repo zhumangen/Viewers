@@ -18,6 +18,13 @@ Template.userlistRow.helpers({
   },
   userName() {
     return this.profile.fullName?this.profile.fullName:this.username;
+  },
+  userOrgs() {
+    const orgIds = JF.user.getAllGroupsForUser(this._id);
+    const orgs = JF.organization.getLocalOrganizations(orgIds);
+    let str = '';
+    orgs.forEach(org => str += org.name + '，');
+    return str.substring(0, str.length-1);
   }
 });
 

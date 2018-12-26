@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
-Meteor.publish('studies', options => {
+Meteor.publish('studies', function(options) {
   const Studies = JF.collections.studies;
   const userId = this.userId;
   const filter = { removed: false };
@@ -16,4 +16,6 @@ Meteor.publish('studies', options => {
     orgIds.forEach(orgId => filter.$or.push({ organizationId: orgId }));
     return Studies.find(filter);
   }
+
+  return this.ready();
 });

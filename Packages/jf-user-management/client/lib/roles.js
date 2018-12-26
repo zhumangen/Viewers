@@ -5,14 +5,19 @@ import { _ } from 'meteor/underscore';
 
 JF.user.hasQualifiedRoles = (type, roles) => {
   const user = Meteor.user();
-  const orgs = JF.organization.getLocalOrganizations(JF.user.getAllGroups(), { type });
-  for (let org of orgs) {
-    if (_.intersection(user.roles[org._id], roles).length > 0) {
+  const orgIds = JF.user.getAllGroups();
+  for (let _id of orgIds) {
+    const org = JF.organization.organizations.findOne({ _id, type });
+    if (org && _.intersection(user.roles[org._id], roles).length > 0) {
       return true;
     }
   }
 
   return false;
+}
+
+JF.user.hasAdminRoles = () => {
+  return Roles.getGroupsForUser(Meteor.user(), 'admin').length > 0;
 }
 
 JF.user.hasScpRoles = () => {
@@ -57,6 +62,10 @@ JF.user.getAllRoles = () => {
 
 JF.user.getAllGroups = role => {
   return Roles.getGroupsForUser(Meteor.user(), role);
+}
+
+JF.user.getAllGroupsForUser = (userId, role) => {
+  return Roles.getGroupsForUser(userId, role);
 }
 
 Template.registerHelper('hasRoles', roles => JF.user.hasRoles(roles));

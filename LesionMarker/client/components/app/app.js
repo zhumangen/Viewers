@@ -10,11 +10,11 @@ Template.app.onCreated(() => {
     instance.headerClasses = new ReactiveVar('');
 
     const items = [{
-      action: () => Router.go('orderlist', {}, { location: 'center' }),
+      action: () => Router.go('orderlist-scp'),
       text: '远程诊断',
       iconClasses: 'server'
     }, {
-      action: () => Router.go('orderlist', {}, { location: 'client' }),
+      action: () => Router.go('orderlist-scu'),
       text: '申请列表',
       iconClasses: 'server'
     }, {
@@ -26,6 +26,14 @@ Template.app.onCreated(() => {
       text: '影像导入',
       iconClasses: 'server',
       separatorAfter: true
+    }, {
+      action: () => Router.go('userlist'),
+      text: '用户管理',
+      iconClasses: 'server'
+    }, {
+      action: () => Router.go('organizationlist'),
+      text: '机构管理',
+      iconClasses: 'server'
     }, {
       action: () => OHIF.ui.showDialog('serverInformationModal'),
       text: 'DICOM服务器',
@@ -118,12 +126,17 @@ Template.app.onRendered(() => {
     c.stop();
 
     if (!JF.user.isSuperAdmin()) {
-      items[4].disabled = true;
+      items[6].disabled = true;
+
+      if (!JF.user.hasAdminRoles()) {
+        items[4].disabled = true;
+        items[5].disabled = true;
+      }
 
       if (!JF.user.hasScpRoles()) {
         items[0].disabled = true;
       }
-  
+
       if (!JF.user.hasScuRoles()) {
         items[1].disabled = true;
         items[2].disabled = true;

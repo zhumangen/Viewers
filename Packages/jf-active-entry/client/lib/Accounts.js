@@ -1,8 +1,3 @@
-
-
-if (Meteor.isClient) {
-
-
   Accounts.onResetPasswordLink(function (token, done){
     console.log('Accounts.onResearchPasswordLink');
     console.log('Sending reset password email...');
@@ -27,17 +22,3 @@ if (Meteor.isClient) {
     console.log('token: ' + token);
     done();
   });
-}
-
-
-if (Meteor.isServer){
-  // Support for playing D&D: Roll 3d6 for dexterity
-  Accounts.onCreateUser(function(options, user) {
-    // We still want the default hook's 'profile' behavior.
-    if (options.profile){
-      user.profile = options.profile;
-    }
-
-    return user;
-  });
-}

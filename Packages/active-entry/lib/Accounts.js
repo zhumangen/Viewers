@@ -36,7 +36,7 @@ if (Meteor.isServer){
 
     var d6 = function () { return Math.floor(Random.fraction() * 6) + 1; };
     user.dexterity = d6() + d6() + d6();
-    user.role = "user";
+    user.roles = {};
 
     // We still want the default hook's 'profile' behavior.
     if (options.profile){

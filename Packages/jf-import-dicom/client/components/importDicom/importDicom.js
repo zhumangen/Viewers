@@ -82,6 +82,7 @@ function search(organization, dateRange, offset, callback) {
 
 Template.importDicom.onCreated(() => {
   const instance = Template.instance();
+  instance.subscribe('organizations');
   instance.items = new ReactiveVar([]);
   instance.dateRangeValue = new ReactiveVar('');
   instance.orgIndex = new ReactiveVar(0);
@@ -131,9 +132,6 @@ Template.importDicom.onRendered(() => {
   instance.datePicker = $dicomDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
   instance.autorun(() => {
-    const user = Meteor.user();
-    if (!user || !user.roles) return;
-
     const orgIds = JF.user.getAllGroups('js');
     const orgs = JF.organization.getLocalOrganizations(orgIds, { type: 'SCU' });
 
