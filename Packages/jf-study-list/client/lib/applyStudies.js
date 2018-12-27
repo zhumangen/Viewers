@@ -10,10 +10,9 @@ JF.studylist.applyStudies = (studies, options) => {
   const promises = [];
   const total = studies.length;
   studies.forEach(study => {
-    const org = JF.organization.getLocalOrganizations([study.organizationId])[0];
     const options2 = {
-      orderOrgId: org.orderOrgId,
-      lesionCode: org.lesionCode
+      orderOrgId: options.applyOrgId,
+      lesionCode: options.lesionType
     };
     const promise = new Promise((resolve, reject) => {
       Meteor.call('applyStudies', [study], options2, (error, response) => {
@@ -70,27 +69,45 @@ JF.studylist.applyStudiesProgress = studies => {
     }
   }
 
-  OHIF.ui.showDialog('dialogProgress', {
-    title: '正在处理申请...',
-    total: studies.length,
-    task: {
-      run: dialog => {
-        JF.studylist.applyStudies(studies, {
-          notify: stats => {
-            dialog.update(stats.processed);
-            dialog.setMessage(`已申请：${stats.processed} / ${stats.total}`);
-          }
-        }).then(() => {
-          dialog.done();
-        }, () => {
-          dialog.cancel();
-        }).catch(error => {
-          OHIF.log.error('There was an error applying studies.');
-          OHIF.log.error(error.stack);
+  // apply options
+  let applyOrgs;
+  const lesionTypes = JF.lesiontracker.getLesionTypes();
+  const indexes = { orgIdx: 0, typeIdx: 0 };
+  let promise = JF.organization.retrieveOrganizations([], { type: 'SCP' }).then(orgs => {
+    applyOrgs = orgs.map(org => { return { value: org._id, label: org.name }; });
+  });
 
-          OHIF.log.trace();
-        })
-      }
-    }
+  promise.then(() => {
+    OHIF.ui.showDialog('applyStudyModal', {
+      applyOrgs,
+      lesionTypes,
+      indexes
+    }).then(() => {
+      OHIF.ui.showDialog('dialogProgress', {
+        title: '正在处理申请...',
+        total: studies.length,
+        task: {
+          run: dialog => {
+            JF.studylist.applyStudies(studies, {
+              notify: stats => {
+                dialog.update(stats.processed);
+                dialog.setMessage(`已申请：${stats.processed} / ${stats.total}`);
+              },
+              applyOrgId: applyOrgs[indexes.orgIdx].value,
+              lesionType: lesionTypes[indexes.typeIdx].value
+            }).then(() => {
+              dialog.done();
+            }, () => {
+              dialog.cancel();
+            }).catch(error => {
+              OHIF.log.error('There was an error applying studies.');
+              OHIF.log.error(error.stack);
+
+              OHIF.log.trace();
+            })
+          }
+        }
+      });
+    });
   });
 }

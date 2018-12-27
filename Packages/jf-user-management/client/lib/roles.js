@@ -64,8 +64,4 @@ JF.user.getAllGroups = role => {
   return Roles.getGroupsForUser(Meteor.user(), role);
 }
 
-JF.user.getAllGroupsForUser = (userId, role) => {
-  return Roles.getGroupsForUser(userId, role);
-}
-
 Template.registerHelper('hasRoles', roles => JF.user.hasRoles(roles));

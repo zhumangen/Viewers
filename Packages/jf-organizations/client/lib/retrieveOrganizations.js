@@ -7,7 +7,7 @@ JF.organization.retrieveOrganizations = (organizationIds, options) => {
 
   return new Promise((resolve, reject) => {
     const Organizations = JF.organization.organizations;
-    Meteor.call('retriveOrganizations', organizationIds, options, (error, orgs) => {
+    Meteor.call('retrieveOrganizations', organizationIds, options, (error, orgs) => {
       if (error) {
         reject(error);
       } else {

@@ -10,3 +10,5 @@ import './removeMeasurementIfInvalid.js';
 import './toggleLesionTrackerTools.js';
 import './clearMeasurementTimepointData.js';
 import './configureTargetToolsHandles.js';
+
+import './getLesionTypes.js';

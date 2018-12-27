@@ -9,15 +9,13 @@ JF.organization.getOrganization = (organizationId, options) => {
     return OrganizationPromises.get(organizationId);
   }
 
-  OHIF.log.info('retrieving organization...');
-
   const promise = new Promise((resolve, reject) => {
     const Organizations = JF.organization.organizations;
     const org = Organizations.findOne({ _id: organizationId });
     if (org) {
       resolve(org);
     } else {
-      Meteor.call('retriveOrganizations', [organizationId], options, (error, orgs) => {
+      Meteor.call('retrieveOrganizations', [organizationId], options, (error, orgs) => {
         if (error) {
           reject(error);
         } else {

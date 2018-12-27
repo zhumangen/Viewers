@@ -4,12 +4,8 @@ import { OHIF } from 'meteor/ohif:core';
 import { Organizations } from 'meteor/jf:organizations/both/collections/organizations';
 
 Meteor.methods({
-  retriveOrganizations(orgIds, options) {
+  retrieveOrganizations(orgIds, options) {
     const filter = {};
-
-    if ((!orgIds || !orgIds.length) && !JF.user.isSuperAdmin()) {
-      return [];
-    }
 
     if (options && options.type) {
       JF.validation.checks.checkNonEmptyString(options.type);

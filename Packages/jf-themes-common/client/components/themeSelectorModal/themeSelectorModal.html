@@ -1,7 +1,7 @@
 <template name="themeSelectorModal">
     {{#dialogForm (extend this
-        id='themeSelectorModal' dialogClass='modal-lg' confirmLabel='Apply theme'
-        title='Themes' titleIcon='fa fa-sliders'
+        id='themeSelectorModal' dialogClass='modal-lg' confirmLabel='应用' cancelLabel='取消'
+        title='主题皮肤' titleIcon='fa fa-sliders'
     )}}
         <ul class="theme-list text-center">
             {{#each theme in themes}}

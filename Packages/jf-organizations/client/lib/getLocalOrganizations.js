@@ -5,7 +5,7 @@ JF.organization.getLocalOrganizations = (orgIds, options) => {
 
   if (orgIds.length > 0) {
     options = options || {};
-    const Organizations = JF.collections.organizations;
+    const Organizations = JF.organization.organizations;
     const filter = { $or: [] };
     _.each(orgIds, _id => filter.$or.push({ _id }));
     _.extend(filter, options);
