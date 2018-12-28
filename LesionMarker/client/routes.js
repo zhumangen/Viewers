@@ -40,31 +40,37 @@ Router.onBeforeAction(function() {
 
 Router.route('/', function() {
   if (JF.user.hasScpRoles()) {
-    Router.go('orderlist-scp', {}, { replaceState: true });
-  } else if (JF.user.hasScuRoles()) {
-    Router.go('orderlist-scu', {}, { replaceState: true });
+    Session.set('locationType', 'SCP');
   } else {
-    Router.go('studylist', {}, { replaceState: true });
+    Session.set('locationType', 'SCU');
   }
+  Router.go('orderlist', {}, { replaceState: true });
 }, { name: 'home' });
 
-Router.route('/orderlist-scp', {
-    name: 'orderlist-scp',
-    /* onBeforeAction: function() {
-        const next = this.next;
-    },*/
-    action: function() {
-      this.render('app', { data: { template: 'orderlist', type: 'SCP' } });
-    }
+Router.route('/orderlist-scp', function() {
+  Session.set('locationType', 'SCP');
+  Router.go('orderlist');
 });
 
-Router.route('/orderlist-scu', {
-    name: 'orderlist-scu',
+Router.route('/orderlist-scu', function() {
+  Session.set('locationType', 'SCU');
+  Router.go('orderlist');
+});
+
+Router.route('/orderlist', {
+    name: 'orderlist',
     /* onBeforeAction: function() {
         const next = this.next;
     },*/
     action: function() {
-      this.render('app', { data: { template: 'orderlist', type: 'SCU' } });
+      if (!Session.get('locationType')) {
+        if (JF.user.hasScpRoles()) {
+          Session.set('locationType', 'SCP');
+        } else {
+          Session.set('locationType', 'SCU');
+        }
+      }
+      this.render('app', { data: { template: 'orderlist' } });
     }
 });
 

@@ -11,7 +11,7 @@ Template.app.onCreated(() => {
 
     const items = [{
       action: () => Router.go('orderlist-scp'),
-      text: '远程会诊',
+      text: '标注列表',
       iconClasses: 'server'
     }, {
       action: () => Router.go('orderlist-scu'),

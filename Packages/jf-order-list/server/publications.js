@@ -25,7 +25,7 @@ Meteor.publish('orders', function(options) {
   } else if (options.type === 'SCU') {
     orgIds = JF.user.getScuGroupsForUser(userId);
     orgIds.forEach(orgId => {
-      filter.$or.push( { organizationId: orgId });
+      filter.$or.push( { studyOrgId: orgId });
     });
   }
 

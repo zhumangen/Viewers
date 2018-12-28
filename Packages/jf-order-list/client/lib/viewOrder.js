@@ -8,7 +8,7 @@ JF.orderlist.viewOrder = order => {
   if (!order) return;
 
   new Promise((resolve, reject) => {
-    Meteor.call('startOrder', order._id, (error, response) => {
+    Meteor.call('startOrder', order._id, { type: Session.get('locationType') }, (error, response) => {
       if (error) {
         OHIF.log.error(error);
       } else {

@@ -3,7 +3,10 @@ import { JF } from 'meteor/jf:core';
 
 Template.orderlistView.onCreated(() => {
   const instance = Template.instance();
-  instance.subscribe('orders', { type: instance.data.type });
+  instance.autorun(() => {
+    const type = Session.get('locationType');
+    instance.subscribe('orders', { type });
+  });
 
   instance.sortOptions = new ReactiveVar();
   instance.sortingColumns = new ReactiveDict();
@@ -66,6 +69,9 @@ Template.orderlistView.onDestroyed(() => {
 })
 
 Template.orderlistView.helpers({
+  tableTitle() {
+    return Session.get('locationType')==='SCP'?'标注列表':'申请列表';
+  },
   orders() {
     const instance = Template.instance();
     let orders;
