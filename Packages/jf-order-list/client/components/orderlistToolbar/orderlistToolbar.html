@@ -1,12 +1,11 @@
 <template name="orderlistToolbar">
-    <div class='orderlistToolbar'>
-        {{#if importSupported}}
-            <div class="addNewStudy btn-file">
-                <label for="btnImport">
-                    <i class="fa fa-plus"></i> Import study
-                </label>
-                <input id="btnImport" class='js-import-files' type="file" webkitdirectory directory multiple>
-            </div>
-        {{/if}}
-    </div>
+  <div class='orderlistToolbar'>
+    {{#button id='startOrders' class='btn p-x-2' disabled=disableStartBtn}}查看{{/button}}
+    {{#if eq (session 'locationType') 'SCP'}}
+      {{#button id='denyOrders' class='btn p-x-2' disabled=disableDenyBtn}}拒绝{{/button}}
+    {{else}}
+      {{#button id='cancelOrders' class='btn p-x-2' disabled=disableCancelBtn}}撤回{{/button}}
+      {{#button id='removeOrders' class='btn p-x-2' disabled=disableRemoveBtn}}删除{{/button}}
+    {{/if}}
+  </div>
 </template>

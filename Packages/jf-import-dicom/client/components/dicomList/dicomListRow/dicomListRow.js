@@ -66,21 +66,5 @@ Template.dicomListRow.events({
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
             dblClickOnStudy([instance.data]);
         }
-    },
-
-    'contextmenu tr.dicomListRow, press tr.dicomListRow'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
-
-        if (!JF.ui.rowSelect.isRowSelected.call(JF.dicomlist, rowId)) {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.dicomlist, $studyRow, { rowId });
-        }
-
-        event.preventDefault();
-        OHIF.ui.showDropdown(JF.dicomlist.dropdown.getItems(), {
-            event,
-            menuClasses: 'dropdown-menu-left'
-        });
-        return false;
     }
 });

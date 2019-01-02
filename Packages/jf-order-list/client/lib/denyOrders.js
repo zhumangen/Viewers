@@ -1,14 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
+import { OHIF } from 'meteor/ohif:core';
 
-JF.studylist.removeStudies = (studies, options) => {
+JF.orderlist.denyOrders = (orders, options) => {
   let processed = 0;
   const notify = (options || {}).notify || function() { /* noop */ };
   const promises = [];
-  const total = studies.length;
-  studies.forEach(study => {
+  const total = orders.length;
+  orders.forEach(order => {
     const promise = new Promise((resolve, reject) => {
-      Meteor.call('removeStudies', [study._id], {}, (error, response) => {
+      Meteor.call('denyOrders', [order._id], {}, (error, response) => {
         if (error) {
           reject(error);
         } else {
@@ -26,13 +27,12 @@ JF.studylist.removeStudies = (studies, options) => {
   return Promise.all(promises);
 }
 
-JF.studylist.removeStudiesProgress = studies => {
+JF.orderlist.denyOrdersProgress = orders => {
   // check permissions
-  for (let study of studies) {
-    const orgId = study.organizationId;
-    if (!Roles.userIsInRole(Meteor.user(), 'admin', orgId)) {
+  for (let order of orders) {
+    if (!Roles.userIsInRole(Meteor.user(), ['bg','sh','admin'], order.orderOrgId)) {
       OHIF.ui.showDialog('dialogInfo', {
-        title: '删除失败',
+        title: '拒绝失败',
         reason: '未授权的操作！',
       });
       return;
@@ -40,21 +40,21 @@ JF.studylist.removeStudiesProgress = studies => {
   }
 
   OHIF.ui.showDialog('dialogProgress', {
-    title: '正在删除检查...',
-    total: studies.length,
+    title: '正在拒绝...',
+    total: orders.length,
     task: {
       run: dialog => {
-        JF.studylist.removeStudies(studies, {
+        JF.orderlist.denyOrders(orders, {
           notify: stats => {
             dialog.update(stats.processed);
-            dialog.setMessage(`已删除：${stats.processed} / ${stats.total}`);
+            dialog.setMessage(`已拒绝：${stats.processed} / ${stats.total}`);
           }
         }).then(() => {
           dialog.done();
         }, () => {
           dialog.cancel();
         }).catch(error => {
-          OHIF.log.error('There was an error removing studies.');
+          OHIF.log.error('There was an error denying orders.');
           OHIF.log.error(error.stack);
 
           OHIF.log.trace();

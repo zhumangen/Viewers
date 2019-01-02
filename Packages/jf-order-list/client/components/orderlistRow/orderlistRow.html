@@ -6,6 +6,9 @@
         <td class="serialNumber">
             {{serialNumber}}
         </td>
+        <td class="lesionType">
+            {{lesionType}}
+        </td>
         <td class="patientName">
             {{formatPatientName patientName}}
         </td>
@@ -25,7 +28,7 @@
             {{dateToString orderTime ''}}
         </td>
         <td class="institution">
-            {{getOrganizationName organizationId}}
+            {{getOrganizationName studyOrgId}}
         </td>
         <td class="reportPhyscian">
             {{getUserName reporterId}}

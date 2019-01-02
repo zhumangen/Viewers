@@ -1,10 +1,7 @@
 <template name="userlistToolbar">
     <div class='userlistToolbar'>
-        <div class="addNewUser">
-            <label for="btnAdd">
-                <i class="fa fa-plus"></i>增加用户
-            </label>
-            <input id="btnAdd" class='js-add-user' type="button">
-        </div>
+      {{#button id='addUser' class='btn p-x-2' action='addUser' disabled=disableModifyUser}}增加{{/button}}
+      {{#button id='modifyUser' class='btn p-x-2' action='modifyUser' disabled=disableModifyUser}}修改{{/button}}
+      {{#button id='removeUsers' class='btn p-x-2' action='removeUsers' disabled=disableRemoveUsers}}删除{{/button}}
     </div>
 </template>

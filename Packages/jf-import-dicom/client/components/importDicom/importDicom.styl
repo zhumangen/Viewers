@@ -1,27 +1,13 @@
 @import "{jf:design}/app"
 
-.import-dicom
+.dicom-list-wrapper
+  theme('background-color', '$primaryBackgroundColor')
+  color: white
+  margin: 2px auto 0
+  height: calc(100% - 162px)
+  position: relative
+  width: 100%
 
-  .filter-row
-    display: flex
-    align-items: center
-    theme('background', '$uiGrayDarker')
-    height: $dicomListToolbarHeight
-    padding: 0 $studyListPadding
-    margin: 2px 0
+  .loadingTextDiv
     theme('color', '$textSecondaryColor')
-
-    &>div
-      flex: 1
-      margin: 5px
-
-  .dicom-list
-    theme('background-color', '$primaryBackgroundColor')
-    color: white
-    height: calc(100% - 91px)
-    position: relative
-    width: 100%
-
-    .loadingTextDiv
-      theme('color', '$textSecondaryColor')
-      font-size: 30px
+    font-size: 30px

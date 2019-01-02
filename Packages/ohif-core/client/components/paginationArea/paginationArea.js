@@ -35,23 +35,11 @@ Template.paginationArea.onRendered(() => {
         if (recordCount && rowsPerPage) {         
             const totalPages = Math.ceil(recordCount / rowsPerPage); 
 
-            if(sessionStorage.getItem("currentPage") > totalPages){
-                sessionStorage.setItem("currentPage", totalPages);
-            }       
-
-            // 默认开始页 为上次的 页码
-            let startPage = sessionStorage.getItem("currentPage");            
-            if(startPage){
-                startPage = startPage;
-            }else {
-                startPage = 1;
-            }
-
             // Initialize plugin
             instance.$paginationControl.twbsPagination({
                 totalPages,
                 visiblePages,
-                startPage,
+                startPage: 1,
                 first: '首页',  
                 prev: '上页',  
                 next: '下页',  
@@ -60,10 +48,7 @@ Template.paginationArea.onRendered(() => {
                     // Update currentPage
                     // Decrease page by 1 to set currentPage
                     // Since reactive table current page index starts by 0
-                    instance.data.currentPage.set(page - 1);                   
-                   
-                    // save currentPage
-                    sessionStorage.setItem("currentPage", page);                   
+                    instance.data.currentPage.set(page - 1);
                     
                 }
             });

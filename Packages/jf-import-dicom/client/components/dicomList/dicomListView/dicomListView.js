@@ -4,8 +4,20 @@ import { JF } from 'meteor/jf:core';
 Template.dicomListView.onCreated(() => {
   const instance = Template.instance();
 
-  instance.filterOptions = new ReactiveVar();
+  instance.paginationData = {
+    class: 'dicomlist-pagination',
+    currentPage: new ReactiveVar(0),
+    recordCount: new ReactiveVar(0),
+    rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage())
+  };
+  instance.statusData = {
+    loadAll: new ReactiveVar(false),
+    loaded: new ReactiveVar(0),
+    total: new ReactiveVar(0),
+    errorMsg: new ReactiveVar('')
+  };
 
+  instance.filterOptions = new ReactiveVar();
   instance.sortingColumns = new ReactiveVar({
     status: 0,
     qidoLevel: 0,
@@ -31,8 +43,8 @@ Template.dicomListView.helpers({
     // const filter = instance.filterOptions.get();
 
     // Pagination parameters
-    const rowsPerPage = instance.data.paginationData.rowsPerPage.get();
-    const currentPage = instance.data.paginationData.currentPage.get();
+    const rowsPerPage = instance.paginationData.rowsPerPage.get();
+    const currentPage = instance.paginationData.currentPage.get();
     const offset = rowsPerPage * currentPage;
     const limit = offset + rowsPerPage;
 
@@ -47,7 +59,7 @@ Template.dicomListView.helpers({
   },
 
   numberOfRecords() {
-    return Template.instance().data.paginationData.recordCount.get();
+    return Template.instance().paginationData.recordCount.get();
   },
 
   sortingColumnsIcons() {

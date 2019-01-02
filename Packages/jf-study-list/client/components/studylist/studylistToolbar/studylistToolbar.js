@@ -4,30 +4,51 @@ import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
 import { $ } from 'meteor/jquery';
 
-Template.studylistToolbar.onCreated(() => {
-    const instance = Template.instance();
-    instance.api = {
-      apply: () => {
-        const studies = JF.collections.studies.find().fetch();
-        return new Promise((resolve, reject) => {
-          Meteor.call('applyStudies', studies, {}, (error, response) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(response);
-            }
-          });
-        });
+Template.studylistToolbar.helpers({
+  disableApplyBtn() {
+    const studies = JF.studylist.getSelectedStudies();
+
+    studies.forEach(study => {
+      if (!Roles.userIsInRole(Meteor.user(), 'js', study.organizationId)) {
+        return true;
       }
-    }
+    });
+
+    return !studies.length;
+  },
+  disableApplyAllBtn() {
+    const studies = JF.collections.studies.find({ status: 0 }).fetch();
+
+    studies.forEach(study => {
+      if (!Roles.userIsInRole(Meteor.user(), 'js', study.organizationId)) {
+        return true;
+      }
+    });
+
+    return !studies.length;
+  },
+  disableRemoveBtn() {
+    const studies = JF.studylist.getSelectedStudies();
+
+    studies.forEach(study => {
+      if (!Roles.userIsInRole(Meteor.user(), 'admin', study.organizationId)) {
+        return true;
+      }
+    });
+
+    return !studies.length;
+  }
 });
 
 Template.studylistToolbar.events({
-    'click .js-apply-studies'(event, instance) {
-        instance.api.apply();
-    }
-});
-
-Template.studylistToolbar.helpers({
-
+  'click #applyStudies'(event, instance) {
+    JF.studylist.applySelectedStudies();
+  },
+  'click #applyAllStudies'(event, instance) {
+    const studies = JF.collections.studies.find( { status: 0 }).fetch();
+    JF.studylist.applyStudiesProgress(studies);
+  },
+  'click #removeStudies'(event, instance) {
+    JF.studylist.removeSelectedStudies(event);
+  }
 });

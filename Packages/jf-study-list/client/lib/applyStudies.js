@@ -46,7 +46,7 @@ JF.studylist.applyStudiesProgress = studies => {
       msg = '未授权的操作！';
     }
     if (!msg && !JF.user.isSuperAdmin()) {
-      const orgs = JF.organization.getLocalOrganizations([orgId]);
+      const orgs = JF.organization.getLocalOrganizations.call(JF.organization.organizations, [orgId]);
       if (orgs.length > 0) {
         const org = orgs[0];
         if (!org.orderOrgId) {

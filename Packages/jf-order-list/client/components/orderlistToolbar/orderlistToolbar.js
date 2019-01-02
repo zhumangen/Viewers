@@ -5,33 +5,56 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { $ } from 'meteor/jquery';
 
-Template.orderlistToolbar.onCreated(() => {
-    Meteor.call('importSupported', (error, result) => {
-        if (error || !result) {
-            Session.set('importSupported', false);
-        } else {
-            Session.set('importSupported', true);
-        }
+Template.orderlistToolbar.helpers({
+  disableStartBtn() {
+    return !JF.orderlist.getSelectedOrderIds().length;
+  },
+  disableDenyBtn() {
+    const orders = JF.orderlist.getSelectedOrders();
+
+    orders.forEach(order => {
+      if (!Roles.userIsInRole(Meteor.user(), ['bg','sh','admin'], order.orderOrgId)) {
+        return true;
+      }
     });
+
+    return !orders.length;
+  },
+  disableCancelBtn() {
+    const orders = JF.orderlist.getSelectedOrders();
+
+    orders.forEach(order => {
+      if (!Roles.userIsInRole(Meteor.user(), ['admin'], order.studyOrgId)) {
+        return true;
+      }
+    });
+
+    return !orders.length;
+  },
+  disableRemoveBtn() {
+    const orders = JF.orderlist.getSelectedOrders();
+
+    orders.forEach(order => {
+      if (!Roles.userIsInRole(Meteor.user(), ['admin'], order.studyOrgId)) {
+        return true;
+      }
+    });
+
+    return !orders.length;
+  }
 });
 
 Template.orderlistToolbar.events({
-    'change .js-import-files'(event) {
-        //  Get selected files located in the client machine
-        const selectedFiles = $.map(event.currentTarget.files, value => value);
-
-        JF.orderlist.importStudies(selectedFiles);
-    },
-
-    'click .js-import-files'(event) {
-        // Reset file input
-        $(event.currentTarget).val('');
-    }
-});
-
-Template.orderlistToolbar.helpers({
-    importSupported() {
-        const importSupported = Session.get('importSupported');
-        return (importSupported && OHIF.uiSettings.studyListFunctionsEnabled);
-    }
+  'click #startOrders'(event, instance) {
+    JF.orderlist.viewSelectedOrder();
+  },
+  'click #denyOrders'(event, instance) {
+    JF.orderlist.denySelectedOrders();
+  },
+  'click #cancelOrders'(event, instance) {
+    JF.orderlist.cancelSelectedOrders(event);
+  },
+  'click #removeOrders'(event, instance) {
+    JF.orderlist.removeSelectedOrders(event);
+  }
 });

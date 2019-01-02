@@ -1,13 +1,13 @@
 import { JF } from 'meteor/jf:core';
 import { OHIF }  from 'meteor/ohif:core';
 
-JF.studylist.removeSelectedStudies = event => {
-  const studies = JF.studylist.getSelectedStudies();
+JF.orderlist.cancelSelectedOrders = event => {
+  const orders = JF.orderlist.getSelectedOrders();
 
   OHIF.ui.showDialog('dialogConfirm', {
       element: event.element,
-      title: '删除检查',
-      message: '您确定要删除这些检查吗？',
+      title: '撤回申请',
+      message: '您确定要撤回这些申请吗？',
       position: {
         x: event.clientX,
         y: event.clientY
@@ -15,6 +15,6 @@ JF.studylist.removeSelectedStudies = event => {
       cancelLabel: '取消',
       confirmLabel: '确定'
   }).then(() => {
-      JF.studylist.removeStudiesProgress(studies);
+      JF.orderlist.cancelOrdersProgress(orders);
   }).catch(() => {});
 }

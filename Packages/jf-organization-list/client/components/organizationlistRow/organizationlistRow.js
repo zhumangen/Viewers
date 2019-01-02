@@ -14,15 +14,10 @@ Template.organizationlistRow.helpers({
     return JF.ui.rowSelect.isRowSelected.call(JF.organizationlist, this._id);
   },
   type() {
-    const t = this.type;
-    switch (t) {
-      case 1:
-        return '影像中心'
-      case 2:
-        return '医疗机构'
-    }
-
-    return '';
+    const ts = this.type;
+    let type = '';
+    ts.forEach(t => type += (t==='SCP')?'影像中心，':'医疗机构，');
+    return type.substring(0, type.length-1);
   }
 });
 
@@ -62,21 +57,5 @@ Template.organizationlistRow.events({
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
             dblClickOnStudy(instance.data);
         }
-    },
-
-    'contextmenu tr.organizationlistRow, press tr.organizationlistRow'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
-
-        if (!JF.ui.rowSelect.isRowSelected.call(JF.organizationlist, rowId)) {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.organizationlist, $studyRow, { rowId });
-        }
-
-        event.preventDefault();
-        OHIF.ui.showDropdown(JF.organizationlist.dropdown.getItems(), {
-            event,
-            menuClasses: 'dropdown-menu-left'
-        });
-        return false;
     }
 });

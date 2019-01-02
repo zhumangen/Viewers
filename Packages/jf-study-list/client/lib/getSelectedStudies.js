@@ -1,6 +1,10 @@
 import { JF } from 'meteor/jf:core';
 
+JF.studylist.getSelectedStudyIds = () => {
+  return JF.ui.rowSelect.getSelectedRows.call(JF.studylist);
+};
+
 JF.studylist.getSelectedStudies = () => {
-  const rowIds = JF.ui.rowSelect.getSelectedRows.call(JF.studylist);
+  const rowIds = JF.studylist.getSelectedStudyIds();
   return rowIds.map(rowId => JF.collections.studies.find({ _id: rowId }).fetch()[0]);
 };

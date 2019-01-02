@@ -1,8 +1,8 @@
 <template name="dicomListView">
     <div class="dicomListToolbar clearfix">
-        <div class="header pull-left">影像列表</div>
+        <div class="header pull-left">导入列表</div>
         <div class="dicomCount pull-right">{{numberOfRecords}}</div>
-        <div class="pull-right">{{>dicomListToolbar statusData}}</div>
+        <div class="pull-right">{{>dicomListToolbar paginationData=instance.paginationData statusData=instance.statusData}}</div>
     </div>
     <div class="theadBackground">
     </div>
@@ -121,7 +121,7 @@
         </table>
 
         <!-- Pagination -->
-        {{>paginationArea this.paginationData}}
+        {{>paginationArea instance.paginationData}}
 
         {{#if session "showLoadingText"}}
             {{>loadingText}}

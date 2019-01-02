@@ -26,7 +26,18 @@ Template.orderlistRow.helpers({
         return '审核中';
       case 4:
         return '已审核';
+      case 10:
+        return '已拒绝';
+      case 11:
+        return '已撤回';
     }
+  },
+  lesionType() {
+    const types = JF.lesiontracker.getLesionTypes(this.lesionCode);
+    if (types.length > 0) {
+      return types[0].label;
+    }
+    return '';
   },
   studyDate() {
     return this.qidoLevel === 'STUDY'? this.studyDate : this.seriesDate;
@@ -69,21 +80,5 @@ Template.orderlistRow.events({
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
             dblClickOnStudy(instance.data);
         }
-    },
-
-    'contextmenu tr.orderlistRow, press tr.orderlistRow'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
-
-        if (!JF.ui.rowSelect.isRowSelected.call(JF.orderlist, rowId)) {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.orderlist, $studyRow, { rowId });
-        }
-
-        event.preventDefault();
-        OHIF.ui.showDropdown(JF.orderlist.dropdown.getItems(), {
-            event,
-            menuClasses: 'dropdown-menu-left'
-        });
-        return false;
     }
 });

@@ -1,10 +1,7 @@
 <template name="studylistToolbar">
     <div class='studylistToolbar'>
-      <div class="addNewStudy">
-        <label for="btnApply">
-            <i class="fa fa-plus"></i>一键申请
-        </label>
-        <input id="btnApply" class='js-apply-studies' type="button">
-      </div>
+      {{#button id='applyStudies' class='btn p-x-2' disabled=disableApplyBtn}}申请{{/button}}
+      {{#button id='applyAllStudies' class='btn p-x-2' disabled=disableApplyAllBtn}}申请所有{{/button}}
+      {{#button id='removeStudies' class='btn p-x-2' disabled=disableRemoveBtn}}删除{{/button}}
     </div>
 </template>

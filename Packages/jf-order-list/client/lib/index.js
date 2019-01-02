@@ -1,6 +1,10 @@
-import './getSelectedOrders.js';
-import './viewOrder.js';
-import './viewSelectedOrder.js';
-import './removeOrders.js';
-import './removeSelectedOrders.js';
-import './queryOrders.js';
+import './getSelectedOrders';
+import './viewOrder';
+import './viewSelectedOrder';
+import './removeOrders';
+import './removeSelectedOrders';
+import './queryOrders';
+import './denyOrders';
+import './denySelectedOrders';
+import './cancelOrders';
+import './cancelSelectedOrders';

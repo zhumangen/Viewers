@@ -1,12 +1,10 @@
 <template name="dicomListToolbar">
   <div class='dicomlistToolbar'>
-    {{#unless allImported}}
-      <div class="addNewStudy">
-        <label for="btnImport">
-            <i class="fa fa-plus"></i>一键导入
-        </label>
-        <input id="btnImport" class='js-import-dicoms' type="button">
-      </div>
-    {{/unless}}
+    <div class="filter-options">
+      {{>inputSelect id='organization' name='organization' items=instance.items options=(clone placeholder='请选择一个机构')}}
+      {{>inputText id='dicomDate' name='dateRange'}}
+    </div>
+    {{#button id='importStudies' class='btn p-x-2' disabled=disableImportBtn}}导入{{/button}}
+    {{#button id='importAllStudies' class='btn p-x-2' disabled=disableImportAllBtn}}导入所有{{/button}}
   </div>
 </template>

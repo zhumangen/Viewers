@@ -92,21 +92,5 @@ Template.studylistStudy.events({
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
             dblClickOnStudy([instance.data]);
         }
-    },
-
-    'contextmenu tr.studylistStudy, press tr.studylistStudy'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
-
-        if (!JF.ui.rowSelect.isRowSelected.call(JF.studylist, rowId)) {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.studylist, $studyRow, { rowId });
-        }
-
-        event.preventDefault();
-        OHIF.ui.showDropdown(JF.studylist.dropdown.getItems(), {
-            event,
-            menuClasses: 'dropdown-menu-left'
-        });
-        return false;
     }
 });

@@ -1,10 +1,7 @@
 <template name="organizationlistToolbar">
-    <div class='organizationlistToolbar'>
-        <div class="addNewOrg">
-            <label for="btnAdd">
-                <i class="fa fa-plus"></i>增加机构
-            </label>
-            <input id="btnAdd" class='js-add-org' type="button">
-        </div>
-    </div>
+  <div class='organizationlistToolbar'>
+    {{#button id='addOrg' class='btn p-x-2' action='addOrg' disabled=disableModifyOrg}}增加{{/button}}
+    {{#button id='modifyOrg' class='btn p-x-2' action='modifyOrg' disabled=disableModifyOrg}}修改{{/button}}
+    {{#button id='removeOrgs' class='btn p-x-2' action='removeOrgs' disabled=disableRemoveOrgs}}删除{{/button}}
+  </div>
 </template>

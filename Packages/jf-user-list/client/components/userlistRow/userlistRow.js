@@ -21,7 +21,7 @@ Template.userlistRow.helpers({
   },
   userOrgs() {
     const orgIds = JF.user.getAllGroupsForUser(this._id);
-    const orgs = JF.organization.getLocalOrganizations(orgIds);
+    const orgs = JF.organization.getLocalOrganizations.call(JF.collections.organizations, orgIds);
     let str = '';
     orgs.forEach(org => str += org.name + '，');
     return str.substring(0, str.length-1);
@@ -64,21 +64,5 @@ Template.userlistRow.events({
         if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
             dblClickOnStudy(instance.data);
         }
-    },
-
-    'contextmenu tr.userlistRow, press tr.userlistRow'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
-
-        if (!JF.ui.rowSelect.isRowSelected.call(JF.userlist, rowId)) {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.userlist, $studyRow, { rowId });
-        }
-
-        event.preventDefault();
-        OHIF.ui.showDropdown(JF.userlist.dropdown.getItems(), {
-            event,
-            menuClasses: 'dropdown-menu-left'
-        });
-        return false;
     }
 });

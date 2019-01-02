@@ -1,15 +1,5 @@
 <template name="importDicom">
-  <div class="import-dicom">
-    <div class="filter-row">
-      <div class="organization">
-        {{>inputSelect id='organization' name='organization' items=instance.items options=(clone placeholder='请选择一个机构') label='机构名称'}}
-      </div>
-      <div class="date-range">
-        {{>inputText labelClass='form-group' id='dicomDate' name='dateRange' label='检查时间'}}
-      </div>
-    </div>
-    <div class="dicom-list">
-      {{>dicomListView paginationData=instance.paginationData statusData=instance.statusData}}
-    </div>
+  <div class="dicom-list-wrapper">
+    {{>dicomListView}}
   </div>
 </template>
