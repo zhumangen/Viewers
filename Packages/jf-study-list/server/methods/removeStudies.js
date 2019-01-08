@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { OHIF } from 'meteor/ohif:core';
 
 export default function removeStudies(studyIds, options) {
   const result = { code: 200 };
@@ -16,14 +17,21 @@ export default function removeStudies(studyIds, options) {
 
   const Studies = JF.collections.studies;
   studyIds.forEach(studyId => {
-    const ops = {
-      $set: {
-        removed: true,
-        removedAt: new Date(),
-        removedBy: userId
+    const study = Studies.findOne({ _id: studyId });
+    if (study) {
+      if (Roles.userIsInRole(userId, 'admin', study.organizationId)) {
+        const ops = {
+          $set: {
+            status: -1
+          }
+        };
+        Studies.update({ _id: studyId }, ops, OHIF.MongoUtils.writeCallback);
+      } else {
+        result.code = 403;
       }
-    };
-    Studies.update({ _id: studyId }, ops);
+    } else {
+      result.code = 404;
+    }
   });
 
   return result;

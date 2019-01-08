@@ -39,7 +39,7 @@ JF.orderlist.removeOrdersProgress = orders => {
     }
   }
 
-  OHIF.ui.showDialog('dialogProgress', {
+  return OHIF.ui.showDialog('dialogProgress', {
     title: '正在删除...',
     total: orders.length,
     task: {

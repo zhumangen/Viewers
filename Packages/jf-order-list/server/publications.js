@@ -5,31 +5,30 @@ Meteor.publish('orders', function(options) {
   JF.validation.checks.checkNonEmptyString(options.type);
 
   const Orders = JF.collections.orders;
-
-  const filter = {
-    removed: false
-  };
-
-  if (JF.user.isSuperAdmin()) {
-    return Orders.find(filter);
-  }
-
+  const filter = { status: { $gte: 0 }};
   const userId = this.userId;
-  filter.$or = [];
+  const su = JF.user.isSuperAdmin();
+
   let orgIds = [];
   if (options.type === 'SCP') {
+    filter.status.$lte = 10;
     orgIds = JF.user.getScpGroupsForUser(userId);
+  } else if (options.type === 'SCU') {
+    orgIds = JF.user.getScuGroupsForUser(userId);
+  }
+
+  if (su) {
+    orgIds = [];
+  }
+
+  if (orgIds.length > 0) {
+    filter.$or = [];
     orgIds.forEach(orgId => {
       filter.$or.push({ orderOrgId: orgId });
     });
-  } else if (options.type === 'SCU') {
-    orgIds = JF.user.getScuGroupsForUser(userId);
-    orgIds.forEach(orgId => {
-      filter.$or.push( { studyOrgId: orgId });
-    });
   }
 
-  if (filter.$or.length > 0) {
+  if (orgIds.length > 0 || su) {
     return Orders.find(filter);
   }
 

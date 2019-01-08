@@ -17,14 +17,25 @@ export default function removeOrders(orderIds, options) {
 
   const collection = JF.collections.orders;
   orderIds.forEach(orderId => {
-    const ops = {
-      $set: {
-        removed: true,
-        removedAt: new Date(),
-        removedBy: userId
+    const order = collection.findOne({ _id: orderId });
+    if (order) {
+      if (Roles.userIsInRole(userId, 'admin', order.studyOrgId)) {
+        if (order.status === 0 || order.status === 4 || order.status === 10 || order.status === 11) {
+          const ops = {
+            $set: {
+              status: -1
+            }
+          };
+          collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+        } else {
+          result.code = 409;
+        }
+      } else {
+        result.code = 403;
       }
-    };
-    collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+    } else {
+      result.code = 404;
+    }
   });
 
   return result;

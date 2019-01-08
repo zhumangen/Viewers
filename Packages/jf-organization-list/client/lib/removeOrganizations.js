@@ -19,7 +19,7 @@ JF.organizationlist.removeOrganizations = (orgIds, options) => {
 }
 
 JF.organizationlist.removeOrganizationsProgress = orgIds => {
-  OHIF.ui.showDialog('dialogProgress', {
+  return OHIF.ui.showDialog('dialogProgress', {
     title: '正在删除机构...',
     total: orgIds.length,
     task: {

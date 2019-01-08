@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
 Template.orderlistView.onCreated(() => {
+  JF.orderlist.clearSelections();
   const instance = Template.instance();
   instance.autorun(() => {
     const type = Session.get('locationType');

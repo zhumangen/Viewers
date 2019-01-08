@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
 Template.userlistView.onCreated(() => {
+  JF.userlist.clearSelections();
   const instance = Template.instance();
   instance.subscribe('users');
   instance.subscribe('organizations');

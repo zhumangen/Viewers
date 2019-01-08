@@ -1,5 +1,5 @@
 import './getSelectedUsers';
-import './viewUser';
-import './viewSelectedUser';
+import './updateUser';
+import './updateSelectedUser';
 import './removeUsers';
 import './removeSelectedUsers';

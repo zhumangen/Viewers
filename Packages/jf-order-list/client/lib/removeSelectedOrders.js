@@ -15,6 +15,8 @@ JF.orderlist.removeSelectedOrders = event => {
       cancelLabel: '取消',
       confirmLabel: '确定'
   }).then(() => {
-      JF.orderlist.removeOrdersProgress(orders);
+      JF.orderlist.removeOrdersProgress(orders).then(() => {
+        JF.orderlist.clearSelections();
+      });
   }).catch(() => {});
 }

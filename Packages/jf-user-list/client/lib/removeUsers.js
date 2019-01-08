@@ -7,15 +7,7 @@ JF.userlist.removeUsers = (userIds, options) => {
   const promises = [];
   const total = userIds.length;
   userIds.forEach(userId => {
-    const promise = new Promise((resolve, reject) => {
-      Meteor.call('removeUsers', [userId], {}, (error, response) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(response);
-        }
-      });
-    });
+    const promise = JF.user.removeUsers([userId]);
     promise.then(() => {
       processed++;
       notify({processed, total});
@@ -27,7 +19,7 @@ JF.userlist.removeUsers = (userIds, options) => {
 }
 
 JF.userlist.removeUsersProgress = userIds => {
-  OHIF.ui.showDialog('dialogProgress', {
+  return OHIF.ui.showDialog('dialogProgress', {
     title: '正在删除用户...',
     total: userIds.length,
     task: {

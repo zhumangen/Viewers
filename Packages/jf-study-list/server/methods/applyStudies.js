@@ -28,7 +28,6 @@ export default function applyStudies(studies, options) {
     const t = new Date();
     const order = {
       status: 0,
-      removed: false,
       orderOrgId: options.orderOrgId,
       lesionCode: options.lesionCode,
       dicomId: study._id,

@@ -1,7 +1,7 @@
 <template name="organizationlistToolbar">
   <div class='organizationlistToolbar'>
-    {{#button id='addOrg' class='btn p-x-2' action='addOrg' disabled=disableModifyOrg}}增加{{/button}}
-    {{#button id='modifyOrg' class='btn p-x-2' action='modifyOrg' disabled=disableModifyOrg}}修改{{/button}}
-    {{#button id='removeOrgs' class='btn p-x-2' action='removeOrgs' disabled=disableRemoveOrgs}}删除{{/button}}
+    {{#button id='addOrg' class='btn p-x-2' disabled=disableAddBtn}}增加{{/button}}
+    {{#button id='updateOrg' class='btn p-x-2' disabled=disableUpdateBtn}}修改{{/button}}
+    {{#button id='removeOrgs' class='btn p-x-2' disabled=disableRemoveBtn}}删除{{/button}}
   </div>
 </template>

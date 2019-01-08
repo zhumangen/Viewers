@@ -1,0 +1,16 @@
+<template name="userGroupRow">
+  <tr>
+    <td>{{group.name}}</td>
+    <td>{{orgTypes group.type}}</td>
+    <td>
+      {{#form}}
+        {{#group class='permissions' key='perms'}}
+          {{>inputCheckbox key='admin' label='管理员' disabled=(not isSuperAdmin)}}
+          {{>inputCheckbox key='js' label='技师'}}
+          {{>inputCheckbox key='bg' label='报告医生'}}
+          {{>inputCheckbox key='sh' label='审核医生'}}
+        {{/group}}
+      {{/form}}
+    </td>
+  </tr>
+</template>

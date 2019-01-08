@@ -12,33 +12,42 @@ Template.orderlistToolbar.helpers({
   disableDenyBtn() {
     const orders = JF.orderlist.getSelectedOrders();
 
-    orders.forEach(order => {
+    for (let order of orders) {
       if (!Roles.userIsInRole(Meteor.user(), ['bg','sh','admin'], order.orderOrgId)) {
         return true;
       }
-    });
+      if (order.status < 0 || order.status >= 10) {
+        return true;
+      }
+    }
 
     return !orders.length;
   },
   disableCancelBtn() {
     const orders = JF.orderlist.getSelectedOrders();
 
-    orders.forEach(order => {
+    for (let order of orders) {
       if (!Roles.userIsInRole(Meteor.user(), ['admin'], order.studyOrgId)) {
         return true;
       }
-    });
+      if (order.status !== 0) {
+        return true;
+      }
+    }
 
     return !orders.length;
   },
   disableRemoveBtn() {
     const orders = JF.orderlist.getSelectedOrders();
 
-    orders.forEach(order => {
+    for (let order of orders) {
       if (!Roles.userIsInRole(Meteor.user(), ['admin'], order.studyOrgId)) {
         return true;
       }
-    });
+      if (order.status > 0 && order.status < 4) {
+        return true;
+      }
+    }
 
     return !orders.length;
   }

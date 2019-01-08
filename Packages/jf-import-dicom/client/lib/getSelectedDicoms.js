@@ -1,5 +1,9 @@
 import { JF } from 'meteor/jf:core';
 
+JF.dicomlist.clearSelections = () => {
+  JF.ui.rowSelect.doClearSelections.call(JF.dicomlist);
+}
+
 JF.dicomlist.getSelectedDicomIds = () => {
   return JF.ui.rowSelect.getSelectedRows.call(JF.dicomlist);
 }

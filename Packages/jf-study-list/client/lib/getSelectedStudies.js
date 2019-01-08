@@ -1,5 +1,9 @@
 import { JF } from 'meteor/jf:core';
 
+JF.studylist.clearSelections = () => {
+  JF.ui.rowSelect.doClearSelections.call(JF.studylist);
+};
+
 JF.studylist.getSelectedStudyIds = () => {
   return JF.ui.rowSelect.getSelectedRows.call(JF.studylist);
 };

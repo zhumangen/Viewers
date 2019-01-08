@@ -8,33 +8,33 @@ Template.studylistToolbar.helpers({
   disableApplyBtn() {
     const studies = JF.studylist.getSelectedStudies();
 
-    studies.forEach(study => {
+    for (let study of studies) {
       if (!Roles.userIsInRole(Meteor.user(), 'js', study.organizationId)) {
         return true;
       }
-    });
+    }
 
     return !studies.length;
   },
   disableApplyAllBtn() {
     const studies = JF.collections.studies.find({ status: 0 }).fetch();
 
-    studies.forEach(study => {
+    for (let study of studies) {
       if (!Roles.userIsInRole(Meteor.user(), 'js', study.organizationId)) {
         return true;
       }
-    });
+    }
 
     return !studies.length;
   },
   disableRemoveBtn() {
     const studies = JF.studylist.getSelectedStudies();
 
-    studies.forEach(study => {
+    for (let study of studies) {
       if (!Roles.userIsInRole(Meteor.user(), 'admin', study.organizationId)) {
         return true;
       }
-    });
+    };
 
     return !studies.length;
   }

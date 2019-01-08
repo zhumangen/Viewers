@@ -16,6 +16,8 @@ Template.orderlistRow.helpers({
   status() {
     const s = this.status;
     switch (s) {
+      case -1:
+        return '已删除';
       case 0:
         return '待标注';
       case 1:

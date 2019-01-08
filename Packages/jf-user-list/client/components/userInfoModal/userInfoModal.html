@@ -1,0 +1,29 @@
+<template name="userInfoModal">
+  {{#dialogForm (extend this id='userInfoModal' dialogClass='modal-lg'
+      confirmLabel='确定' cancelLabel='取消' title='用户详细信息')}}
+    <div class="col-lg-6">
+      {{>inputText labelClass='form-group' key='userId' label='用户ID' disabled=(bool _id)}}
+    </div>
+    <div class="col-lg-6">
+      {{>inputText labelClass='form-group' key='userName' label='姓名'}}
+    </div>
+    <table id="tblGroups" class="table">
+      <thead>
+        <tr>
+          <th>机构名称</th>
+          <th>机构类型</th>
+          <th class="user-roles">用户权限</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each group in (reactive instance.groups)}}
+          {{>userGroupRow extend group=group}}
+        {{else}}
+          <tr>
+            <td class="text-center" colspan="3">该用户不属于任何机构</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{/dialogForm}}
+</template>

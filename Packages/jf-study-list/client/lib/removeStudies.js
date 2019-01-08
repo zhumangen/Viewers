@@ -39,7 +39,7 @@ JF.studylist.removeStudiesProgress = studies => {
     }
   }
 
-  OHIF.ui.showDialog('dialogProgress', {
+  return OHIF.ui.showDialog('dialogProgress', {
     title: '正在删除检查...',
     total: studies.length,
     task: {

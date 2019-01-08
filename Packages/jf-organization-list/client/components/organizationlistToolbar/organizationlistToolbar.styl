@@ -5,3 +5,20 @@
 
   button
     margin: 0 5px
+
+    &.btn
+      theme('background-color', '$activeColor')
+      color: #fff
+      cursor: pointer
+      font-size: 15px
+      font-weight: bold
+      height: 37px
+      margin-top: 6px
+      text-align: center
+
+      &[disabled]
+        /* opacity: 0.5 */
+        cursor: not-allowed
+
+      &:hover:enabled
+        theme('background-color', '$defaultColor')

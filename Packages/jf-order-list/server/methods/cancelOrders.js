@@ -17,12 +17,25 @@ export default function cancelOrders(orderIds, options) {
 
   const collection = JF.collections.orders;
   orderIds.forEach(orderId => {
-    const ops = {
-      $set: {
-        status: 11
+    const order = collection.findOne({ _id: orderId });
+    if (order) {
+      if (Roles.userIsInRole(userId, 'admin', order.studyOrgId)) {
+        if (order.status === 0) {
+          const ops = {
+            $set: {
+              status: 11
+            }
+          };
+          collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+        } else {
+          result.code = 409;
+        }
+      } else {
+        result.code = 403;
       }
-    };
-    collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+    } else {
+      result.code = 404;
+    }
   });
 
   return result;

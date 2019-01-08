@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
 Template.dicomListView.onCreated(() => {
+  JF.dicomlist.clearSelections();
   const instance = Template.instance();
 
   instance.paginationData = {

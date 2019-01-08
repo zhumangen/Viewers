@@ -12,12 +12,6 @@ Template.organizationlistRow.onRendered(() => {
 Template.organizationlistRow.helpers({
   selected() {
     return JF.ui.rowSelect.isRowSelected.call(JF.organizationlist, this._id);
-  },
-  type() {
-    const ts = this.type;
-    let type = '';
-    ts.forEach(t => type += (t==='SCP')?'影像中心，':'医疗机构，');
-    return type.substring(0, type.length-1);
   }
 });
 

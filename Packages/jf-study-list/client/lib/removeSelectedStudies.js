@@ -15,6 +15,8 @@ JF.studylist.removeSelectedStudies = event => {
       cancelLabel: '取消',
       confirmLabel: '确定'
   }).then(() => {
-      JF.studylist.removeStudiesProgress(studies);
+      JF.studylist.removeStudiesProgress(studies).then(() => {
+        JF.studylist.clearSelections();
+      })
   }).catch(() => {});
 }

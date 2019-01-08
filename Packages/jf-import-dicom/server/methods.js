@@ -20,7 +20,6 @@ Meteor.methods({
         const t = new Date();
         dicom.status = 0;
         dicom.userId = userId;
-        dicom.removed = false;
         dicom.createdAt = t;
         dicom.serialNumber = '1' + t.getTime() + JF.utils.randomString();
         dicom._id = collection.insert(dicom);

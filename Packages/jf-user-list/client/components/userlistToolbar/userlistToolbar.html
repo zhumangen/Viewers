@@ -1,7 +1,7 @@
 <template name="userlistToolbar">
     <div class='userlistToolbar'>
-      {{#button id='addUser' class='btn p-x-2' action='addUser' disabled=disableModifyUser}}增加{{/button}}
-      {{#button id='modifyUser' class='btn p-x-2' action='modifyUser' disabled=disableModifyUser}}修改{{/button}}
-      {{#button id='removeUsers' class='btn p-x-2' action='removeUsers' disabled=disableRemoveUsers}}删除{{/button}}
+      {{#button id='addUser' class='btn p-x-2' disabled=disableAddBtn}}增加{{/button}}
+      {{#button id='updateUser' class='btn p-x-2' disabled=disableUpdateBtn}}修改{{/button}}
+      {{#button id='removeUsers' class='btn p-x-2' disabled=disableRemoveBtn}}删除{{/button}}
     </div>
 </template>

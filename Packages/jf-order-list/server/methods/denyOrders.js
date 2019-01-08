@@ -17,12 +17,25 @@ export default function denyOrders(orderIds, options) {
 
   const collection = JF.collections.orders;
   orderIds.forEach(orderId => {
-    const ops = {
-      $set: {
-        status: 10
+    const order = collection.findOne({ _id: orderId });
+    if (order) {
+      if (Roles.userIsInRole(userId, ['bg','sh','admin'], order.orderOrgId)) {
+        if (order.status >= 0 && order.status < 4) {
+          const ops = {
+            $set: {
+              status: 10
+            }
+          };
+          collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+        } else {
+          result.code = 409;
+        }
+      } else {
+        result.code = 403;
       }
-    };
-    collection.update({ _id: orderId }, ops, OHIF.MongoUtils.writeCallback);
+    } else {
+      result.code = 404;
+    }
   });
 
   return result;

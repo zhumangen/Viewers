@@ -4,7 +4,7 @@ import { JF } from 'meteor/jf:core';
 Meteor.publish('studies', function(options) {
   const Studies = JF.collections.studies;
   const userId = this.userId;
-  const filter = { removed: false };
+  const filter = { status: { $gte: 0 }};
 
   if (JF.user.isSuperAdmin()) {
     return Studies.find(filter);

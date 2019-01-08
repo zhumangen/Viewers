@@ -70,6 +70,7 @@ Template.studylistResult.helpers({
 });
 
 Template.studylistResult.onCreated(() => {
+    JF.studylist.clearSelections();
     const instance = Template.instance();
     instance.subscribe('studies');
 

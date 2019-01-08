@@ -16,8 +16,8 @@ JF.user.hasQualifiedRoles = (type, roles) => {
   return false;
 }
 
-JF.user.hasAdminRoles = () => {
-  return Roles.getGroupsForUser(Meteor.user(), 'admin').length > 0;
+JF.user.hasAdminRoles = userId => {
+  return Roles.getGroupsForUser(userId?userId:Meteor.userId(), 'admin').length > 0;
 }
 
 JF.user.hasScpRoles = () => {
@@ -28,7 +28,7 @@ JF.user.hasScuRoles = () => {
   return JF.user.hasQualifiedRoles('SCU', ['admin', 'js']);
 }
 
-JF.user.hasRoles = roles => {
+JF.user.hasRoles = (roles, user) => {
   let result = false;
 
   if (!roles) return result;
@@ -37,23 +37,16 @@ JF.user.hasRoles = roles => {
     roles = [roles];
   }
 
-  result = true;
-  const allRoles = JF.user.getAllRoles();
-  roles.forEach(role => {
-    if (allRoles.indexOf(role) < 0) {
-      result = false;
-    }
-  });
-
-  return result;
+  const allRoles = JF.user.getAllRoles(user);
+  return _.intersection(roles, allRoles).length > 0;
 }
 
-JF.user.getAllRoles = () => {
+JF.user.getAllRoles = user => {
   const roles = [];
-  const user = Meteor.user();
+  user = user || Meteor.user();
   if (user && user.roles) {
     Object.keys(user.roles).forEach(gn => {
-      roles.push(user.roles[gn]);
+      roles = _.union(roles, user.roles[gn]);
     });
   }
 
@@ -65,3 +58,5 @@ JF.user.getAllGroups = role => {
 }
 
 Template.registerHelper('hasRoles', roles => JF.user.hasRoles(roles));
+Template.registerHelper('hasAdminRoles', userId => JF.user.hasAdminRoles(userId));
+Template.registerHelper('isSuperAdmin', userId => JF.user.isSuperAdmin(userId));
