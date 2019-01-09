@@ -4,16 +4,20 @@ import { JF } from 'meteor/jf:core';
 Meteor.publish('organizations', function(options) {
   const Organizations = JF.collections.organizations;
   const userId = this.userId;
-  const filter = { removed: false };
+  const filter = { status: { $gte: 0 }};
 
-  if (JF.user.isSuperAdmin()) {
-    return Organizations.find(filter);
+  const su = JF.user.isSuperAdmin();
+  let orgIds = [];
+  if (!su) {
+    orgIds = JF.user.getAdminGroupsForUser(userId);
   }
 
-  const orgIds = JF.user.getAdminGroupsForUser(userId);
   if (orgIds.length > 0) {
     filter.$or = [];
     orgIds.forEach(_id => filter.$or.push({ _id }));
+  }
+
+  if (orgIds.length > 0 || su) {
     return Organizations.find(filter);
   }
 

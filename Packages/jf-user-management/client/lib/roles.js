@@ -17,7 +17,8 @@ JF.user.hasQualifiedRoles = (type, roles) => {
 }
 
 JF.user.hasAdminRoles = userId => {
-  return Roles.getGroupsForUser(userId?userId:Meteor.userId(), 'admin').length > 0;
+  userId = userId || Meteor.userId();
+  return Roles.getGroupsForUser(userId, 'admin').length > 0;
 }
 
 JF.user.hasScpRoles = () => {

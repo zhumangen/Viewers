@@ -21,14 +21,51 @@ Meteor.methods({
   },
 
   removeOrganizations(orgIds, options) {
-    JF.validation.checks.checkNonEmptyStringArray(orgIds);
+    const result = { code: 200 };
+
+    if (!orgIds || !orgIds.length) {
+      result.code = 400;
+      return result;
+    }
+
+    const userId = this.userId;
+    if (!userId) {
+      result.code = 401;
+      return result;
+    }
+
+    const su = JF.user.isSuperAdmin();
+    if (!su) {
+      result.code = 403;
+      return result;
+    }
 
     const filter = { $or: [] };
     orgIds.forEach(_id => filter.$or.push({ _id }));
-    Organizations.update(filter, { $set: { removed: true }}, { multi: true }, OHIF.MongoUtils.writeCallback);
+    Organizations.update(filter, { $set: { status: -1 }}, { multi: true }, OHIF.MongoUtils.writeCallback);
+    return result;
   },
 
   storeOrganization(organization, options) {
+    const result = { code: 200 };
+
+    if (!organization) {
+      result.code = 400;
+      return result;
+    }
+
+    const userId = this.userId;
+    if (!userId) {
+      result.code = 401;
+      return result;
+    }
+
+    const su = JF.user.isSuperAdmin();
+    if (!su) {
+      result.code = 403;
+      return result;
+    }
+
     const query = {
       _id: organization._id
     };
@@ -36,12 +73,12 @@ Meteor.methods({
       // new organization
       delete organization._id;
       const t = new Date();
+      organization.status = 0;
       organization.serialNumber = '3' + t.getTime() + JF.utils.randomString();
       organization.createdAt = t;
-      organization.userId = Meteor.userId();
-      organization.removed = false;
+      organization.createdBy = userId;
     }
-
     Organizations.update(query, organization, { upsert: true }, OHIF.MongoUtils.writeCallback);
+    return result;
   }
 })

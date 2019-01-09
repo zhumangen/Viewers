@@ -1,0 +1,34 @@
+<template name="orgInfoModal">
+  {{#dialogForm (extend this id='orgInfoModal' dialogClass='modal-lg'
+      confirmLabel='确定' cancelLabel='取消' title='机构详细信息')}}
+      <div class="col-lg-6">
+        {{>inputText labelClass='form-group' key='serialNumber' label='流水号' disabled=true}}
+      </div>
+      <div class="col-lg-6">
+        {{>inputText labelClass='form-group' key='name' label='机构简称'}}
+      </div>
+      <div class="col-lg-6 fullName">
+        {{>inputText labelClass='form-group' key='fullName' label='机构全称'}}
+      </div>
+      <div class="col-lg-6">
+        {{>inputSelect labelClass='form-group' key='serverId' label='影像存储'}}
+      </div>
+      <div class="col-lg-6">
+        <strong>机构类型</strong>
+        <div class="form-group">
+          <div class="form-control">
+            <div class="checkbox">
+              {{>inputCheckbox key='SCU' label='医疗机构'}}
+              {{>inputCheckbox key='SCP' label='影像中心'}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        {{>inputSelect labelClass='form-group' key='orderOrgId' label='默认标注机构'}}
+      </div>
+      <div class="col-lg-6">
+        {{>inputSelect labelClass='form-group' key='lesionCode' label='默认标注类型'}}
+      </div>
+  {{/dialogForm}}
+</template>

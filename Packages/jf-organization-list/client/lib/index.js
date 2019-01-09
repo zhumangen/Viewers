@@ -1,6 +1,7 @@
 import './getSelectedOrganizations';
-import './viewOrganization';
-import './viewSelectedOrganization';
+import './updateOrganization';
+import './updateSelectedOrganization';
 import './removeOrganizations';
 import './removeSelectedOrganizations';
 import './helpers';
+import './orgInfoSchema';

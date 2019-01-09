@@ -36,7 +36,7 @@ Template.entrySignIn.helpers({
     }
   },
   getButtonText: function () {
-    return "Sign In";
+    return "登录";
     // if (ActiveEntry.errorMessages.get('signInError')){
     //   return ActiveEntry.errorMessages.get('signInError');
     // } else {

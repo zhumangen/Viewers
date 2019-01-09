@@ -1,4 +1,4 @@
 import './getUserName';
 import './reviewers';
-import './updateUserRoles';
+import './updateUser';
 import './removeUsers';

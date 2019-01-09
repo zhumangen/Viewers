@@ -1,6 +1,7 @@
 import { JF } from 'meteor/jf:core';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { OHIF } from 'meteor/ohif:core';
+import { _ } from 'meteor/underscore';
 
 Template.userInfoModal.onCreated(() => {
   const instance = Template.instance();
@@ -34,7 +35,15 @@ Template.userInfoModal.onCreated(() => {
     instance.groups.set(groups);
   });
 
-  instance.data.confirmDisabled = JF.user.isSuperAdmin(instance.data._id);
+  instance.data.confirmDisabled = () => {
+    if (!JF.user.isSuperAdmin()) {
+      const orgIds = JF.user.getAdminGroupsForUser(instance.data._id);
+      const _orgIds = JF.user.getAdminGroupsForUser(Meteor.userId());
+      return _.intersection(orgIds, _orgIds).length > 0;
+    }
+
+    return true;
+  }
 
   instance.data.confirmCallback = () => {
     const groups = instance.groups.get();
@@ -51,12 +60,19 @@ Template.userInfoModal.onCreated(() => {
       });
     });
 
-    return JF.user.updateUserRoles({ _id: instance.data._id, roles }).then(() => {
-      instance.data.message = '保存成功';
+    const user = {
+      _id: instance.data._id,
+      userId: userData.userId,
+      userName: userData.userName,
+      roles
+    }
+
+    return JF.user.updateUser(user).then(() => {
+      OHIF.ui.notification.success({ text: '保存成功' });
     }, error => {
-      instance.data.error = error;
+      OHIF.ui.notification.warning({ text: error });
     }).catch(error => {
-      instance.data.error = error;
+      OHIF.ui.notification.danger({ text: error });
     });
   };
 });

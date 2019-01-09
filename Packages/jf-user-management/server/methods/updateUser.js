@@ -3,9 +3,9 @@ import { JF } from 'meteor/jf:core';
 import { _ } from 'meteor/underscore';
 
 Meteor.methods({
-  updateUserRoles(user) {
+  updateUser(user) {
     const result = { code: 200, message: '' };
-    if (!user || !user._id || !user.roles) {
+    if (!user || !user.roles) {
       result.code = 400;
       return result;
     }
@@ -25,7 +25,22 @@ Meteor.methods({
       }
     }
 
-    Meteor.users.update({ _id: user._id }, { $set: { roles: user.roles }});
+    const ops = {
+      $set: {
+        'profile.fullName': user.userName,
+        roles: user.roles
+      }
+    };
+    if (!user._id) {
+      delete user._id;
+      const t = new Date();
+      ops.$set.services = { password: { bcrypt: '$2a$10$hb66tWlxx.rOCzANKD1gUeGEMBCtfuAR2wszckik47z4J6GQTFW1O', setDate: t }};
+      ops.$set.emails = [{ address: user.userId, verified: false }];
+      ops.$set.createdAt = t;
+      ops.$set.lastLoginDate = t;
+    }
+
+    Meteor.users.update({ _id: user._id }, ops, { upsert: true });
     return result;
   }
 });

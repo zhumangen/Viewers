@@ -1,8 +1,8 @@
 import { JF } from 'meteor/jf:core';
 
-JF.user.updateUserRoles = user => {
+JF.user.updateUser = user => {
   return new Promise((resolve, reject) => {
-    Meteor.call('updateUserRoles', user, (error, response) => {
+    Meteor.call('updateUser', user, (error, response) => {
       if (error) {
         reject(error);
       } else {
