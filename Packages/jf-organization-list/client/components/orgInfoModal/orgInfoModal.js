@@ -56,7 +56,10 @@ Template.orgInfoModal.onRendered(() => {
     instance.data.hasScuType.set(scuComponent.value());
   });
 
-  instance.data.form.value(instance.data.organization);
+  instance.autorun(() => {
+    instance.orderOrgItems.get();
+    Meteor.defer(() => instance.data.form.value(instance.data.organization));
+  });
 });
 
 Template.orgInfoModal.helpers({
