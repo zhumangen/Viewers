@@ -10,7 +10,7 @@ function createNewMeasurement () {
     isCreating: true,
     toolType: toolType,
     version: JF.managers.settings.systemVersion(),
-    lesionCode: JF.managers.settings.lesionCode(),
+    lesionCode: JF.viewer.data.order.lesionCode,
     orderId: JF.viewer.data.order._id,
     createdAt: new Date()
   };

@@ -19,7 +19,7 @@ Template.organizationlistToolbar.helpers({
 
 Template.organizationlistToolbar.events({
   'click #addOrg'(event, instance) {
-    JF.organizationlist.updateOrganization();
+    JF.organizationlist.updateOrganization({});
   },
   'click #updateOrg'(event, instance) {
     JF.organizationlist.updateSelectedOrganization();

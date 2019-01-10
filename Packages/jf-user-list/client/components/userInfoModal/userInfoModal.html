@@ -2,10 +2,10 @@
   {{#dialogForm (extend this id='userInfoModal' dialogClass='modal-lg'
       confirmLabel='确定' cancelLabel='取消' title='用户详细信息')}}
     <div class="col-lg-6">
-      {{>inputText labelClass='form-group' key='userId' label='用户ID' disabled=(bool _id)}}
+      {{>inputText labelClass='form-group' key='userId' disabled=(bool _id)}}
     </div>
     <div class="col-lg-6">
-      {{>inputText labelClass='form-group' key='userName' label='姓名'}}
+      {{>inputText labelClass='form-group' key='userName'}}
     </div>
     <table id="tblGroups" class="table">
       <thead>

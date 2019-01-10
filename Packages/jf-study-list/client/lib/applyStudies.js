@@ -10,12 +10,8 @@ JF.studylist.applyStudies = (studies, options) => {
   const promises = [];
   const total = studies.length;
   studies.forEach(study => {
-    const options2 = {
-      orderOrgId: options.applyOrgId,
-      lesionCode: options.lesionType
-    };
     const promise = new Promise((resolve, reject) => {
-      Meteor.call('applyStudies', [study], options2, (error, response) => {
+      Meteor.call('applyStudies', [study], options.applyData, (error, response) => {
         if (error) {
           reject(error);
         } else {
@@ -40,20 +36,16 @@ JF.studylist.applyStudiesProgress = studies => {
 
   // check permissions
   let msg;
+  let org;
   for (let study of studies) {
     const orgId = study.organizationId;
     if (!Roles.userIsInRole(Meteor.user(), 'js', orgId)) {
       msg = '未授权的操作！';
     }
-    if (!msg && !JF.user.isSuperAdmin()) {
+    if (!msg && !org) {
       const orgs = JF.organization.getLocalOrganizations.call(JF.organization.organizations, [orgId]);
       if (orgs.length > 0) {
-        const org = orgs[0];
-        if (!org.orderOrgId) {
-          msg = org.name + '未配置申请目标机构！';
-        } else if (!org.lesionCode) {
-          msg = org.name + '未配置申请目标标注类型！';
-        }
+        org = orgs[0];
       } else {
         // something went wrong, shouldn't be here.
         msg = '未找到的机构：' + orgId;
@@ -69,45 +61,35 @@ JF.studylist.applyStudiesProgress = studies => {
     }
   }
 
-  // apply options
-  let applyOrgs;
-  const lesionTypes = JF.lesiontracker.getLesionTypes();
-  const indexes = { orgIdx: 0, typeIdx: 0 };
-  let promise = JF.organization.retrieveOrganizations([], { type: 'SCP' }).then(orgs => {
-    applyOrgs = orgs.map(org => { return { value: org._id, label: org.name }; });
-  });
+  OHIF.ui.showDialog('applyStudyModal', {
+    applyInfo: {
+      orderOrgId: org.orderOrgId,
+      lesionCode: org.lesionCode
+    }
+  }).then(applyData => {
+    OHIF.ui.showDialog('dialogProgress', {
+      title: '正在处理申请...',
+      total: studies.length,
+      task: {
+        run: dialog => {
+          JF.studylist.applyStudies(studies, {
+            notify: stats => {
+              dialog.update(stats.processed);
+              dialog.setMessage(`已申请：${stats.processed} / ${stats.total}`);
+            },
+            applyData
+          }).then(() => {
+            dialog.done();
+          }, () => {
+            dialog.cancel();
+          }).catch(error => {
+            OHIF.log.error('There was an error applying studies.');
+            OHIF.log.error(error.stack);
 
-  promise.then(() => {
-    OHIF.ui.showDialog('applyStudyModal', {
-      applyOrgs,
-      lesionTypes,
-      indexes
-    }).then(() => {
-      OHIF.ui.showDialog('dialogProgress', {
-        title: '正在处理申请...',
-        total: studies.length,
-        task: {
-          run: dialog => {
-            JF.studylist.applyStudies(studies, {
-              notify: stats => {
-                dialog.update(stats.processed);
-                dialog.setMessage(`已申请：${stats.processed} / ${stats.total}`);
-              },
-              applyOrgId: applyOrgs[indexes.orgIdx].value,
-              lesionType: lesionTypes[indexes.typeIdx].value
-            }).then(() => {
-              dialog.done();
-            }, () => {
-              dialog.cancel();
-            }).catch(error => {
-              OHIF.log.error('There was an error applying studies.');
-              OHIF.log.error(error.stack);
-
-              OHIF.log.trace();
-            })
-          }
+            OHIF.log.trace();
+          })
         }
-      });
+      }
     });
   });
 }

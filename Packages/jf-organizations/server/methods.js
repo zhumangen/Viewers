@@ -5,7 +5,7 @@ import { Organizations } from 'meteor/jf:organizations/both/collections/organiza
 
 Meteor.methods({
   retrieveOrganizations(orgIds, options) {
-    const filter = {};
+    const filter = { status: { $gte: 0 }};
 
     if (options && options.type) {
       JF.validation.checks.checkNonEmptyString(options.type);
@@ -46,10 +46,10 @@ Meteor.methods({
     return result;
   },
 
-  storeOrganization(organization, options) {
+  storeOrganization(org, options) {
     const result = { code: 200 };
 
-    if (!organization) {
+    if (!org) {
       result.code = 400;
       return result;
     }
@@ -67,18 +67,32 @@ Meteor.methods({
     }
 
     const query = {
-      _id: organization._id
+      _id: org._id
     };
-    if (!organization._id) {
-      // new organization
-      delete organization._id;
-      const t = new Date();
-      organization.status = 0;
-      organization.serialNumber = '3' + t.getTime() + JF.utils.randomString();
-      organization.createdAt = t;
-      organization.createdBy = userId;
+    const ops = {
+      $set: {
+        name: org.name,
+        fullName: org.fullName,
+        serverId: org.serverId,
+        type: org.type,
+        qidoLevel: org.qidoLevel
+      }
+    };
+    if (org.orderOrgId) {
+      ops.$set.orderOrgId = org.orderOrgId;
     }
-    Organizations.update(query, organization, { upsert: true }, OHIF.MongoUtils.writeCallback);
+    if (org.lesionCode) {
+      ops.$set.lesionCode = org.lesionCode;
+    }
+    if (!org._id) {
+      // new organization
+      const t = new Date();
+      ops.$set.status = 0;
+      ops.$set.serialNumber = '3' + t.getTime() + JF.utils.randomString();
+      ops.$set.createdAt = t;
+      ops.$set.createdBy = userId;
+    }
+    Organizations.update(query, ops, { upsert: true }, OHIF.MongoUtils.writeCallback);
     return result;
   }
 })

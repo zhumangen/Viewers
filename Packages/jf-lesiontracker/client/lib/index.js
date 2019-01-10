@@ -11,4 +11,4 @@ import './toggleLesionTrackerTools.js';
 import './clearMeasurementTimepointData.js';
 import './configureTargetToolsHandles.js';
 
-import './getLesionTypes.js';
+import './getLesionCodes.js';

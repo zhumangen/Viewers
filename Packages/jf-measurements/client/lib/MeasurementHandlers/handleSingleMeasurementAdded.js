@@ -25,7 +25,7 @@ export default function ({ instance, eventData, tool }) {
         userId: Meteor.userId(),
         status: 0,
         version: JF.managers.settings.systemVersion(),
-        lesionCode: JF.managers.settings.lesionCode(),
+        lesionCode: JF.viewer.data.order.lesionCode,
         orderId: JF.viewer.data.order._id
     });
 

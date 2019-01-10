@@ -2,7 +2,7 @@ import { JF } from 'meteor/jf:core';
 import { _ } from 'meteor/underscore';
 import { measurementTools } from 'meteor/jf:lesiontracker/both/configuration/measurementTools';
 
-JF.lesiontracker.getLesionTypes = codes => {
+JF.lesiontracker.getLesionCodes = codes => {
   const toolId = measurementTools[0].id;
   const defs = JF.collections.definitions[toolId];
   const filter = {};

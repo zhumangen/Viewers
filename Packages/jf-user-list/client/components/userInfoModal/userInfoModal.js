@@ -2,6 +2,7 @@ import { JF } from 'meteor/jf:core';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { OHIF } from 'meteor/ohif:core';
 import { _ } from 'meteor/underscore';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 Template.userInfoModal.onCreated(() => {
   const instance = Template.instance();
@@ -35,19 +36,28 @@ Template.userInfoModal.onCreated(() => {
     instance.groups.set(groups);
   });
 
+  instance.data.schema = new SimpleSchema({
+    userId: {
+      type: String,
+      label: '用户ID'
+    },
+    userName: {
+      type: String,
+      label: '用户名'
+    }
+  })
+
   instance.data.confirmDisabled = () => {
-    if (!JF.user.isSuperAdmin()) {
+    if (!JF.user.isSuperAdmin() && instance.data._id) {
       const orgIds = JF.user.getAdminGroupsForUser(instance.data._id);
       const _orgIds = JF.user.getAdminGroupsForUser(Meteor.userId());
       return _.intersection(orgIds, _orgIds).length > 0;
     }
-
-    return true;
+    return false;
   }
 
-  instance.data.confirmCallback = () => {
+  instance.data.confirmCallback = userData => {
     const groups = instance.groups.get();
-    const userData = instance.data.form.value();
     const roles = {};
     groups.forEach(g => {
       Object.keys(g.perms).forEach(k => {
@@ -68,11 +78,11 @@ Template.userInfoModal.onCreated(() => {
     }
 
     return JF.user.updateUser(user).then(() => {
-      OHIF.ui.notification.success({ text: '保存成功' });
+      OHIF.ui.notifications.success({ text: '保存成功' });
     }, error => {
-      OHIF.ui.notification.warning({ text: error });
+      OHIF.ui.notifications.warning({ text: error });
     }).catch(error => {
-      OHIF.ui.notification.danger({ text: error });
+      OHIF.ui.notifications.danger({ text: error });
     });
   };
 });

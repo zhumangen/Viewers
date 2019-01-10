@@ -3,7 +3,7 @@
     id='applyStudyModal' dialogClass='modal-lg' confirmLabel='确定'
      cancelLabel='取消' title='检查申请'
   )}}
-    {{>inputSelect id='applyOrg' name='applyOrg' items=applyOrgs label='会诊中心'}}
-    {{>inputSelect id='lesionType' name='lesionType' items=lesionTypes label='会诊类型'}}
+    {{>inputSelect key='orderOrgId' items=applyOrgs}}
+    {{>inputSelect key='lesionCode' items=lesionCodes}}
   {{/dialogForm}}
 </template>

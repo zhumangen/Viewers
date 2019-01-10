@@ -35,7 +35,7 @@ Template.orderlistRow.helpers({
     }
   },
   lesionType() {
-    const types = JF.lesiontracker.getLesionTypes(this.lesionCode);
+    const types = JF.lesiontracker.getLesionCodes(this.lesionCode);
     if (types.length > 0) {
       return types[0].label;
     }
