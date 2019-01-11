@@ -9,7 +9,7 @@ Meteor.methods({
 
     if (options && options.type) {
       JF.validation.checks.checkNonEmptyString(options.type);
-      filter.type = options.type;
+      filter[`orgTypes.${options.type}`] = true;
     }
 
     if (orgIds && orgIds.length > 0) {
@@ -74,15 +74,20 @@ Meteor.methods({
         name: org.name,
         fullName: org.fullName,
         serverId: org.serverId,
-        type: org.type,
-        qidoLevel: org.qidoLevel
+        orgTypes: org.orgTypes
       }
     };
+    if (org.qidoLevel) {
+      ops.$set.qidoLevel = org.qidoLevel;
+    }
     if (org.orderOrgId) {
       ops.$set.orderOrgId = org.orderOrgId;
     }
     if (org.lesionCode) {
       ops.$set.lesionCode = org.lesionCode;
+    }
+    if (org.filters) {
+      ops.$set.filters = org.filters;
     }
     if (!org._id) {
       // new organization

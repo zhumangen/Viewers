@@ -1,7 +1,7 @@
 <template name="userGroupRow">
   <tr>
     <td>{{group.name}}</td>
-    <td>{{orgTypes group.type}}</td>
+    <td>{{orgTypes2Str group.orgTypes}}</td>
     <td>
       {{#form}}
         {{#group class='permissions' key='perms'}}

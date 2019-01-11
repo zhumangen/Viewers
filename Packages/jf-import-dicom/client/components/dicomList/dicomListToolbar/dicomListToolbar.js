@@ -12,15 +12,22 @@ function search(organization, dateRange, offset, callback) {
   Session.set('showLoadingText', true);
   Session.set('serverError', false);
 
-  const filter = Object.assign({}, organization.filter);
+  const filters = Object.assign({}, organization.filters);
   const level = organization.qidoLevel.toUpperCase();
-  const modality = filter.modality?filter.modality.toUpperCase():'';
-  filter.offset = offset;
+  const modalities = [];
+  if (filters.modalities) {
+    Object.keys(filters.modalities).forEach(k => {
+      if (filters.modalities[k]) {
+        modalities.push(k.toUpperCase());
+      }
+    });
+  }
+  filters.offset = offset;
 
   if (dateRange) {
     const dates = dateRange.replace(/ /g, '').split('-');
-    filter.studyDateFrom = dates[0];
-    filter.studyDateTo = dates[1];
+    filters.studyDateFrom = dates[0];
+    filters.studyDateTo = dates[1];
   }
 
   const callbackData = {
@@ -30,7 +37,7 @@ function search(organization, dateRange, offset, callback) {
     errorMsg: ''
   };
 
-  JF.studies.searchDicoms(organization.serverId, level, filter).then(result => {
+  JF.studies.searchDicoms(organization.serverId, level, filters).then(result => {
     OHIF.log.info('dicom list search finished')
     Session.set('showLoadingText', false);
     const dicoms = result.data;
@@ -38,7 +45,16 @@ function search(organization, dateRange, offset, callback) {
 
     if (_.isArray(dicoms)) {
       dicoms.forEach(dicom => {
-        if (!modality || dicom.modality.indexOf(modality) > -1 || (dicom.modalities && dicom.modalities.indexOf(modality) > -1)) {
+        let ok = true;
+        if (!modalities) {
+          ok = false;
+          modalities.forEach(m => {
+            if (dicom.modality.indexOf(m) > -1 || (dicom.modalities && dicom.modalities.indexOf(m) > -1)) {
+              ok = true;
+            }
+          });
+        }
+        if (ok) {
           dicom.numberOfStudyRelatedInstances = !isNaN(dicom.numberOfStudyRelatedInstances) ? parseInt(dicom.numberOfStudyRelatedInstances) : undefined;
           dicom.numberOfSeriesRelatedInstances = !isNaN(dicom.numberOfSSeriesRelatedInstances) ? parseInt(dicom.numberOfSSeriesRelatedInstances) : undefined;
           dicom.serverId = organization.serverId;

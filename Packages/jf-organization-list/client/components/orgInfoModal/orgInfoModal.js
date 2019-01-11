@@ -2,16 +2,15 @@ import { JF } from 'meteor/jf:core';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { OHIF } from 'meteor/ohif:core';
 import { _ } from 'meteor/underscore';
-import OrgInfoSchema from 'meteor/jf:organization-list/client/lib/orgInfoSchema.js';
+import { OrgInfoSchema, ScuOrgInfoSchema } from 'meteor/jf:organization-list/client/lib/orgInfoSchema.js';
 
 Template.orgInfoModal.onCreated(() => {
   const instance = Template.instance();
 
-  instance.data.schema = OrgInfoSchema;
-  instance.data.organization.SCU = instance.data.organization.type && instance.data.organization.type.indexOf('SCU') > -1;
-  instance.data.organization.SCP = instance.data.organization.type && instance.data.organization.type.indexOf('SCP') > -1;
-  instance.data.hasScuType = new ReactiveVar(instance.data.organization.SCU || false);
+  const scu = instance.data.organization.orgTypes?instance.data.organization.orgTypes.SCU:false;
+  instance.data.hasScuType = new ReactiveVar(scu);
   instance.orderOrgItems = new ReactiveVar([]);
+  instance.schema = new ReactiveVar(OrgInfoSchema);
   JF.organization.retrieveOrganizations([], { type: 'SCP' }).then(orgs => {
     instance.orderOrgItems.set(orgs.map(org => { return { value: org._id, label: org.name }; }));
   });
@@ -19,19 +18,6 @@ Template.orgInfoModal.onCreated(() => {
   instance.data.confirmCallback = formData => {
     const org = _.clone(formData);
     org._id = instance.data.organization._id;
-    org.type = [];
-
-    const checkOrgType = type => {
-      const idx = org.type.indexOf(type);
-      if (formData[type] && idx === -1) {
-        org.type.push(type);
-      }
-    }
-
-    checkOrgType('SCU');
-    checkOrgType('SCP');
-    delete org.SCU;
-    delete org.SCP;
 
     JF.organization.storeOrganization(org).then(() => {
       OHIF.ui.notifications.success({ text: '保存成功' });
@@ -50,10 +36,11 @@ Template.orgInfoModal.onRendered(() => {
   instance.data.form = instance.data.$form.data('component');
 
   instance.autorun(() => {
-    const scuComponent = instance.$('[data-key=SCU] :input').data('component');
+    const scuComponent = instance.$('[data-key="orgTypes.SCU"] :input').data('component');
     scuComponent.depend();
-
-    instance.data.hasScuType.set(scuComponent.value());
+    const hasScu = scuComponent.value();
+    instance.data.hasScuType.set(hasScu);
+    instance.schema.set(hasScu?ScuOrgInfoSchema:OrgInfoSchema);
   });
 
   instance.autorun(() => {

@@ -1,5 +1,5 @@
 <template name="orgInfoModal">
-  {{#dialogForm (extend this id='orgInfoModal' dialogClass='modal-lg'
+  {{#dialogForm (extend this id='orgInfoModal' schema=instance.schema dialogClass='modal-lg'
       confirmLabel='确定' cancelLabel='取消' title='机构详细信息')}}
       <div class="col-lg-6">
         {{>inputText labelClass='form-group' key='serialNumber' disabled=true}}
@@ -7,31 +7,72 @@
       <div class="col-lg-6">
         {{>inputText labelClass='form-group' key='name'}}
       </div>
-      <div class="col-lg-6">
-        <strong>机构类型</strong>
-        <div class="form-group">
-          <div class="form-control">
-            <div class="checkbox">
-              {{>inputCheckbox key='SCU'}}
-              {{>inputCheckbox key='SCP'}}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
+      <div class="col-lg-6 fullName">
         {{>inputText labelClass='form-group' key='fullName'}}
       </div>
       <div class="col-lg-6">
         {{>inputSelect labelClass='form-group' key='serverId' items=serverItems}}
       </div>
       <div class="col-lg-6">
-        {{>inputSelect labelClass='form-group' key='qidoLevel'}}
+        <strong>机构类型</strong>
+        {{#group key='orgTypes'}}
+          <div class="form-group">
+            <div class="form-control clearfix">
+              <div class="checkbox pull-left">
+                {{>inputCheckbox key='SCU'}}
+              </div>
+              <div class="checkbox pull-left">
+                {{>inputCheckbox key='SCP'}}
+              </div>
+            </div>
+          </div>
+        {{/group}}
       </div>
-      <div class="col-lg-6">
-        {{>inputSelect labelClass='form-group' key='orderOrgId' items=orderOrgItems disabled=(not (reactive hasScuType))}}
-      </div>
-      <div class="col-lg-6">
-        {{>inputSelect labelClass='form-group' key='lesionCode' items=lesionCodeItems disabled=(not (reactive hasScuType))}}
-      </div>
+      {{#if (reactive hasScuType)}}
+        <div class="col-lg-6">
+          {{>inputSelect labelClass='form-group' key='orderOrgId' items=orderOrgItems}}
+        </div>
+        <div class="col-lg-6">
+          {{>inputSelect labelClass='form-group' key='lesionCode' items=lesionCodeItems}}
+        </div>
+        <div class="col-lg-6">
+          {{>inputSelect labelClass='form-group' hideSearch=true key='qidoLevel'}}
+        </div>
+        {{#group key='filters'}}
+          <div class="col-lg-6">
+            {{>inputText labelClass='form-group' key='patientId'}}
+          </div>
+          <div class="col-lg-6">
+            {{>inputText labelClass='form-group' key='institutionName'}}
+          </div>
+          <div class="col-lg-6">
+            <strong>设备类型</strong>
+            {{#group key='modalities'}}
+              <div class="form-group">
+                <div class="form-control clearfix">
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='DX'}}
+                  </div>
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='DR'}}
+                  </div>
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='CR'}}
+                  </div>
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='CT'}}
+                  </div>
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='MR'}}
+                  </div>
+                  <div class="checkbox pull-left">
+                    {{>inputCheckbox key='US'}}
+                  </div>
+                </div>
+              </div>
+            {{/group}}
+          </div>
+        {{/group}}
+      {{/if}}
   {{/dialogForm}}
 </template>

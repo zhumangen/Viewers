@@ -1,7 +1,20 @@
 import { Template } from 'meteor/templating';
 
-Template.registerHelper('orgTypes', types => {
+Template.registerHelper('orgTypes2Str', types => {
   let typeStr = '';
-  types.forEach(t => typeStr += (t==='SCP')?'影像中心，':'医疗机构，');
-  return typeStr.substring(0, typeStr.length-1);
+  if (types) {
+    Object.keys(types).forEach(k => {
+      if (types[k]) {
+        switch (k) {
+          case 'SCU':
+            typeStr += '医疗机构，';
+            break;
+          case 'SCP':
+            typeStr += '影像中心，';
+            break;
+        }
+      }
+    });
+  }
+  return typeStr?typeStr.substring(0, typeStr.length-1):typeStr;
 });

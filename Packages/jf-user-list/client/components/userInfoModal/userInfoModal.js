@@ -21,7 +21,7 @@ Template.userInfoModal.onCreated(() => {
       const group = {
         _id: org._id,
         name: org.name,
-        type: org.type,
+        orgTypes: org.orgTypes,
         perms: {}
       };
       if (roles && roles[org._id]) {
