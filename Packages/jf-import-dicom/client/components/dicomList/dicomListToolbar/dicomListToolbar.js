@@ -97,7 +97,6 @@ function search(organization, dateRange, offset, callback) {
 
 Template.dicomListToolbar.onCreated(() => {
   const instance = Template.instance();
-  instance.items = new ReactiveVar([]);
   instance.dateRangeValue = new ReactiveVar('');
   instance.orgIndex = new ReactiveVar(0);
 
@@ -150,9 +149,9 @@ Template.dicomListToolbar.onRendered(() => {
 
     instance.organizations = orgs;
     const items = [];
-    _.each(orgs, org => items.push({value: org.name, label: org.name}));
-    instance.items.set(items);
-  })
+    _.each(orgs, org => items.push({value: org._id, label: org.name}));
+    instance.data.orgItems.set(items);
+  });
 
   instance.autorun(() => {
     const instance = Template.instance();

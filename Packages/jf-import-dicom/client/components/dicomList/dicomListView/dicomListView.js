@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
+import { _ } from 'meteor/underscore';
 
 Template.dicomListView.onCreated(() => {
   JF.dicomlist.clearSelections();
@@ -17,6 +18,8 @@ Template.dicomListView.onCreated(() => {
     total: new ReactiveVar(0),
     errorMsg: new ReactiveVar('')
   };
+
+  instance.orgItems = new ReactiveVar([]);
 
   instance.filterOptions = new ReactiveVar();
   instance.sortingColumns = new ReactiveVar({
@@ -81,12 +84,29 @@ Template.dicomListView.helpers({
         }
     });
     return sortingColumnsIcons;
+  },
+  statusItems() {
+    const items = [{
+      value: 0,
+      label: '未导入'
+    }, {
+      value: 1,
+      label: '已导入'
+    }];
+    items.unshift(JF.ui.selectNoneItem);
+    return items;
+  },
+  institutionItems() {
+    const orgItems = Template.instance().orgItems.get();
+    const items = _.clone(orgItems);
+    items.unshift(JF.ui.selectNoneItem);
+    return items;
   }
-})
+});
 
 Template.dicomListView.events({
   'change #status-select'(event, instance) {
     const index = event.currentTarget.options.selectedIndex;
 
   }
-})
+});

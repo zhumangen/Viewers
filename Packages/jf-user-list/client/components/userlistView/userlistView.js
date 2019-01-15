@@ -52,12 +52,12 @@ Template.userlistView.onRendered(() => {
 
     Object.assign(config, JF.ui.datePickerConfig);
     instance.userTimePicker = $userTime.daterangepicker(config).data('daterangepicker');
-})
+});
 
 Template.userlistView.onDestroyed(() => {
   const instance = Template.instance();
   instance.userTimePicker.remove();
-})
+});
 
 Template.userlistView.helpers({
   users() {
@@ -108,8 +108,11 @@ Template.userlistView.helpers({
         }
     });
     return sortingColumnsIcons;
+  },
+  orgNameItems() {
+    return JF.organization.getLocalOrgItems.call(JF.collections.organizations, []);
   }
-})
+});
 
 Template.userlistView.events({
   'show.daterangepicker #userTime'(event, instance) {
@@ -118,4 +121,4 @@ Template.userlistView.events({
   'cancel.daterangepicker #userTime'(event, instance) {
     $(event.currentTarget).val('');
   }
-})
+});

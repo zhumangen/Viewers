@@ -4,3 +4,4 @@ import './retrieveOrganizations';
 import './storeOrganization';
 import './removeOrganizations';
 import './getLocalOrganizations';
+import './getLocalOrgItems';

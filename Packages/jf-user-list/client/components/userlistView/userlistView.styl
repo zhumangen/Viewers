@@ -85,7 +85,7 @@ $bodyCellHeight = 40px
       tr
         th
           padding: 0
-          border-bottom: solid 1px #6fbde2
+          vertical-align: top
           width: 100%
 
           &.userId
@@ -126,7 +126,7 @@ $bodyCellHeight = 40px
             &.active, &:active
               theme('color', '$activeColor')
 
-          input.userlist-search
+          input.userlist-search, .select2-container
             height: 40px
             margin: 0 5px 20px 5px
             padding: 0 20px
@@ -148,6 +148,24 @@ $bodyCellHeight = 40px
 
             &:active, &:hover
               background-color: $inputBackgroundColor
+
+          label
+            margin: 0
+
+          .select2-container
+            padding: 0
+
+            .select2-selection
+              background-color: inherit
+              height: 40px
+
+              .select2-selection__rendered
+                color: $inputPlaceholderColor
+                height: 40px
+                line-height: 40px
+
+              .select2-selection__arrow
+                visibility: hidden
 
       ::-webkit-datetime-edit-year-field:not([aria-valuenow]),
       ::-webkit-datetime-edit-month-field:not([aria-valuenow]),

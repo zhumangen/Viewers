@@ -1,7 +1,7 @@
 <template name="applyStudyModal">
   {{#dialogForm (extend this
     id='applyStudyModal' dialogClass='modal-lg' confirmLabel='确定'
-     cancelLabel='取消' title='检查申请'
+     cancelLabel='取消' title='标注申请'
   )}}
     {{>inputSelect key='orderOrgId' items=applyOrgs}}
     {{>inputSelect key='lesionCode' items=lesionCodes}}

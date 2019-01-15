@@ -27,7 +27,11 @@ Template.applyStudyModal.onRendered(() => {
   const instance = Template.instance();
 
   instance.data.form = instance.$('form').first().data('component');
-  instance.data.form.value(instance.data.applyInfo);
+
+  instance.autorun(() => {
+    instance.applyOrgs.get();
+    Meteor.defer(() => instance.data.form.value(instance.data.applyInfo));
+  });
 });
 
 Template.applyStudyModal.helpers({

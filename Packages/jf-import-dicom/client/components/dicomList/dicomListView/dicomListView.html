@@ -2,7 +2,7 @@
     <div class="dicomListToolbar clearfix">
         <div class="header pull-left">导入列表</div>
         <div class="dicomCount pull-right">{{numberOfRecords}}</div>
-        <div class="pull-right">{{>dicomListToolbar paginationData=instance.paginationData statusData=instance.statusData}}</div>
+        <div class="pull-right">{{>dicomListToolbar paginationData=instance.paginationData statusData=instance.statusData orgItems=instance.orgItems}}</div>
     </div>
     <div class="theadBackground">
     </div>
@@ -15,101 +15,77 @@
                           <span>状态</span>
                           <i class="{{sortingColumnsIcons.status}}">&nbsp;</i>
                       </div>
-                      <select id="status-selector" class="form-control status-select">
-                        <option value="0">未导入</option>
-                        <option value="1">已导入</option>
-                      </select>
+                      {{>inputSelect id="status" class="form-control dicomList-search" items=statusItems placeholder='请选择' hideSearch=true}}
                   </th>
                     <th class="level">
                         <div id="_level" class="sortingCell">
                             <span>层级</span>
                             <i class="{{sortingColumnsIcons.qidoLevel}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="level">
+                        {{>inputSelect id="qidoLevel" class="form-control dicomList-search" items=qidoLevelItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="patientId">
                         <div id="_patientId" class="sortingCell">
                             <span>患者ID</span>
                             <i class="{{sortingColumnsIcons.patientId}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="patientId">
+                        {{>inputText id="patientId" class="form-control dicomList-search"}}
                     </th>
                     <th class="patientName">
                         <div id="_patientName" class="sortingCell">
                             <span>患者姓名</span>
                             <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="patientName">
+                        {{>inputText id="patientName" class="form-control dicomList-search"}}
                     </th>
                     <th class="patientSex">
                         <div id="_patientSex" class="sortingCell">
                             <span>性别</span>
                             <i class="{{sortingColumnsIcons.patientSex}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="patientSex">
+                        {{>inputSelect id="patientSex" class="form-control dicomList-search" items=patientSexItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="patientAge">
                         <div id="_patientAge" class="sortingCell ">
                             <span>年龄</span>
                             <i class="{{sortingColumnsIcons.patientAge}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="patientAge">
+                        {{>inputText id="patientAge" class="form-control dicomList-search"}}
                     </th>
                     <th class="dicomDate">
                         <div id="_dicomDate" class="sortingCell">
                             <span>检查时间</span>
                             <i class="{{sortingColumnsIcons.dicomDate}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               name="daterange"
-                               id="dicomDate">
+                        {{>inputText id="dicomDate" class="form-control dicomList-search"}}
                     </th>
                     <th class="institution">
                         <div id="_institution" class="sortingCell">
                             <span>机构名称</span>
                             <i class="{{sortingColumnsIcons.institution}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="institution">
+                        {{>inputSelect id="institution" class="form-control dicomList-search" items=institutionItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="modality">
                         <div id="_modality" class="sortingCell">
                             <span>类型</span>
                             <i class="{{sortingColumnsIcons.modality}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="modality">
+                        {{>inputSelect id="modality" class="form-control dicomList-search" items=modalityItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="bodyPart">
                         <div id="_bodyPart" class="sortingCell">
                             <span>部位</span>
                             <i class="{{sortingColumnsIcons.bodyPart}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="bodyPart">
+                        {{>inputText id="bodyPart" class="form-control dicomList-search"}}
                     </th>
                     <th class="description">
-                        <div id="_dicomDescription" class="sortingCell">
+                        <div id="_description" class="sortingCell">
                             <span>检查描述</span>
                             <i class="{{sortingColumnsIcons.description}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control dicomList-search"
-                               id="dicomDescription">
+                        {{>inputText id="description" class="form-control dicomList-search"}}
                     </th>
                 </tr>
             </thead>

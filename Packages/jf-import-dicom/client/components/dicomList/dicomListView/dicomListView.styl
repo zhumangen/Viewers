@@ -85,27 +85,10 @@ $bodyCellHeight = 40px
       tr
         th
           padding: 0
-          border-bottom: solid 1px #6fbde2
+          vertical-align: top
           width: 100%
 
-          &.status
-            width: 5%
-
-            .status-select
-              margin: 0 5px 20px 5px
-              height: 40px
-              cursor: pointer
-              border: none
-              background-color: #2c363f
-              color: #d3d3d3
-              font-size: 10pt
-              font-weight: normal
-              width: calc(100% - 10px)
-
-              option
-                padding: 10px 0
-
-          &.level, &.modality, &.bodyPart
+          &.status, &.level, &.modality, &.bodyPart
             width: 5%
 
           &.patientSex, &.patientAge
@@ -119,6 +102,9 @@ $bodyCellHeight = 40px
 
           &:last-child
             padding-right: $tablePadding
+
+          label
+            margin: 0
 
           div.sortingCell
             display: inline-block
@@ -143,7 +129,7 @@ $bodyCellHeight = 40px
             &.active, &:active
               theme('color', '$activeColor')
 
-          input.dicomList-search
+          input.dicomList-search, .select2-container
             height: 40px
             margin: 0 5px 20px 5px
             padding: 0 20px
@@ -165,6 +151,21 @@ $bodyCellHeight = 40px
 
             &:active, &:hover
               background-color: $inputBackgroundColor
+
+          .select2-container
+            padding: 0
+
+            .select2-selection
+              background-color: inherit
+              height: 40px
+
+              .select2-selection__rendered
+                color: $inputPlaceholderColor
+                height: 40px
+                line-height: 40px
+
+              .select2-selection__arrow
+                visibility: hidden
 
       ::-webkit-datetime-edit-year-field:not([aria-valuenow]),
       ::-webkit-datetime-edit-month-field:not([aria-valuenow]),

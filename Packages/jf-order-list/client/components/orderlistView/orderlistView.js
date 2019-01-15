@@ -121,6 +121,51 @@ Template.orderlistView.helpers({
         }
     });
     return sortingColumnsIcons;
+  },
+  statusItems() {
+    const items = [{
+      value: 0,
+      label: '待标注'
+    }, {
+      value: 1,
+      label: '标注中'
+    }, {
+      value: 2,
+      label: '待审核'
+    }, {
+      value: 3,
+      label: '审核中'
+    }, {
+      value: 4,
+      label: '已审核'
+    }];
+
+    if (Session.get('locationType') === 'SCU') {
+      items.splice(items.length, 0, {
+        value: 10,
+        label: '已拒绝'
+      }, {
+        value: 11,
+        label: '已撤回'
+      });
+    }
+
+    items.unshift(JF.ui.selectNoneItem);
+    return items;
+  },
+  lesionTypeItems() {
+    const items = JF.lesiontracker.getLesionCodes();
+    items.unshift(JF.ui.selectNoneItem);
+    return items;
+  },
+  institutionItems() {
+    return JF.organization.getLocalOrgItems.call(JF.organization.organizations, [], { type: 'SCU' });
+  },
+  reportPhyItems() {
+    return JF.user.getUserItems('bg');
+  },
+  reviewPhyItems() {
+    return JF.user.getUserItems('sh');
   }
 })
 

@@ -58,7 +58,7 @@ Template.orderlistToolbar.events({
     JF.orderlist.viewSelectedOrder();
   },
   'click #denyOrders'(event, instance) {
-    JF.orderlist.denySelectedOrders();
+    JF.orderlist.denySelectedOrders(event);
   },
   'click #cancelOrders'(event, instance) {
     JF.orderlist.cancelSelectedOrders(event);

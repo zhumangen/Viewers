@@ -15,46 +15,35 @@
                             <span>用户ID</span>
                             <i class="{{sortingColumnsIcons.userId}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control userlist-search"
-                               id="userId">
+                        {{>inputText id="userId" class="form-control userlist-search"}}
                     </th>
                     <th class="userName">
                         <div id="_userName" class="sortingCell">
                             <span>用户名</span>
                             <i class="{{sortingColumnsIcons.userName}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control userlist-search"
-                               id="userName">
+                        {{>inputText id="userName" class="form-control userlist-search"}}
                     </th>
                     <th class="userTime">
                         <div id="_userTime" class="sortingCell">
                             <span>创建时间</span>
                             <i class="{{sortingColumnsIcons.userTime}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control userlist-search"
-                               name="daterange"
-                               id="userTime">
+                        {{>inputText id="userTime" class="form-control userlist-search"}}
                     </th>
                     <th class="lastLogin">
                         <div id="_lastLogin" class="sortingCell">
                             <span>最近登录</span>
                             <i class="{{sortingColumnsIcons.lastLogin}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control userlist-search"
-                               id="lastLogin">
+                        {{>inputText id="lastLogin" class="form-control userlist-search"}}
                     </th>
                     <th class="userOrgs">
                         <div id="_userOrgs" class="sortingCell">
                             <span>所属机构</span>
                             <i class="{{sortingColumnsIcons.userOrgs}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control userlist-search"
-                               id="userOrgs">
+                        {{>inputSelect id="userOrgs" class="form-control userlist-search" items=orgNameItems placeholder='请选择'}}
                     </th>
                 </tr>
             </thead>

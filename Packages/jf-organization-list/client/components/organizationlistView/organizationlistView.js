@@ -107,6 +107,9 @@ Template.organizationlistView.helpers({
         }
     });
     return sortingColumnsIcons;
+  },
+  orgNameItems() {
+    return JF.organization.getLocalOrgItems.call(JF.collections.organizations, []);
   }
 })
 

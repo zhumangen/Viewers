@@ -1,3 +1,3 @@
 import './components';
-import './lib';
+import './ui';
 import './helpers';

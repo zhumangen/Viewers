@@ -66,6 +66,20 @@ Template.studylistResult.helpers({
             }
         });
         return sortingColumnsIcons;
+    },
+    statusItems() {
+      const items = [{
+        value: 0,
+        label: '未申请'
+      }, {
+        value: 1,
+        label: '已申请'
+      }];
+      items.unshift(JF.ui.selectNoneItem);
+      return items;
+    },
+    institutionItems() {
+      return JF.organization.getLocalOrgItems.call(JF.organization.organizations, [], { type: 'SCU' });
     }
 });
 

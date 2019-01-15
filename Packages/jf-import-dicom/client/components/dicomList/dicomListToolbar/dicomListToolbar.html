@@ -1,7 +1,7 @@
 <template name="dicomListToolbar">
   <div class='dicomlistToolbar'>
     <div class="filter-options">
-      {{>inputSelect id='organization' name='organization' items=instance.items options=(clone placeholder='请选择一个机构')}}
+      {{>inputSelect id='organization' name='organization' items=orgItems options=(clone placeholder='请选择一个机构')}}
       {{>inputText id='dicomDate' name='dateRange'}}
     </div>
     {{#button id='importStudies' class='btn p-x-2' disabled=disableImportBtn}}导入{{/button}}

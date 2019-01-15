@@ -15,132 +15,98 @@
                             <span>状态</span>
                             <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
                         </div>
-                        <select id="status-selector" class="form-control status-select">
-                            <option value="0">请选择</option>
-                            <option value="1">待标注</option>
-                            <option value="2">标注中</option>
-                            <option value="3">待审核</option>
-                            <option value="4">审核中</option>
-                            <option value="5">已审核</option>
-                        </select>
+                        {{>inputSelect id="status" class="form-control orderlist-search" items=statusItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="serialNumber">
                         <div id="_serialNumber" class="sortingCell ">
                             <span>流水号</span>
                             <i class="{{sortingColumnsIcons.serialNumber}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="serialNumber">
+                        {{>inputText id="serialNumber" class="form-control orderlist-search"}}
                     </th>
                     <th class="lesionType">
                         <div id="_lesionType" class="sortingCell ">
                             <span>标注类型</span>
                             <i class="{{sortingColumnsIcons.lesionType}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="lesionType">
+                        {{>inputSelect id="lesionType" class="form-control orderlist-search" items=lesionTypeItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="patientName">
                         <div id="_patientName" class="sortingCell">
                             <span>患者姓名</span>
                             <i class="{{sortingColumnsIcons.patientName}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="patientName">
+                        {{>inputText id="patientName" class="form-control orderlist-search"}}
                     </th>
                     <th class="patientSex">
                         <div id="_patientSex" class="sortingCell">
                             <span>性别</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="patientSex">
+                        {{>inputSelect id="patientSex" class="form-control orderlist-search" items=patientSexItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="patientAge">
                         <div id="_patientAge" class="sortingCell ">
                             <span>年龄</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="patientAge">
+                        {{>inputText id="patientAge" class="form-control orderlist-search"}}
                     </th>
                     <th class="modalities">
                         <div id="_modalities" class="sortingCell">
                             <span>类型</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="modality">
+                        {{>inputSelect id="modality" class="form-control orderlist-search" items=modalityItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="bodyPart">
                         <div id="_bodyPart" class="sortingCell">
                             <span>部位</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="bodyPart">
+                        {{>inputText id="bodyPart" class="form-control orderlist-search"}}
                     </th>
                     <th class="orderTime">
                         <div id="_orderTime" class="sortingCell">
                             <span>申请时间</span>
                             <i class="{{sortingColumnsIcons.orderTime}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               name="daterange"
-                               id="orderTime">
+                        {{>inputText id="orderTime" class="form-control orderlist-search"}}
                     </th>
                     <th class="institution">
                         <div id="_institution" class="sortingCell">
                             <span>申请机构</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="institution">
+                        {{>inputSelect id="institution" class="form-control orderlist-search" items=institutionItems placeholder='请选择'}}
                     </th>
                     <th class="reportPhyscian">
                         <div id="_reportPhyscian" class="sortingCell">
                             <span>标注医生</span>
                             <i class="{{sortingColumnsIcons.reportPhyscian}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="reportPhyscian">
+                        {{>inputSelect id="reportPhyscian" class="form-control orderlist-search" items=reportPhyItems placeholder='请选择'}}
                     </th>
                     <th class="reportTime">
                         <div id="_reportTime" class="sortingCell">
                             <span>标注时间</span>
                             <i class="{{sortingColumnsIcons.reportTime}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="reportTime">
+                        {{>inputText id="reportTime" class="form-control orderlist-search"}}
                     </th>
                     <th class="reviewPhyscian">
                         <div id="_reviewPhyscian" class="sortingCell">
                             <span>审核医生</span>
                             <i class="{{sortingColumnsIcons.reviewPhyscian}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="reviewPhyscian">
+                        {{>inputSelect id="reviewPhyscian" class="form-control orderlist-search" items=reviewPhyItems placeholder='请选择'}}
                     </th>
                     <th class="reviewTime">
                         <div id="_reviewTime" class="sortingCell">
                             <span>审核时间</span>
                             <i class="{{sortingColumnsIcons.reviewTime}}">&nbsp;</i>
                         </div>
-                        <input type="text"
-                               class="form-control orderlist-search"
-                               id="reviewTime">
+                        {{>inputText id="reviewTime" class="form-control orderlist-search"}}
                     </th>
                 </tr>
             </thead>

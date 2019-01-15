@@ -23,9 +23,12 @@ export default function endOrder(orderId, options) {
   if (order) {
     let ops;
     switch (order.status) {
+      case -1:
       case 0:
       case 2:
       case 4:
+      case 10:
+      case 11:
         result.code = 409;
         break;
       case 1:
