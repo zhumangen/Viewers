@@ -16,15 +16,6 @@ Template.dicomListRow.helpers({
   status() {
     return this.imported?'已导入':'未导入';
   },
-  dicomDate() {
-    return this.studyLevel? this.studyDate : this.seriesDate;
-  },
-  dicomTime() {
-    return this.studyLevel? this.studyTime : this.seriesTime;
-  },
-  description() {
-    return this.studyLevel? this.studyDescription : this.seriesDescription;
-  },
   statusClass() {
     return this.imported?'imported':'unimported';
   }

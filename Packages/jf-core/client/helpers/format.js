@@ -21,7 +21,7 @@ Template.registerHelper('formatPatientSex', context => {
   }
 });
 
-Template.registerHelper('formatPatientAge', (ageStr, birthStr, dateStr) => {
+Template.registerHelper('formatPatientAge', ageStr => {
     const result = '未知';
     if (ageStr) {
       const unit = ageStr.charAt(ageStr.length-1).toUpperCase();
@@ -40,23 +40,12 @@ Template.registerHelper('formatPatientAge', (ageStr, birthStr, dateStr) => {
           result = value + '天';
           break;
       }
-    } else {
-      const birth = moment(birthStr, 'YYYYMMDD');
-      const date = moment(dateStr, 'YYYYMMDD');
-      const year = date.get('year') - birth.get('year');
-      const month = date.get('month') - birth.get('month');
-      const week = date.get('week') - birth.get('week');
-      const day = date.get('date') - birth.get('date');
-      if (year > 0) {
-        result = year + '岁';
-      } else if (month > 0) {
-        result = month + '月';
-      } else if (week > 0) {
-        result = week + '周';
-      } else if (day > 0) {
-        result = day + '天';
-      }
     }
 
     return result;
-})
+});
+
+Template.registerHelper('formatDateTime', context => {
+  if (!context) return;
+  return moment(new Date(context)).format('YYYY/MM/DD HH:mm:ss');
+});

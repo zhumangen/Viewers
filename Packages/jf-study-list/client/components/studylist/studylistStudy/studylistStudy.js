@@ -18,15 +18,6 @@ Template.studylistStudy.helpers({
       default:
         return '';
     }
-  },
-  studyDate() {
-    return this.studyLevel? this.studyDate : this.seriesDate;
-  },
-  studyTime() {
-    return this.studyLevel? this.studyTime : this.seriesTime;
-  },
-  description() {
-    return this.studyLevel? this.studyDescription : this.seriesDescription;
   }
 });
 

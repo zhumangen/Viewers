@@ -16,16 +16,16 @@
             {{formatPatientSex patientSex}}
         </td>
         <td class="patientAge">
-            {{formatPatientAge patientAge patientBirthdate studyDate}}
+            {{formatPatientAge patientAge}}
         </td>
         <td class="modalities">
-            {{choose modality modalities}}
+            {{modalities}}
         </td>
         <td class="bodyPart">
             {{bodyPartExamined}}
         </td>
         <td class="orderTime">
-            {{dateToString orderTime ''}}
+            {{formatDateTime orderTime}}
         </td>
         <td class="institution">
             {{getOrganizationName studyOrgId}}
@@ -34,13 +34,13 @@
             {{getUserName reporterId}}
         </td>
         <td class="reportTime">
-            {{dateToString reportEnd ''}}
+            {{formatDateTime reportEnd}}
         </td>
         <td class="reviewPhyscian">
             {{getUserName reviewerId}}
         </td>
         <td class="reviewTime">
-            {{dateToString reviewEnd ''}}
+            {{formatDateTime reviewEnd}}
         </td>
     </tr>
 </template>

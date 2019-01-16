@@ -3,9 +3,11 @@ import { JF } from 'meteor/jf:core';
 import { _ } from 'meteor/underscore';
 
 Template.dicomListView.onCreated(() => {
-  JF.dicomlist.clearSelections();
   const instance = Template.instance();
 
+  JF.dicomlist.clearSelections();
+  JF.collections.importDicoms.remove({});
+  
   instance.paginationData = {
     class: 'dicomlist-pagination',
     currentPage: new ReactiveVar(0),

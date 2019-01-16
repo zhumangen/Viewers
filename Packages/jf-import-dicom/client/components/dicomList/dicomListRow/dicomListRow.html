@@ -16,16 +16,16 @@
             {{formatPatientSex patientSex}}
         </td>
         <td class="patientAge">
-            {{formatPatientAge patientAge patientBirthdate dicomDate}}
+            {{formatPatientAge patientAge}}
         </td>
         <td class="dicomDate">
-            {{concat (formatDA dicomDate) ' ' (formatTM dicomTime)}}
+            {{formatDateTime dicomTime}}
         </td>
         <td class="institution">
             {{institutionName}}
         </td>
         <td class="modality">
-            {{choose modality modalities}}
+            {{modalities}}
         </td>
         <td class="bodyPart">
             {{bodyPartExamined}}

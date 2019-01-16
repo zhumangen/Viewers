@@ -91,10 +91,10 @@ function resultDataToStudies(resultData) {
         studyId: DICOMWeb.getString(study['00200010']),
         numberOfStudyRelatedSeries: DICOMWeb.getString(study['00201206']),
         numberOfStudyRelatedInstances: DICOMWeb.getString(study['00201208']),
-        studyDescription: DICOMWeb.getString(study['00081030']),
+        description: DICOMWeb.getString(study['00081030']),
         institutionName: DICOMWeb.getString(study['00080080']),
         bodyPartExamined: DICOMWeb.getString(study['00180015']),
-        modality: DICOMWeb.getString(study['00080060']),
+        // modality: DICOMWeb.getString(study['00080060']),
         // modalitiesInStudy: DICOMWeb.getString(study['00080061']),
         modalities: DICOMWeb.getString(DICOMWeb.getModalities(study['00080060'], study['00080061']))
     }));

@@ -49,12 +49,22 @@ function search(organization, dateRange, offset, callback) {
         if (!modalities) {
           ok = false;
           modalities.forEach(m => {
-            if (dicom.modality.indexOf(m) > -1 || (dicom.modalities && dicom.modalities.indexOf(m) > -1)) {
+            if (dicom.modalities && dicom.modalities.indexOf(m) >= 0) {
               ok = true;
             }
           });
         }
         if (ok) {
+          dicom.patientAge = JF.dicomlist.getPatientAge(dicom.patientAge, dicom.patientBirthdate, dicom.seriesDate||dicom.studyDate);
+          delete dicom.patientBirthdate;
+          dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
+          delete dicom.studyDate;
+          delete dicom.studyTime;
+          if (level === 'SERIES') {
+            dicom.dicomTime = moment(dicom.seriesDate+dicom.seriesTime, 'YYYYMMDDHHmmss.SSS').toDate();
+            delete dicom.seriesDate;
+            delete dicom.seriesTime;
+          }
           dicom.numberOfStudyRelatedInstances = !isNaN(dicom.numberOfStudyRelatedInstances) ? parseInt(dicom.numberOfStudyRelatedInstances) : undefined;
           dicom.numberOfSeriesRelatedInstances = !isNaN(dicom.numberOfSSeriesRelatedInstances) ? parseInt(dicom.numberOfSSeriesRelatedInstances) : undefined;
           dicom.serverId = organization.serverId;

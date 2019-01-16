@@ -9,7 +9,6 @@ Template.orderlistView.onCreated(() => {
     instance.subscribe('orders', { type });
   });
 
-  instance.sortOptions = new ReactiveVar();
   instance.sortingColumns = new ReactiveDict();
   instance.filterOptions = new ReactiveDict();
 
@@ -28,7 +27,7 @@ Template.orderlistView.onCreated(() => {
     studyDescription: 0,
     modality: 0
   });
-})
+});
 
 Template.orderlistView.onRendered(() => {
   const instance = Template.instance();
@@ -60,14 +59,14 @@ Template.orderlistView.onRendered(() => {
     config.autoUpdateInput = false;
     instance.reportTimePicker = $reportTime.daterangepicker(config).data('daterangepicker');
     instance.reviewTimePicker = $reviewTime.daterangepicker(config).data('daterangepicker');
-})
+});
 
 Template.orderlistView.onDestroyed(() => {
   const instance = Template.instance();
   instance.orderTimePicker.remove();
   instance.reportTimePicker.remove();
   instance.reviewTimePicker.remove();
-})
+});
 
 Template.orderlistView.helpers({
   tableTitle() {
@@ -167,12 +166,24 @@ Template.orderlistView.helpers({
   reviewPhyItems() {
     return JF.user.getUserItems('sh');
   }
-})
+});
 
 Template.orderlistView.events({
-  'change #status-selector'(event, instance) {
-    const index = event.currentTarget.options.selectedIndex;
-    console.log(index);
+  'change #status'(event, instance) {
+    const comp = $(event.currentTarget).data('component');
+    console.log(comp.value());
+  },
+  'change #lesionType'(event, instance) {
+    const comp = $(event.currentTarget).data('component');
+    console.log(comp.value());
+  },
+  'change #patientSex'(event, instance) {
+    const comp = $(event.currentTarget).data('component');
+    console.log(comp.value());
+  },
+  'change #institution'(event, instance) {
+    const comp = $(event.currentTarget).data('component');
+    console.log(comp.value());
   },
   'show.daterangepicker #reportTime'(event, instance) {
     instance.reportTimePicker.autoUpdateInput = true;
@@ -183,4 +194,4 @@ Template.orderlistView.events({
   'cancel.daterangepicker #reportTime, cancel.daterangepicker #reviewTime'(event, instance) {
     $(event.currentTarget).val('');
   }
-})
+});
