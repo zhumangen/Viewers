@@ -6,6 +6,10 @@ Meteor.publish('studies', function(options) {
   const userId = this.userId;
   const filter = { status: { $gte: 0 }};
 
+  if (options.filter) {
+    Object.assign(filter, options.filter);
+  }
+
   if (JF.user.isSuperAdmin()) {
     return Studies.find(filter);
   }

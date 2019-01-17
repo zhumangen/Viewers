@@ -31,6 +31,7 @@ export default function applyStudies(studies, options) {
       orderOrgId: options.orderOrgId,
       lesionCode: options.lesionCode,
       dicomId: study._id,
+      accessionNumber: study.accessionNumber,
       patientName: study.patientName,
       patientSex: study.patientSex,
       patientAge: study.patientAge,

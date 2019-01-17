@@ -1,16 +1,20 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
+import { ReactiveVar } from 'meteor/reactive-var';
 
 Template.orderlistView.onCreated(() => {
   JF.orderlist.clearSelections();
+
   const instance = Template.instance();
+  instance.sortOption = new ReactiveVar({ orderTime: -1 });
+  instance.filterOptions = new ReactiveVar({});
+  instance.orderFilter = new ReactiveVar({});
+
   instance.autorun(() => {
     const type = Session.get('locationType');
-    instance.subscribe('orders', { type });
+    const filter = instance.orderFilter.get();
+    instance.subscribe('orders', { type, filter });
   });
-
-  instance.sortingColumns = new ReactiveDict();
-  instance.filterOptions = new ReactiveDict();
 
   instance.paginationData = {
     class: 'orderlist-pagination',
@@ -19,53 +23,61 @@ Template.orderlistView.onCreated(() => {
     recordCount: new ReactiveVar(0)
   };
 
-  instance.sortingColumns.set({
-    patientName: 1,
-    studyDate: 1,
-    patientId: 0,
-    serialNumber: 0,
-    studyDescription: 0,
-    modality: 0
+  instance.autorun(() => {
+    const orders = JF.collections.orders.find({}, { fields: { studyOrgId: 1, reporterId: 1, reviewerId: 1 }});
+    const orgIds = {};
+    const userIds = {};
+    orders.forEach(o => {
+      orgIds[o.studyOrgId] = 1;
+      userIds[o.reporterId] = 1;
+      userIds[o.reviewerId] = 1;
+    });
+    Object.keys(orgIds).forEach(id => JF.organization.getOrganization(id));
+    Object.keys(userIds).forEach(id => {
+      if (id != 'undefined' && id != 'null') {
+        JF.user.getUser(id);
+      }
+    });
   });
 });
 
 Template.orderlistView.onRendered(() => {
   const instance = Template.instance();
 
-    // Initialize daterangepicker
-    const today = moment();
-    const lastWeek = moment().subtract(1, 'week');
-    const lastMonth = moment().subtract(1, 'month');
-    const lastThreeMonth = moment().subtract(3, 'month');
-    const $orderTime = instance.$('#orderTime');
-    const $reportTime = instance.$('#reportTime');
-    const $reviewTime = instance.$('#reviewTime');
+  // Initialize daterangepicker
+  const today = moment();
+  const lastWeek = moment().subtract(1, 'week');
+  const lastMonth = moment().subtract(1, 'month');
+  const lastThreeMonth = moment().subtract(3, 'month');
+  const $orderTime = instance.$('#orderTime');
+  const $reportEnd = instance.$('#reportEnd');
+  const $reviewEnd = instance.$('#reviewEnd');
 
-    const config = {
-      maxDate: today,
-      autoUpdateInput: true,
-      startDate: lastWeek,
-      endDate: today,
-      ranges: {
-        '今天': [today, today],
-        '最近一周': [lastWeek, today],
-        '最近一月': [lastMonth, today],
-        '最近三月': [lastThreeMonth, today]
-      }
-    };
+  const config = {
+    maxDate: today,
+    autoUpdateInput: true,
+    startDate: lastWeek,
+    endDate: today,
+    ranges: {
+      '今天': [today, today],
+      '最近一周': [lastWeek, today],
+      '最近一月': [lastMonth, today],
+      '最近三月': [lastThreeMonth, today]
+    }
+  };
 
-    Object.assign(config, JF.ui.datePickerConfig);
-    instance.orderTimePicker = $orderTime.daterangepicker(config).data('daterangepicker');
-    config.autoUpdateInput = false;
-    instance.reportTimePicker = $reportTime.daterangepicker(config).data('daterangepicker');
-    instance.reviewTimePicker = $reviewTime.daterangepicker(config).data('daterangepicker');
+  Object.assign(config, JF.ui.datePickerConfig);
+  instance.orderTimePicker = $orderTime.daterangepicker(config).data('daterangepicker');
+  config.autoUpdateInput = false;
+  instance.reportEndPicker = $reportEnd.daterangepicker(config).data('daterangepicker');
+  instance.reviewEndPicker = $reviewEnd.daterangepicker(config).data('daterangepicker');
 });
 
 Template.orderlistView.onDestroyed(() => {
   const instance = Template.instance();
   instance.orderTimePicker.remove();
-  instance.reportTimePicker.remove();
-  instance.reviewTimePicker.remove();
+  instance.reportEndPicker.remove();
+  instance.reviewEndPicker.remove();
 });
 
 Template.orderlistView.helpers({
@@ -75,10 +87,8 @@ Template.orderlistView.helpers({
   orders() {
     const instance = Template.instance();
     let orders;
-    let sortOption = {
-        patientName: 1,
-        orderTime: 1
-    };
+    let sortOption = instance.sortOption.get();
+    let filterOptions = instance.filterOptions.get();
 
     // Pagination parameters
     const rowsPerPage = instance.paginationData.rowsPerPage.get();
@@ -86,7 +96,7 @@ Template.orderlistView.helpers({
     const offset = rowsPerPage * currentPage;
     const limit = offset + rowsPerPage;
 
-    orders = JF.collections.orders.find({}, {
+    orders = JF.collections.orders.find(filterOptions, {
         sort: sortOption
     }).fetch();
 
@@ -106,20 +116,32 @@ Template.orderlistView.helpers({
   sortingColumnsIcons() {
     const instance = Template.instance();
 
-    let sortingColumnsIcons = {};
-    Object.keys(instance.sortingColumns.keys).forEach(key => {
-        const value = instance.sortingColumns.get(key);
-
+    let sortIcons = {
+      status: 'fa fa-fw',
+      serialNumber: 'fa fa-fw',
+      lesionCode: 'fa fa-fw',
+      patientName: 'fa fa-fw',
+      patientSex: 'fa fa-fw',
+      patientAge: 'fa fa-fw',
+      modalities: 'fa fa-fw',
+      bodyPartExamined: 'fa fa-fw',
+      orderTime: 'fa fa-fw',
+      studyOrgId: 'fa fa-fw',
+      reporterId: 'fa fa-fw',
+      reportEnd: 'fa fa-fw',
+      reviewerId: 'fa fa-fw',
+      reviewEnd: 'fa fa-fw'
+    };
+    const sortOption = instance.sortOption.get();
+    Object.keys(sortOption).forEach(key => {
+        const value = sortOption[key];
         if (value === 1) {
-            sortingColumnsIcons[key] = 'fa fa-fw fa-sort-up';
+            sortIcons[key] = 'fa fa-fw fa-sort-up';
         } else if (value === -1) {
-            sortingColumnsIcons[key] = 'fa fa-fw fa-sort-down';
-        } else {
-            // fa-fw is blank
-            sortingColumnsIcons[key] = 'fa fa-fw';
+            sortIcons[key] = 'fa fa-fw fa-sort-down';
         }
     });
-    return sortingColumnsIcons;
+    return sortIcons;
   },
   statusItems() {
     const items = [{
@@ -152,12 +174,12 @@ Template.orderlistView.helpers({
     items.unshift(JF.ui.selectNoneItem);
     return items;
   },
-  lesionTypeItems() {
+  lesionCodeItems() {
     const items = JF.lesiontracker.getLesionCodes();
     items.unshift(JF.ui.selectNoneItem);
     return items;
   },
-  institutionItems() {
+  studyOrgItems() {
     return JF.organization.getLocalOrgItems.call(JF.organization.organizations, [], { type: 'SCU' });
   },
   reportPhyItems() {
@@ -169,29 +191,80 @@ Template.orderlistView.helpers({
 });
 
 Template.orderlistView.events({
-  'change #status'(event, instance) {
+  'change input, keydown input, change select'(event, instance) {
+    if (event.type === 'keydown' && event.which !== 13) {
+      return;
+    }
+
     const comp = $(event.currentTarget).data('component');
-    console.log(comp.value());
+    const value = comp.value();
+    const id = event.currentTarget.id;
+    const filterOptions = instance.filterOptions.get();
+
+    if (value && value !== 'none') {
+      switch (id) {
+        case 'status':
+          value = parseInt(value);
+        case 'lesionCode':
+        case 'patientSex':
+        case 'studyOrgId':
+        case 'reporterId':
+        case 'reviewerId':
+          filterOptions[id] = value;
+          break;
+        case 'serialNumber':
+        case 'patientName':
+        case 'patientAge':
+        case 'bodyPartExamined':
+        case 'modalities':
+          filterOptions[id] = { $regex: value };
+          break;
+        case 'orderTime':
+        case 'reportEnd':
+        case 'reviewEnd':
+          const ranges = value.split('-');
+          if (ranges.length === 2) {
+            const start = new Date(ranges[0] + ' 00:00:00');
+            const end = new Date(ranges[1] + ' 23:59:59');
+            const val = { $gte: start, $lte: end };
+            if (id === 'orderTime') {
+              const filter = instance.orderFilter.get();
+              filter[id] = val;
+              instance.orderFilter.set(filter);
+            } else {
+              filterOptions[id] = val;
+            }
+          }
+          break;
+      }
+
+      instance.paginationData.currentPage.set(0);
+    } else {
+      delete filterOptions[id];
+    }
+
+    instance.filterOptions.set(filterOptions);
   },
-  'change #lesionType'(event, instance) {
-    const comp = $(event.currentTarget).data('component');
-    console.log(comp.value());
+  'show.daterangepicker #reportEnd'(event, instance) {
+    instance.reportEndPicker.autoUpdateInput = true;
   },
-  'change #patientSex'(event, instance) {
-    const comp = $(event.currentTarget).data('component');
-    console.log(comp.value());
+  'show.daterangepicker #reviewEnd'(event, instance) {
+    instance.reviewEndPicker.autoUpdateInput = true;
   },
-  'change #institution'(event, instance) {
-    const comp = $(event.currentTarget).data('component');
-    console.log(comp.value());
-  },
-  'show.daterangepicker #reportTime'(event, instance) {
-    instance.reportTimePicker.autoUpdateInput = true;
-  },
-  'show.daterangepicker #reviewTime'(event, instance) {
-    instance.reviewTimePicker.autoUpdateInput = true;
-  },
-  'cancel.daterangepicker #reportTime, cancel.daterangepicker #reviewTime'(event, instance) {
+  'cancel.daterangepicker #reportEnd, cancel.daterangepicker #reviewEnd'(event, instance) {
     $(event.currentTarget).val('');
+    const id = event.currentTarget.id;
+    const filterOptions = instance.filterOptions.get();
+    delete filterOptions[id];
+    instance.filterOptions.set(filterOptions);
+  },
+  'click div.sortingCell'(event, instance) {
+    const eleId = event.currentTarget.id;
+    const id = eleId.replace('_', '');
+    let sortOption = instance.sortOption.get();
+    const value = sortOption[id]? (sortOption[id] * -1) : 1;
+    sortOption = {};
+    sortOption[id] = value;
+    instance.sortOption.set(sortOption);
   }
 });

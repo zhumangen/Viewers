@@ -1,14 +1,6 @@
 import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 
-Template.orderlistRow.onCreated(() => {
-
-});
-
-Template.orderlistRow.onRendered(() => {
-
-});
-
 Template.orderlistRow.helpers({
   selected() {
     return JF.ui.rowSelect.isRowSelected.call(JF.orderlist, this._id);
@@ -33,54 +25,44 @@ Template.orderlistRow.helpers({
       case 11:
         return '已撤回';
     }
-  },
-  lesionType() {
-    const types = JF.lesiontracker.getLesionCodes(this.lesionCode);
-    if (types.length > 0) {
-      return types[0].label;
-    }
-    return '';
-  },
-  studyDate() {
-    return this.qidoLevel === 'STUDY'? this.studyDate : this.seriesDate;
   }
 });
 
 Template.orderlistRow.events({
   'click tr.orderlistRow'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
+    const $studyRow = $(event.currentTarget);
+    const rowId = instance.data._id;
 
-        if (event.shiftKey) {
-            JF.ui.rowSelect.handleShiftClick.call(JF.orderlist, $studyRow, { rowId });
-        } else if (event.ctrlKey || event.metaKey) {
-            JF.ui.rowSelect.handleCtrlClick.call(JF.orderlist, $studyRow, { rowId });
-        } else {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.orderlist, $studyRow, { rowId });
-        }
-    },
-
-    'mousedown tr.orderlistRow'(event, instance) {
-        // This event handler is meant to handle middle-click on a study
-        if (event.which !== 2) {
-            return;
-        }
-
-        const middleClickOnStudy = JF.orderlist.callbacks.middleClickOnStudy;
-        if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
-            middleClickOnStudy(instance.data);
-        }
-    },
-
-    'dblclick tr.orderlistRow, doubletap tr.orderlistRow'(event, instance) {
-        if (event.which !== undefined && event.which !== 1) {
-            return;
-        }
-
-        const dblClickOnStudy = JF.orderlist.callbacks.dblClickOnStudy;
-
-        if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
-            dblClickOnStudy(instance.data);
-        }
+    if (event.shiftKey) {
+        JF.ui.rowSelect.handleShiftClick.call(JF.orderlist, $studyRow, { rowId });
+    } else if (event.ctrlKey || event.metaKey) {
+        JF.ui.rowSelect.handleCtrlClick.call(JF.orderlist, $studyRow, { rowId });
+    } else {
+        JF.ui.rowSelect.doSelectSingleRow.call(JF.orderlist, $studyRow, { rowId });
     }
+  },
+
+  'mousedown tr.orderlistRow'(event, instance) {
+    // This event handler is meant to handle middle-click on a study
+    if (event.which !== 2) {
+      return;
+    }
+
+    const middleClickOnStudy = JF.orderlist.callbacks.middleClickOnStudy;
+    if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
+      middleClickOnStudy(instance.data);
+    }
+  },
+
+  'dblclick tr.orderlistRow, doubletap tr.orderlistRow'(event, instance) {
+    if (event.which !== undefined && event.which !== 1) {
+      return;
+    }
+
+    const dblClickOnStudy = JF.orderlist.callbacks.dblClickOnStudy;
+
+    if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
+      dblClickOnStudy(instance.data);
+    }
+  }
 });

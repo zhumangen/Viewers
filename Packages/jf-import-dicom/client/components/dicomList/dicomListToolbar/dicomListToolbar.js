@@ -55,6 +55,7 @@ function search(organization, dateRange, offset, callback) {
           });
         }
         if (ok) {
+          if (_.isString(dicom.patientSex)) dicom.patientSex = dicom.patientSex.toUpperCase();
           dicom.patientAge = JF.dicomlist.getPatientAge(dicom.patientAge, dicom.patientBirthdate, dicom.seriesDate||dicom.studyDate);
           delete dicom.patientBirthdate;
           dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
@@ -70,6 +71,7 @@ function search(organization, dateRange, offset, callback) {
           dicom.serverId = organization.serverId;
           dicom.qidoLevel = level;
           dicom.organizationId = organization._id;
+          dicom.status = 0;
           Tracker.nonreactive(() => {
             JF.collections.importDicoms.insert(dicom);
           });

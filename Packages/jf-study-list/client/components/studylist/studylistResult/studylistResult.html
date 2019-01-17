@@ -13,7 +13,7 @@
                     <th class="status">
                         <div id="_status" class="sortingCell">
                             <span>状态</span>
-                            <i class="{{sortingColumnsIcons.default}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.status}}">&nbsp;</i>
                         </div>
                         {{>inputSelect id="status" class="form-control studylist-search" items=statusItems placeholder='请选择' hideSearch=true}}
                     </th>
@@ -34,51 +34,51 @@
                     <th class="patientSex">
                         <div id="_patientSex" class="sortingCell">
                             <span>性别</span>
-                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.patientSex}}">&nbsp;</i>
                         </div>
                         {{>inputSelect id="patientSex" class="form-control studylist-search" items=patientSexItems placeholder='请选择' hideSearch=true}}
                     </th>
                     <th class="patientAge">
                         <div id="_patientAge" class="sortingCell ">
                             <span>年龄</span>
-                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.patientAge}}">&nbsp;</i>
                         </div>
                         {{>inputText id="patientAge" class="form-control studylist-search"}}
                     </th>
-                    <th class="studyDate">
-                        <div id="_studyDate" class="sortingCell">
+                    <th class="dicomTime">
+                        <div id="_dicomTime" class="sortingCell">
                             <span>检查时间</span>
-                            <i class="{{sortingColumnsIcons.studyDate}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.dicomTime}}">&nbsp;</i>
                         </div>
-                        {{>inputText id="studyDate" class="form-control studylist-search"}}
+                        {{>inputText id="dicomTime" class="form-control studylist-search"}}
                     </th>
-                    <th class="institution">
-                        <div id="_institution" class="sortingCell">
+                    <th class="organizationId">
+                        <div id="_organizationId" class="sortingCell">
                             <span>机构名称</span>
-                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.organizationId}}">&nbsp;</i>
                         </div>
-                        {{>inputSelect id="institution" class="form-control studylist-search" items=institutionItems placeholder='请选择'}}
+                        {{>inputSelect id="organizationId" class="form-control studylist-search" items=orgItems placeholder='请选择'}}
                     </th>
                     <th class="modalities">
                         <div id="_modalities" class="sortingCell">
-                            <span>类型</span>
+                            <span>设备</span>
                             <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
                         </div>
-                        {{>inputSelect id="modality" class="form-control studylist-search" items=modalityItems placeholder='请选择' hideSearch=true}}
+                        {{>inputSelect id="modalities" class="form-control studylist-search" items=modalityItems placeholder='请选择' hideSearch=true}}
                     </th>
-                    <th class="bodyPart">
-                        <div id="_bodyPart" class="sortingCell">
+                    <th class="bodyPartExamined">
+                        <div id="_bodyPartExamined" class="sortingCell">
                             <span>部位</span>
-                            <i class="{{sortingColumnsIcons.modalities}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.bodyPartExamined}}">&nbsp;</i>
                         </div>
-                        {{>inputText id="bodyPart" class="form-control studylist-search"}}
+                        {{>inputText id="bodyPartExamined" class="form-control studylist-search"}}
                     </th>
-                    <th class="studyDescription">
-                        <div id="_studyDescription" class="sortingCell">
+                    <th class="description">
+                        <div id="_description" class="sortingCell">
                             <span>检查描述</span>
-                            <i class="{{sortingColumnsIcons.studyDescription}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.description}}">&nbsp;</i>
                         </div>
-                        {{>inputText id="studyDescription" class="form-control studylist-search"}}
+                        {{>inputText id="description" class="form-control studylist-search"}}
                     </th>
                 </tr>
             </thead>

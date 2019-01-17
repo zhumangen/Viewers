@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { measurementTools } from 'meteor/jf:lesiontracker/both/configuration/measurementTools';
 
@@ -16,3 +17,8 @@ JF.lesiontracker.getLesionCodes = codes => {
   const ts = defs.find(filter).fetch();
   return ts.map(t => { return { value: t.code, label: t.name.zh}; });
 }
+
+Template.registerHelper('getLesionName', code => {
+  const types = JF.lesiontracker.getLesionCodes(code);
+  return types.length>0?types[0].label:'';
+});

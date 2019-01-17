@@ -86,7 +86,7 @@ function resultDataToSeries(resultData) {
         referringPhysicianName: DICOMWeb.getString(series['00080090']),
         // 00081190 = URL
         patientName: DICOMWeb.getName(series['00100010']),
-        // patientId: DICOMWeb.getString(series['00100020']),
+        patientId: DICOMWeb.getString(series['00100020']),
         patientBirthdate: DICOMWeb.getString(series['00100030']),
         patientSex: DICOMWeb.getString(series['00100040']),
         studyId: DICOMWeb.getString(series['00200010']),

@@ -2,95 +2,98 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { moment } from 'meteor/momentjs:moment';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
+import { _ } from 'meteor/underscore';
 
 Template.studylistResult.helpers({
-    /**
-     * Returns a ascending sorted instance of the Studies Collection by Patient name and Study Date
-     */
-    studies() {
-        const instance = Template.instance();
-        let studies;
-        let sortOption = {
-            patientName: 1,
-            studyDate: 1
-        };
+  studies() {
+    const instance = Template.instance();
+    let studies;
 
-        // Update sort option if session is defined
-        if (Session.get('sortOption')) {
-            sortOption = Session.get('sortOption');
-        }
+    let sortOption = instance.sortOption.get();
+    let filterOptions = instance.filterOptions.get();
 
-        // Pagination parameters
-        const rowsPerPage = instance.paginationData.rowsPerPage.get();
-        const currentPage = instance.paginationData.currentPage.get();
-        const offset = rowsPerPage * currentPage;
-        const limit = offset + rowsPerPage;
+    // Pagination parameters
+    const rowsPerPage = instance.paginationData.rowsPerPage.get();
+    const currentPage = instance.paginationData.currentPage.get();
+    const offset = rowsPerPage * currentPage;
+    const limit = offset + rowsPerPage;
 
-        studies = JF.collections.studies.find({}, {
-            sort: sortOption
-        }).fetch();
+    studies = JF.collections.studies.find(filterOptions, {
+        sort: sortOption
+    }).fetch();
 
-        if (!studies) {
-            return;
-        }
-
-        // Update record count
-        instance.paginationData.recordCount.set(studies.length);
-
-        // Limit studies
-        return studies.slice(offset, limit);
-    },
-
-    numberOfStudies() {
-        return Template.instance().paginationData.recordCount.get();
-    },
-
-    sortingColumnsIcons() {
-        const instance = Template.instance();
-
-        let sortingColumnsIcons = {};
-        Object.keys(instance.sortingColumns.keys).forEach(key => {
-            const value = instance.sortingColumns.get(key);
-
-            if (value === 1) {
-                sortingColumnsIcons[key] = 'fa fa-fw fa-sort-up';
-            } else if (value === -1) {
-                sortingColumnsIcons[key] = 'fa fa-fw fa-sort-down';
-            } else {
-                // fa-fw is blank
-                sortingColumnsIcons[key] = 'fa fa-fw';
-            }
-        });
-        return sortingColumnsIcons;
-    },
-    statusItems() {
-      const items = [{
-        value: 0,
-        label: '未申请'
-      }, {
-        value: 1,
-        label: '已申请'
-      }];
-      items.unshift(JF.ui.selectNoneItem);
-      return items;
-    },
-    institutionItems() {
-      return JF.organization.getLocalOrgItems.call(JF.organization.organizations, [], { type: 'SCU' });
+    if (!studies) {
+        return;
     }
+
+    // Update record count
+    instance.paginationData.recordCount.set(studies.length);
+
+    // Limit studies
+    return studies.slice(offset, limit);
+  },
+
+  numberOfStudies() {
+    return Template.instance().paginationData.recordCount.get();
+  },
+
+  sortingColumnsIcons() {
+    const instance = Template.instance();
+
+    let sortIcons = {
+      status: 'fa fa-fw',
+      serialNumber: 'fa fa-fw',
+      patientName: 'fa fa-fw',
+      patientSex: 'fa fa-fw',
+      patientAge: 'fa fa-fw',
+      modalities: 'fa fa-fw',
+      bodyPartExamined: 'fa fa-fw',
+      dicomTime: 'fa fa-fw',
+      organizationId: 'fa fa-fw',
+      descripton: 'fa fa-fw'
+    };
+    const sortOption = instance.sortOption.get();
+    Object.keys(sortOption).forEach(key => {
+      const value = sortOption[key];
+      if (value === 1) {
+        sortIcons[key] = 'fa fa-fw fa-sort-up';
+      } else if (value === -1) {
+        sortIcons[key] = 'fa fa-fw fa-sort-down';
+      }
+    });
+    return sortIcons;
+  },
+  statusItems() {
+    const items = [{
+      value: 0,
+      label: '未申请'
+    }, {
+      value: 1,
+      label: '已申请'
+    }];
+    items.unshift(JF.ui.selectNoneItem);
+    return items;
+  },
+  orgItems() {
+    return JF.organization.getLocalOrgItems.call(JF.organization.organizations, [], { type: 'SCU' });
+  }
 });
 
 Template.studylistResult.onCreated(() => {
     JF.studylist.clearSelections();
-    const instance = Template.instance();
-    instance.subscribe('studies');
 
-    instance.sortOptions = new ReactiveVar();
-    instance.sortingColumns = new ReactiveDict();
-    instance.filterOptions = new ReactiveDict();
+    const instance = Template.instance();
+    instance.studyFilter = new ReactiveVar({});
+    instance.sortOption = new ReactiveVar({ dicomTime: -1 });
+    instance.filterOptions = new ReactiveVar({});
+
+    instance.autorun(() => {
+      const filter = instance.studyFilter.get();
+      instance.subscribe('studies', { filter });
+    });
 
     instance.paginationData = {
         class: 'studylist-pagination',
@@ -99,13 +102,10 @@ Template.studylistResult.onCreated(() => {
         recordCount: new ReactiveVar(0)
     };
 
-    instance.sortingColumns.set({
-        patientName: 1,
-        studyDate: 1,
-        patientId: 0,
-        serialNumber: 0,
-        studyDescription: 0,
-        modality: 0
+    instance.autorun(() => {
+      const studies = JF.collections.studies.find({}, { fields: { organizationId: 1 }}).fetch();
+      const orgIds = studies.map(s => s.organizationId);
+      _.uniq(orgIds).forEach(id => JF.organization.getOrganization(id));
     });
 });
 
@@ -117,7 +117,7 @@ Template.studylistResult.onRendered(() => {
     const lastWeek = moment().subtract(1, 'week');
     const lastMonth = moment().subtract(1, 'month');
     const lastThreeMonth = moment().subtract(3, 'month');
-    const $studyDate = instance.$('#studyDate');
+    const $dicomTime = instance.$('#dicomTime');
     const config = {
       maxDate: today,
       autoUpdateInput: true,
@@ -131,7 +131,7 @@ Template.studylistResult.onRendered(() => {
       }
     };
 
-    instance.datePicker = $studyDate.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
+    instance.datePicker = $dicomTime.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 
 });
 
@@ -151,43 +151,59 @@ function resetSortingColumns(instance, sortingColumn) {
 }
 
 Template.studylistResult.events({
-    'change #status-selector'(e, instance) {
-        const val = $(e.currentTarget).val();
-        instance.filterOptions.set('status', val);
-    },
-
-    'keydown input'(event, instance) {
-        if (event.which === 13) { //  Enter
-            const val = $(event.currentTarget).val();
-            const key = $(event.currentTarget)[0].id;
-            instance.filterOptions.set(key, val);
-        }
-    },
-
-    'change #studyDate'(event, instance) {
-        const val = $(event.currentTarget).val();
-        const key = $(event.currentTarget)[0].id;
-        instance.filterOptions.set(key, val);
-    },
-
-    'click div.sortingCell'(event, instance) {
-        const elementId = event.currentTarget.id;
-
-        // Remove _ from id
-        const columnName = elementId.replace('_', '');
-
-        let sortOption = {};
-        resetSortingColumns(instance, columnName);
-
-        const columnObject = instance.sortingColumns.get(columnName);
-        if (columnObject) {
-            instance.sortingColumns.set(columnName, columnObject * -1);
-            sortOption[columnName] = columnObject * -1;
-        } else {
-            instance.sortingColumns.set(columnName, 1);
-            sortOption[columnName] = 1;
-        }
-
-        instance.sortOption.set(sortOption);
+  'change input, keydown input, change select'(event, instance) {
+    if (event.type === 'keydown' && event.which !== 13) {
+      return;
     }
+
+    const comp = $(event.currentTarget).data('component');
+    const value = comp.value();
+    const id = event.currentTarget.id;
+    const filterOptions = instance.filterOptions.get();
+
+    if (value && value !== 'none') {
+      switch (id) {
+        case 'status':
+          value = parseInt(value);
+        case 'patientSex':
+        case 'organizationId':
+          filterOptions[id] = value;
+          break;
+        case 'serialNumber':
+        case 'patientName':
+        case 'patientAge':
+        case 'bodyPartExamined':
+        case 'modalities':
+        case 'description':
+          filterOptions[id] = { $regex: value };
+          break;
+        case 'dicomTime':
+          const ranges = value.split('-');
+          if (ranges.length === 2) {
+            const start = new Date(ranges[0] + ' 00:00:00');
+            const end = new Date(ranges[1] + ' 23:59:59');
+            const filter = instance.studyFilter.get();
+            filter[id] = { $gte: start, $lte: end };
+            instance.studyFilter.set(filter);
+          }
+          break;
+      }
+
+      instance.paginationData.currentPage.set(0);
+    } else {
+      delete filterOptions[id];
+    }
+
+    instance.filterOptions.set(filterOptions);
+  },
+
+  'click div.sortingCell'(event, instance) {
+    const eleId = event.currentTarget.id;
+    const id = eleId.replace('_', '');
+    let sortOption = instance.sortOption.get();
+    const value = sortOption[id]? (sortOption[id] * -1) : 1;
+    sortOption = {};
+    sortOption[id] = value;
+    instance.sortOption.set(sortOption);
+  }
 });

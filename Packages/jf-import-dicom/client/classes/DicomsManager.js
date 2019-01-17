@@ -8,17 +8,13 @@ export class DicomsManager {
 
   numberOfImported() {
     const collection = JF.collections.importDicoms;
-    const filter = { imported: true };
+    const filter = { status: { $gte: 0 }};
     return collection.find(filter).count();
   }
 
   unimportedDicoms() {
     const collection = JF.collections.importDicoms;
-    const filter = { $or: [{
-      imported: { $exists: false }
-    }, {
-      imported: false
-    }] };
+    const filter = { status: { $eq: 0 }};
     return collection.find(filter).fetch();
   }
 
@@ -26,8 +22,8 @@ export class DicomsManager {
     const collection = JF.collections.importDicoms;
     dicoms.forEach(dicom => {
       const filter = { _id: dicom._id };
-      const operation = { $set: { imported: true } }
-      collection.update(filter, operation, { upsert: false, multi: false });
+      const operation = { $set: { status: 1 }}
+      collection.update(filter, operation);
     });
   }
 

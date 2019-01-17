@@ -9,6 +9,10 @@ Meteor.publish('orders', function(options) {
   const userId = this.userId;
   const su = JF.user.isSuperAdmin();
 
+  if (options.filter) {
+    Object.assign(filter, options.filter);
+  }
+
   let orgIds = [];
   if (options.type === 'SCP') {
     filter.status.$lte = 10;

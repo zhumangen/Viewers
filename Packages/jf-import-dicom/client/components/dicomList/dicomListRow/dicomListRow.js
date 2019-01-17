@@ -14,10 +14,20 @@ Template.dicomListRow.helpers({
     return JF.ui.rowSelect.isRowSelected.call(JF.dicomlist, this._id);
   },
   status() {
-    return this.imported?'已导入':'未导入';
+    switch (this.status) {
+      case 0:
+        return '未导入';
+      case 1:
+        return '已导入';
+    }
   },
   statusClass() {
-    return this.imported?'imported':'unimported';
+    switch (this.status) {
+      case 0:
+        return 'unimported';
+      case 1:
+        return 'imported';
+    }
   }
 });
 

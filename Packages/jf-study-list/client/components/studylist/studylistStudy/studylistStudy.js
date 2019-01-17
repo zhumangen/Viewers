@@ -48,40 +48,40 @@ Template.studylistStudy.onRendered(() => {
 });
 
 Template.studylistStudy.events({
-    'click tr.studylistStudy'(event, instance) {
-        const $studyRow = $(event.currentTarget);
-        const rowId = instance.data._id;
+  'click tr.studylistStudy'(event, instance) {
+    const $studyRow = $(event.currentTarget);
+    const rowId = instance.data._id;
 
-        if (event.shiftKey) {
-            JF.ui.rowSelect.handleShiftClick.call(JF.studylist, $studyRow, { rowId });
-        } else if (event.ctrlKey || event.metaKey) {
-            JF.ui.rowSelect.handleCtrlClick.call(JF.studylist, $studyRow, { rowId });
-        } else {
-            JF.ui.rowSelect.doSelectSingleRow.call(JF.studylist, $studyRow, { rowId });
-        }
-    },
-
-    'mousedown tr.studylistStudy'(event, instance) {
-        // This event handler is meant to handle middle-click on a study
-        if (event.which !== 2) {
-            return;
-        }
-
-        const middleClickOnStudy = JF.studylist.callbacks.middleClickOnStudy;
-        if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
-            middleClickOnStudy([instance.data]);
-        }
-    },
-
-    'dblclick tr.studylistStudy, doubletap tr.studylistStudy'(event, instance) {
-        if (event.which !== undefined && event.which !== 1) {
-            return;
-        }
-
-        const dblClickOnStudy = JF.studylist.callbacks.dblClickOnStudy;
-
-        if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
-            dblClickOnStudy([instance.data]);
-        }
+    if (event.shiftKey) {
+      JF.ui.rowSelect.handleShiftClick.call(JF.studylist, $studyRow, { rowId });
+    } else if (event.ctrlKey || event.metaKey) {
+      JF.ui.rowSelect.handleCtrlClick.call(JF.studylist, $studyRow, { rowId });
+    } else {
+      JF.ui.rowSelect.doSelectSingleRow.call(JF.studylist, $studyRow, { rowId });
     }
+  },
+
+  'mousedown tr.studylistStudy'(event, instance) {
+    // This event handler is meant to handle middle-click on a study
+    if (event.which !== 2) {
+      return;
+    }
+
+    const middleClickOnStudy = JF.studylist.callbacks.middleClickOnStudy;
+    if (middleClickOnStudy && typeof middleClickOnStudy === 'function') {
+      middleClickOnStudy([instance.data]);
+    }
+  },
+
+  'dblclick tr.studylistStudy, doubletap tr.studylistStudy'(event, instance) {
+    if (event.which !== undefined && event.which !== 1) {
+      return;
+    }
+
+    const dblClickOnStudy = JF.studylist.callbacks.dblClickOnStudy;
+
+    if (dblClickOnStudy && typeof dblClickOnStudy === 'function') {
+      dblClickOnStudy([instance.data]);
+    }
+  }
 });
