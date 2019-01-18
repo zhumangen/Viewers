@@ -96,7 +96,7 @@ Template.dicomListView.helpers({
     let sortIcons = {
       status: 'fa fa-fw',
       qidoLevel: 'fa fa-fw',
-      patientId: 'fa fa-fw',
+      accessionNumber: 'fa fa-fw',
       patientName: 'fa fa-fw',
       patientSex: 'fa fa-fw',
       patientAge: 'fa fa-fw',
@@ -149,7 +149,7 @@ Template.dicomListView.events({
         case 'patientSex':
           filterOptions[id] = value;
           break;
-        case 'patientId':
+        case 'accessionNumber':
         case 'patientName':
         case 'patientAge':
         case 'bodyPartExamined':

@@ -125,7 +125,7 @@ Template.organizationlistView.events({
               break;
             }
           }
-          filterOptions[`${id}.${value}`] = { $exists: true };
+          filterOptions[`${id}.${value}`] = true;
           break;
         case 'serialNumber':
         case 'name':

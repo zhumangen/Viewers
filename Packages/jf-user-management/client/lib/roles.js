@@ -6,8 +6,13 @@ import { _ } from 'meteor/underscore';
 JF.user.hasQualifiedRoles = (type, roles) => {
   const user = Meteor.user();
   const orgIds = JF.user.getAllGroups();
+  const filter = {};
+  if (!type) {
+    filter[`orgTypes.${type}`] = true;
+  }
   for (let _id of orgIds) {
-    const org = JF.organization.organizations.findOne({ _id, type });
+    filter._id = _id;
+    const org = JF.organization.organizations.findOne(filter);
     if (org && _.intersection(user.roles[org._id], roles).length > 0) {
       return true;
     }

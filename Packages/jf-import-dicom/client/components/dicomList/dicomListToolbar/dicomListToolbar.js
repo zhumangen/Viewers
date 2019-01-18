@@ -61,10 +61,13 @@ function search(organization, dateRange, offset, callback) {
           dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
           delete dicom.studyDate;
           delete dicom.studyTime;
-          if (level === 'SERIES') {
+          if (level === 'SERIES' && dicom.seriesDate && dicom.seriesTime) {
             dicom.dicomTime = moment(dicom.seriesDate+dicom.seriesTime, 'YYYYMMDDHHmmss.SSS').toDate();
             delete dicom.seriesDate;
             delete dicom.seriesTime;
+          }
+          if (isNaN(dicom.dicomTime.valueOf())) {
+            delete dicom.dicomTime;
           }
           dicom.numberOfStudyRelatedInstances = !isNaN(dicom.numberOfStudyRelatedInstances) ? parseInt(dicom.numberOfStudyRelatedInstances) : undefined;
           dicom.numberOfSeriesRelatedInstances = !isNaN(dicom.numberOfSSeriesRelatedInstances) ? parseInt(dicom.numberOfSSeriesRelatedInstances) : undefined;

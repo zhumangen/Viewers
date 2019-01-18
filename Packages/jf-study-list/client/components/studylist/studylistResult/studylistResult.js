@@ -52,6 +52,7 @@ Template.studylistResult.helpers({
       modalities: 'fa fa-fw',
       bodyPartExamined: 'fa fa-fw',
       dicomTime: 'fa fa-fw',
+      createdAt: 'fa fa-fw',
       organizationId: 'fa fa-fw',
       descripton: 'fa fa-fw'
     };
@@ -87,7 +88,7 @@ Template.studylistResult.onCreated(() => {
 
     const instance = Template.instance();
     instance.studyFilter = new ReactiveVar({});
-    instance.sortOption = new ReactiveVar({ dicomTime: -1 });
+    instance.sortOption = new ReactiveVar({ createdAt: -1 });
     instance.filterOptions = new ReactiveVar({});
 
     instance.autorun(() => {
@@ -110,36 +111,40 @@ Template.studylistResult.onCreated(() => {
 });
 
 Template.studylistResult.onRendered(() => {
-    const instance = Template.instance();
+  const instance = Template.instance();
 
-    // Initialize daterangepicker
-    const today = moment();
-    const lastWeek = moment().subtract(1, 'week');
-    const lastMonth = moment().subtract(1, 'month');
-    const lastThreeMonth = moment().subtract(3, 'month');
-    const $dicomTime = instance.$('#dicomTime');
-    const config = {
-      maxDate: today,
-      autoUpdateInput: true,
-      startDate: lastWeek,
-      endDate: today,
-      ranges: {
-        '今天': [today, today],
-        '最近一周': [lastWeek, today],
-        '最近一月': [lastMonth, today],
-        '最近三月': [lastThreeMonth, today]
-      }
-    };
+  // Initialize daterangepicker
+  const today = moment();
+  const lastWeek = moment().subtract(1, 'week');
+  const lastMonth = moment().subtract(1, 'month');
+  const lastThreeMonth = moment().subtract(3, 'month');
+  const $dicomTime = instance.$('#dicomTime');
+  const $createdAt = instance.$('#createdAt');
 
-    instance.datePicker = $dicomTime.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
+  const config = {
+    maxDate: today,
+    autoUpdateInput: false,
+    startDate: lastWeek,
+    endDate: today,
+    ranges: {
+      '今天': [today, today],
+      '最近一周': [lastWeek, today],
+      '最近一月': [lastMonth, today],
+      '最近三月': [lastThreeMonth, today]
+    }
+  };
 
+  instance.dicomTimePicker = $dicomTime.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
+  config.autoUpdateInput = true;
+  instance.createdAtPicker = $createdAt.daterangepicker(Object.assign(config, JF.ui.datePickerConfig)).data('daterangepicker');
 });
 
 Template.studylistResult.onDestroyed(() => {
     const instance = Template.instance();
 
     // Destroy the daterangepicker to prevent residual elements on DOM
-    instance.datePicker.remove();
+    instance.dicomTimePicker.remove();
+    instance.createdAtPicker.remove();
 });
 
 function resetSortingColumns(instance, sortingColumn) {
@@ -178,13 +183,19 @@ Template.studylistResult.events({
           filterOptions[id] = { $regex: value };
           break;
         case 'dicomTime':
+        case 'createdAt':
           const ranges = value.split('-');
           if (ranges.length === 2) {
             const start = new Date(ranges[0] + ' 00:00:00');
             const end = new Date(ranges[1] + ' 23:59:59');
-            const filter = instance.studyFilter.get();
-            filter[id] = { $gte: start, $lte: end };
-            instance.studyFilter.set(filter);
+            const val = { $gte: start, $lte: end };
+            if (id === 'createdAt') {
+              const filter = instance.studyFilter.get();
+              filter[id] = val;
+              instance.studyFilter.set(filter);
+            } else {
+              filterOptions[id] = val;
+            }
           }
           break;
       }
@@ -196,7 +207,16 @@ Template.studylistResult.events({
 
     instance.filterOptions.set(filterOptions);
   },
-
+  'show.daterangepicker #dicomTime'(event, instance) {
+    instance.dicomTimePicker.autoUpdateInput = true;
+  },
+  'cancel.daterangepicker #dicomTime'(event, instance) {
+    $(event.currentTarget).val('');
+    const id = event.currentTarget.id;
+    const filterOptions = instance.filterOptions.get();
+    delete filterOptions[id];
+    instance.filterOptions.set(filterOptions);
+  },
   'click div.sortingCell'(event, instance) {
     const eleId = event.currentTarget.id;
     const id = eleId.replace('_', '');

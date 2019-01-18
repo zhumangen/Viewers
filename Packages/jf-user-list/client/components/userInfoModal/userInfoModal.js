@@ -59,6 +59,10 @@ Template.userInfoModal.onCreated(() => {
   instance.data.confirmCallback = userData => {
     const groups = instance.groups.get();
     const roles = {};
+    const oldRoles = instance.data.roles;
+    if (oldRoles[Roles.GLOBAL_GROUP]) {
+      roles[Roles.GLOBAL_GROUP] = oldRoles[Roles.GLOBAL_GROUP];
+    }
     groups.forEach(g => {
       Object.keys(g.perms).forEach(k => {
         if (g.perms[k]) {
