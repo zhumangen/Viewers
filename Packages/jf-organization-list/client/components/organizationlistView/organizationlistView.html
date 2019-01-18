@@ -17,33 +17,33 @@
                         </div>
                         {{>inputText id="serialNumber" class="form-control organizationlist-search"}}
                     </th>
-                    <th class="organizationName">
-                        <div id="_organizationName" class="sortingCell">
+                    <th class="orgName">
+                        <div id="_orgName" class="sortingCell">
                             <span>机构名称</span>
-                            <i class="{{sortingColumnsIcons.organizationName}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.name}}">&nbsp;</i>
                         </div>
-                        {{>inputSelect id="organizationName" class="form-control organizationlist-search" items=orgNameItems placeholder='请选择'}}
+                        {{>inputText id="orgName" class="form-control organizationlist-search"}}
                     </th>
-                    <th class="organizationType">
-                        <div id="_organizationType" class="sortingCell">
+                    <th class="orgTypes">
+                        <div id="_orgTypes" class="sortingCell">
                             <span>机构类型</span>
-                            <i class="{{sortingColumnsIcons.organizationType}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.orgTypes}}">&nbsp;</i>
                         </div>
-                        {{>inputSelect id="organizationType" class="form-control organizationlist-search" items=orgTypeItems placeholder='请选择' hideSearch=true}}
+                        {{>inputSelect id="orgTypes" class="form-control organizationlist-search" items=orgTypeItems placeholder='请选择' hideSearch=true}}
                     </th>
-                    <th class="organizationTime">
-                        <div id="_organizationTime" class="sortingCell">
+                    <th class="createdAt">
+                        <div id="_createdAt" class="sortingCell">
                             <span>创建时间</span>
-                            <i class="{{sortingColumnsIcons.organizationTime}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.createdAt}}">&nbsp;</i>
                         </div>
-                        {{>inputText id="organizationTime" class="form-control organizationlist-search"}}
+                        {{>inputText id="createdAt" class="form-control organizationlist-search"}}
                     </th>
-                    <th class="organizationFullName">
-                        <div id="_organizationFullName" class="sortingCell">
+                    <th class="orgFullName">
+                        <div id="_orgFullName" class="sortingCell">
                             <span>机构全称</span>
-                            <i class="{{sortingColumnsIcons.organizationFullFullName}}">&nbsp;</i>
+                            <i class="{{sortingColumnsIcons.fullName}}">&nbsp;</i>
                         </div>
-                        {{>inputText id="organizationFullName" class="form-control organizationlist-search"}}
+                        {{>inputText id="orgFullName" class="form-control organizationlist-search"}}
                     </th>
                 </tr>
             </thead>

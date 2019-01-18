@@ -16,9 +16,6 @@ Template.userlistRow.helpers({
   userId() {
     return this.emails[0].address;
   },
-  userName() {
-    return this.profile.fullName?this.profile.fullName:this.username;
-  },
   userOrgs() {
     const orgIds = JF.user.getAllGroupsForUser(this._id);
     const orgs = JF.organization.getLocalOrganizations.call(JF.collections.organizations, orgIds);
