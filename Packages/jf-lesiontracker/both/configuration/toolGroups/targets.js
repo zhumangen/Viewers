@@ -1,5 +1,6 @@
 import { ToolGroupBaseSchema } from './baseSchema';
 import { bidirectional } from '../tools/bidirectional';
+import { targetRect } from '../tools/targetRect';
 import { targetEllipse } from '../tools/targetEllipse';
 import { targetProbe } from '../tools/targetProbe';
 import { targetPencil } from '../tools/targetPencil';
@@ -54,7 +55,7 @@ const headerDisplay = data => {
 export const targets = {
     id: 'targets',
     name: '病灶',
-    childTools: [targetEllipse, bidirectional, targetProbe, targetPencil, targetCR, targetUN],
+    childTools: [targetRect, targetEllipse, bidirectional, targetProbe, targetPencil, targetCR, targetUN],
     schema: ToolGroupBaseSchema,
     options: {
         measurementTable: {

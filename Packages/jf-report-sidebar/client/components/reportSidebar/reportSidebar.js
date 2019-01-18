@@ -57,6 +57,13 @@ Template.reportSidebar.onCreated(() => {
           });
         });
 
+        let ww, wc;
+        const meas = data[config.measurementTools[0].id];
+        if (meas.length > 0) {
+          ww = meas[0].viewport.voi.windowWidth;
+          wc = meas[0].viewport.voi.windowCenter;
+        }
+
         const classifier = {};
         Object.keys(data).forEach(groupId => {
           data[groupId].forEach(item => {
@@ -94,6 +101,10 @@ Template.reportSidebar.onCreated(() => {
             url += uids[0] + '&seriesUID=';
             url += uids[1] + '&objectUID=';
             url += uids[2];
+            if (ww && wc) {
+              url += '&windowWidth=' + ww;
+              url += '&windowCenter=' + wc
+            }
             data.push(Object.assign({url}, groups));
         });
 

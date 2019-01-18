@@ -23,7 +23,7 @@ JF.lesiontracker.toggleLesionTrackerTools = () => {
             activate: ['deleteLesionKeyboardTool'],
             deactivate: [],
             enable: [],
-            disable: ['bidirectional', 'nonTarget', 'length', 'targetEllipse', 'targetProbe', 'targetPencil', 'targetCR', 'targetUN']
+            disable: ['bidirectional', 'nonTarget', 'length', 'targetRect', 'targetEllipse', 'targetProbe', 'targetPencil', 'targetCR', 'targetUN']
         };
 
         toolManager.setToolDefaultStates(toolDefaultStates);
@@ -53,7 +53,7 @@ JF.lesiontracker.toggleLesionTrackerToolsButtons = (isEnabled) => {
         toolStates.disabledToolButtons = [];
         JF.lesiontracker.toggleLesionTrackerToolsHotKeys(true);
     } else {
-        toolStates.disabledToolButtons = ['bidirectional', 'nonTarget', 'targetEllipse', 'targetProbe', 'targetPencil', 'targetCR', 'targetUN',
+        toolStates.disabledToolButtons = ['bidirectional', 'nonTarget', 'targetRect', 'targetEllipse', 'targetProbe', 'targetPencil', 'targetCR', 'targetUN',
             'toggleHUD', 'toggleTrial', 'toolbarSectionEntry', 'toggleMeasurements'];
         JF.lesiontracker.toggleLesionTrackerToolsHotKeys(false);
     }
