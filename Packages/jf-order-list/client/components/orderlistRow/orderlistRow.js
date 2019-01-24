@@ -25,6 +25,27 @@ Template.orderlistRow.helpers({
       case 11:
         return '已撤回';
     }
+  },
+  statusClass() {
+    const s = this.status;
+    switch (s) {
+      case -1:
+        return 'deleted';
+      case 0:
+        return 'unreported';
+      case 1:
+        return 'reporting';
+      case 2:
+        return 'unreviewed';
+      case 3:
+        return 'reviewing';
+      case 4:
+        return 'reviewed';
+      case 10:
+        return 'refused';
+      case 11:
+        return 'revoked';
+    }
   }
 });
 

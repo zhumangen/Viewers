@@ -201,15 +201,29 @@ $bodyCellHeight = 40px
           max-width: 200px
           padding: 2px 12px
 
-          &.completed
-            color: green
-
-          &.uncompleted
+          &.deleted
             color: red
 
-          &.completing
-            color: yellow
+          &.unreported
+            color: #9ccdf8
 
+          &.reporting
+            color: #fab797
+
+          &.unreviewed
+            color: #9aa767
+
+          &.reviewing
+            color: #fa8947
+
+          &.reviewed
+            color: #63fa47
+
+          &.refused
+            color: #d41f9c
+
+          &.revoked
+            color: #bd9f0b
 
         &:hover, &:active, &.active
           background-color: $tableHoverColor

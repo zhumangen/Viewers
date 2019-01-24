@@ -18,6 +18,16 @@ Template.studylistStudy.helpers({
       default:
         return '';
     }
+  },
+  statusClass() {
+    switch (this.status) {
+      case 0:
+        return 'unapplied';
+      case 1:
+        return 'applied';
+      default:
+        return '';
+    }
   }
 });
 
