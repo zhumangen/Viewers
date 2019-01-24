@@ -20,36 +20,37 @@ Template.paginationArea.onCreated(function() {
 
 Template.paginationArea.onRendered(() => {
     const instance = Template.instance();
-    instance.$paginationControl = instance.$('.pagination-control');
 
     // Track changes on recordCount and rowsPerPage
     instance.autorun(() => {
+        instance.$paginationControl = instance.$('.pagination-control');
         const recordCount = instance.data.recordCount.get();
         const rowsPerPage = instance.data.rowsPerPage.get();
-       
+
         // Destroy plugin if exists
         if (instance.$paginationControl.data().twbsPagination) {
             instance.$paginationControl.twbsPagination('destroy');
         }
-    
-        if (recordCount && rowsPerPage) {         
-            const totalPages = Math.ceil(recordCount / rowsPerPage); 
+
+        if (recordCount && rowsPerPage) {
+            const totalPages = Math.ceil(recordCount / rowsPerPage);
 
             // Initialize plugin
             instance.$paginationControl.twbsPagination({
                 totalPages,
                 visiblePages,
                 startPage: 1,
-                first: '首页',  
-                prev: '上页',  
-                next: '下页',  
+                first: '首页',
+                prev: '上页',
+                next: '下页',
                 last: '末页',
+                initiateStartPageClick: false,
                 onPageClick: (event, page) => {
                     // Update currentPage
                     // Decrease page by 1 to set currentPage
                     // Since reactive table current page index starts by 0
                     instance.data.currentPage.set(page - 1);
-                    
+
                 }
             });
         }

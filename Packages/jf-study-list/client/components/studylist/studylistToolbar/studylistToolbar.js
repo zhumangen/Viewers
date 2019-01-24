@@ -45,7 +45,8 @@ Template.studylistToolbar.events({
     JF.studylist.applySelectedStudies();
   },
   'click #applyAllStudies'(event, instance) {
-    const studies = JF.collections.studies.find( { status: 0 }).fetch();
+    const filters = instance.data.filterOptions.get();
+    const studies = JF.collections.studies.find(filters).fetch();
     JF.studylist.applyStudiesProgress(studies);
   },
   'click #removeStudies'(event, instance) {

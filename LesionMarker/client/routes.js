@@ -47,16 +47,6 @@ Router.route('/', function() {
   Router.go('orderlist', {}, { replaceState: true });
 }, { name: 'home' });
 
-Router.route('/orderlist-scp', function() {
-  Session.set('locationType', 'SCP');
-  Router.go('orderlist');
-});
-
-Router.route('/orderlist-scu', function() {
-  Session.set('locationType', 'SCU');
-  Router.go('orderlist');
-});
-
 Router.route('/orderlist', {
     name: 'orderlist',
     /* onBeforeAction: function() {

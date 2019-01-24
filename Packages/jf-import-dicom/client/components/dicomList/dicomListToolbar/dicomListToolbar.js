@@ -7,17 +7,40 @@ import { $ } from 'meteor/jquery';
 import { JF } from 'meteor/jf:core';
 import { OHIF } from 'meteor/ohif:core';
 
+/**
+ * Transforms an input string into a search filter for
+ * the StudyList Search call
+ *
+ * @param filter The input string to be searched for
+ * @returns {*}
+ */
+function getFilter(filter) {
+  if (filter && filter.length) {
+    if (filter.substr(filter.length - 1) !== '*') {
+      filter += '*';
+    }
+    if (filter[0] !== '*') {
+      filter = '*' + filter;
+    }
+  }
+
+  return filter;
+}
+
 function search(organization, dateRange, offset, callback) {
   OHIF.log.info('dicom list search...');
   Session.set('showLoadingText', true);
   Session.set('serverError', false);
 
-  const filters = Object.assign({}, organization.filters);
+  const filters = {
+    patientId: getFilter(organization.filters.patientId),
+    institutionName: getFilter(organization.filters.institutionName)
+  };
   const level = organization.qidoLevel.toUpperCase();
   const modalities = [];
-  if (filters.modalities) {
-    Object.keys(filters.modalities).forEach(k => {
-      if (filters.modalities[k]) {
+  if (organization.filters.modalities) {
+    Object.keys(organization.filters.modalities).forEach(k => {
+      if (organization.filters.modalities[k]) {
         modalities.push(k.toUpperCase());
       }
     });
@@ -46,16 +69,20 @@ function search(organization, dateRange, offset, callback) {
     if (_.isArray(dicoms)) {
       dicoms.forEach(dicom => {
         let ok = true;
-        if (!modalities) {
+        if (modalities.length) {
           ok = false;
-          modalities.forEach(m => {
+          for (let m of modalities) {
             if (dicom.modalities && dicom.modalities.indexOf(m) >= 0) {
               ok = true;
+              break;
             }
-          });
+          }
         }
         if (ok) {
           if (_.isString(dicom.patientSex)) dicom.patientSex = dicom.patientSex.toUpperCase();
+          if (dicom.patientSex !== 'M' && dicom.patientSex !== 'F') {
+            dicom.patientSex = 'O';
+          }
           dicom.patientAge = JF.dicomlist.getPatientAge(dicom.patientAge, dicom.patientBirthdate, dicom.seriesDate||dicom.studyDate);
           delete dicom.patientBirthdate;
           dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
@@ -105,6 +132,7 @@ function search(organization, dateRange, offset, callback) {
 
     if (_.isFunction(callback)) {
       callbackData.errorMsg = 'dicoms metadata retrieving failed: ' + errorType;
+      OHIF.ui.notifications.warning({ text: callbackData.errorMsg });
       callback(callbackData);
     }
   });
@@ -121,8 +149,6 @@ Template.dicomListToolbar.onCreated(() => {
     instance.data.statusData.loaded.set(loaded);
     instance.data.statusData.total.set(total);
     instance.data.statusData.errorMsg.set(data.errorMsg);
-    instance.data.paginationData.currentPage.set(0);
-    instance.data.paginationData.recordCount.set(total);
   };
 
   instance.getCurrentOrg = () => {
@@ -175,27 +201,25 @@ Template.dicomListToolbar.onRendered(() => {
     if (!(org && dateRange)) return;
     JF.collections.importDicoms.remove({});
     Tracker.nonreactive(() => {
+      JF.collections.importDicoms.remove({});
       instance.data.paginationData.currentPage.set(0);
       search(org, dateRange, 0, instance.searchCallback);
     });
   });
 
   instance.autorun(() => {
-    const rowsPerPage = instance.data.paginationData.rowsPerPage.get();
-    const currentPage = instance.data.paginationData.currentPage.get();
-    const recordCount = instance.data.paginationData.recordCount.get();
-    const receivedCount = JF.collections.importDicoms.find().count();
-    const loadAll = instance.data.statusData.loadAll.get();
+    const loaded = instance.data.statusData.loaded.get();
+    const total = instance.data.statusData.total.get();
+    const error = instance.data.statusData.errorMsg.get();
 
-    if (receivedCount < recordCount &&
-        ((recordCount > 0 && (currentPage+1) * rowsPerPage > receivedCount) || loadAll)) {
+    if (loaded < total && !error) {
       Tracker.nonreactive(() => {
         const isLoading = Session.get('showLoadingText');
         if (isLoading) return;
         const dateRange = instance.dateRangeValue.get();
         const org = instance.getCurrentOrg();
         if (!(org && dateRange)) return;
-        search(org, dateRange, receivedCount, instance.searchCallback);
+        search(org, dateRange, loaded, instance.searchCallback);
       });
     }
   });
@@ -235,8 +259,9 @@ Template.dicomListToolbar.events({
     JF.dicomlist.importSelectedDicoms();
   },
   'click #importAllStudies'(event, instance) {
-    JF.dicomlist.loadDicomsProgress(instance.data).then(() => {
-      const dicoms = JF.managers.importDicom.unimportedDicoms();
+    JF.dicomlist.loadDicomsProgress(instance.data.statusData).then(() => {
+      const filters = instance.data.filterOptions.get();
+      const dicoms = JF.collections.importDicoms.find(filters).fetch();
       JF.dicomlist.importDicomsProgress(dicoms);
     });
   }

@@ -17,7 +17,7 @@ Template.registerHelper('formatPatientSex', context => {
   } else if (sex === 'F') {
     return '女';
   } else {
-    return '未知';
+    return '其他';
   }
 });
 

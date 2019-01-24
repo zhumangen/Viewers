@@ -13,7 +13,9 @@ Template.orderlistView.onCreated(() => {
   instance.autorun(() => {
     const type = Session.get('locationType');
     const filter = instance.orderFilter.get();
-    instance.subscribe('orders', { type, filter });
+    if (filter.orderTime) {
+      instance.subscribe('orders', { type, filter });
+    }
   });
 
   instance.paginationData = {

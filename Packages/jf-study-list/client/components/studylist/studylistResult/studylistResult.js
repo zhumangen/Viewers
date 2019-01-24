@@ -93,7 +93,9 @@ Template.studylistResult.onCreated(() => {
 
     instance.autorun(() => {
       const filter = instance.studyFilter.get();
-      instance.subscribe('studies', { filter });
+      if (filter.createdAt) {
+        instance.subscribe('studies', { filter });
+      }
     });
 
     instance.paginationData = {

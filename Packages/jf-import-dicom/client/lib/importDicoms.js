@@ -35,6 +35,7 @@ JF.dicomlist.importDicomsProgress = dicoms => {
   OHIF.ui.showDialog('dialogProgress', {
     title: '正在导入...',
     total: dicoms.length,
+    cancelDisabled: true,
     task: {
       run: dialog => {
         JF.dicomlist.importDicoms(dicoms, {
@@ -51,7 +52,7 @@ JF.dicomlist.importDicomsProgress = dicoms => {
           OHIF.log.error(error.stack);
 
           OHIF.log.trace();
-        })
+        });
       }
     }
   });

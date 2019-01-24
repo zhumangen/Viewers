@@ -8,7 +8,7 @@ export class DicomsManager {
 
   numberOfImported() {
     const collection = JF.collections.importDicoms;
-    const filter = { status: { $gte: 0 }};
+    const filter = { status: { $gt: 0 }};
     return collection.find(filter).count();
   }
 

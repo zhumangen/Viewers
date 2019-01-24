@@ -8,6 +8,7 @@ Meteor.methods({
     const userId = this.userId;
     dicoms.forEach(dicom => {
       const filter = {
+        status: { $gte: 0 },
         serverId: dicom.serverId,
         studyInstanceUid: dicom.studyInstanceUid
       }

@@ -18,7 +18,6 @@ Template.dicomListView.onCreated(() => {
     rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage())
   };
   instance.statusData = {
-    loadAll: new ReactiveVar(false),
     loaded: new ReactiveVar(0),
     total: new ReactiveVar(0),
     errorMsg: new ReactiveVar('')

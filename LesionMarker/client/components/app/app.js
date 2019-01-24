@@ -10,11 +10,11 @@ Template.app.onCreated(() => {
     instance.headerClasses = new ReactiveVar('');
 
     const items = [{
-      action: () => Router.go('orderlist-scp'),
+      action: () => { Router.go('orderlist'); Session.set('locationType', 'SCP'); },
       text: '标注列表',
       iconClasses: 'server'
     }, {
-      action: () => Router.go('orderlist-scu'),
+      action: () => { Router.go('orderlist'); Session.set('locationType', 'SCU'); },
       text: '申请列表',
       iconClasses: 'server'
     }, {

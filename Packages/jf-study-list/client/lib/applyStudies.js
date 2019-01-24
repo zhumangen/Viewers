@@ -70,6 +70,7 @@ JF.studylist.applyStudiesProgress = studies => {
     OHIF.ui.showDialog('dialogProgress', {
       title: '正在处理申请...',
       total: studies.length,
+      cancelDisabled: true,
       task: {
         run: dialog => {
           JF.studylist.applyStudies(studies, {
@@ -87,7 +88,7 @@ JF.studylist.applyStudiesProgress = studies => {
             OHIF.log.error(error.stack);
 
             OHIF.log.trace();
-          })
+          });
         }
       }
     });
