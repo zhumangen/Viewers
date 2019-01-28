@@ -131,6 +131,7 @@ Template.orderlistView.helpers({
       studyOrgId: 'fa fa-fw',
       reporterId: 'fa fa-fw',
       reportEnd: 'fa fa-fw',
+      reportRating: 'fa fa-fw',
       reviewerId: 'fa fa-fw',
       reviewEnd: 'fa fa-fw'
     };
@@ -161,13 +162,13 @@ Template.orderlistView.helpers({
     }, {
       value: 4,
       label: '已审核'
+    }, {
+      value: 10,
+      label: '已拒绝'
     }];
 
     if (Session.get('locationType') === 'SCU') {
       items.splice(items.length, 0, {
-        value: 10,
-        label: '已拒绝'
-      }, {
         value: 11,
         label: '已撤回'
       });
@@ -213,6 +214,9 @@ Template.orderlistView.events({
         case 'reporterId':
         case 'reviewerId':
           filterOptions[id] = value;
+          break;
+        case 'reportRating':
+          filterOptions[id] = parseInt(value);
           break;
         case 'serialNumber':
         case 'patientName':

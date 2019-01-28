@@ -1,0 +1,8 @@
+<template name="starsRatingForm">
+    {{#dialogForm (extend this
+        dialogClass='modal-sm'
+    )}}
+      <br>
+      {{>starsRating id='reportRating' mutable=true size='lg'}}
+    {{/dialogForm}}
+</template>

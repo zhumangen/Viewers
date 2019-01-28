@@ -16,7 +16,7 @@
                                 {{>pageError (extend this error=this.details)}}
                             {{else}}
                                 {{#let message=(choose this.bodyText this.reason this.message (valueIf UI.contentBlock '' 'An error has ocurred.' ))}}
-                                    <div class="message">{{message}}</div>
+                                    <div class="message">{{{message}}}</div>
                                 {{/let}}
                             {{/if}}
                         {{/each}}

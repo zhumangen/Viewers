@@ -36,6 +36,11 @@
         <td class="reportEnd">
             {{formatDateTime reportEnd}}
         </td>
+        <td class="reportRating">
+            {{#if isValidNumber reportRating}}
+              {{>starsRating rating=reportRating}}
+            {{/if}}
+        </td>
         <td class="reviewerId">
             {{getUserName reviewerId}}
         </td>

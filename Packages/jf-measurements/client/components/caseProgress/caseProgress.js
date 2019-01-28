@@ -18,14 +18,14 @@ Template.caseProgress.onCreated(() => {
     instance.noChanges = new ReactiveVar(true);
 
     instance.api = {
-        save() {
+        save(rating) {
             // Clear signaled unsaved changes...
             const successHandler = () => {
                 OHIF.ui.unsavedChanges.clear(`${instance.path}.*`);
                 instance.saveObserver.changed();
 
                 if (!instance.saveOnly) {
-                    const promise = instance.data.measurementApi.submitOrder({ action: 1 });
+                    const promise = instance.data.measurementApi.submitOrder({ action: 1, rating });
                     OHIF.ui.showDialog('dialogLoading', {
                         promise,
                         text: '正在提交...'
@@ -265,11 +265,9 @@ Template.caseProgress.events({
         instance.saveOnly = true;
     },
 
-    'click #commit'(event, instance){
+    'click #commit'(event, instance) {
         const dialogSettings = {
             class: 'themed',
-            title: '提交标注',
-            message: '是否提交标注?',
             position: {
                 x: event.clientX,
                 y: event.clientY
@@ -277,10 +275,36 @@ Template.caseProgress.events({
             cancelLabel: '取消',
             confirmLabel: '确定'
         };
-        OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
-            instance.saveOnly = false;
-            instance.api.save();
-        });
-
+        const status = JF.viewer.data.order.status;
+        if (status === 3) {
+          Object.assign(dialogSettings, {
+            title: '标注评价',
+            message: '请给标注医生做出评价：'
+          });
+          OHIF.ui.showDialog('starsRatingForm', dialogSettings).then(data => {
+              if (!data.rating) {
+                Object.assign(dialogSettings, {
+                  title: '标注评价',
+                  bodyText: '您没有点亮小星星，是否按<span class="emphases">0颗星</span>处理？'
+                });
+                OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
+                    instance.saveOnly = false;
+                    instance.api.save();
+                });
+              } else {
+                instance.saveOnly = false;
+                instance.api.save(data.rating);
+              }
+          });
+        } else {
+          Object.assign(dialogSettings, {
+            title: '提交标注',
+            message: '是否提交标注？'
+          });
+          OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
+              instance.saveOnly = false;
+              instance.api.save();
+          });
+        }
     }
 });

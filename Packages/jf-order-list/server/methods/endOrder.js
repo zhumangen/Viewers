@@ -17,6 +17,11 @@ export default function endOrder(orderId, options) {
   // 0: abort, 1: submit
   const action = options.action;
   JF.validation.checks.checkNonNegativeNumber(action);
+  let reportRating = 0;
+  if (options.rating) {
+    JF.validation.checks.checkNonNegativeNumber(options.rating);
+    reportRating = options.rating;
+  }
 
   const Orders = JF.collections.orders;
   const order = Orders.findOne({ _id: orderId });
@@ -63,6 +68,7 @@ export default function endOrder(orderId, options) {
           } else if (action === 1) {
             ops = { $set: {
               status: 4,
+              reportRating,
               reviewEnd: new Date()
             }};
             JF.measurements.updateMeasurementStatus(order._id, 2);

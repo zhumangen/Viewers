@@ -60,7 +60,7 @@ Template.userInfoModal.onCreated(() => {
     const groups = instance.groups.get();
     const roles = {};
     const oldRoles = instance.data.roles;
-    if (oldRoles[Roles.GLOBAL_GROUP]) {
+    if (oldRoles && oldRoles[Roles.GLOBAL_GROUP]) {
       roles[Roles.GLOBAL_GROUP] = oldRoles[Roles.GLOBAL_GROUP];
     }
     groups.forEach(g => {

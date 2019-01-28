@@ -88,14 +88,14 @@ $bodyCellHeight = 40px
           vertical-align: top
           width: 100%
 
-          &.status
-            width: 4%
-
-          &.patientSex, &.patientAge, &.modalities
+          &.status, &.patientSex, &.patientAge
             width: 3%
 
-          &.lesionCode, &.patientName, &.reporterId, &.reviewerId, &.bodyPartExamined
-            width: 7%
+          &.modalities
+            width: 3%
+
+          &.lesionCode, &.patientName, &.reporterId, &.reviewerId, &.bodyPartExamined, &.reportRating
+            width: 6%
 
           &.serialNumber
             width: 8%
@@ -135,7 +135,7 @@ $bodyCellHeight = 40px
           input.orderlist-search, .select2-container
             height: 40px
             margin: 0 5px 20px 5px
-            padding: 0 20px
+            padding: 0 10px
             cursor: pointer
             border: none
             background-color: $inputBackgroundColor
@@ -200,6 +200,9 @@ $bodyCellHeight = 40px
           white-space: nowrap
           max-width: 200px
           padding: 2px 12px
+
+          &.reportRating
+            padding-top: 12px
 
           &.deleted
             color: red

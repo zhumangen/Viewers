@@ -17,7 +17,7 @@ Template.studylistToolbar.helpers({
     return !studies.length;
   },
   disableApplyAllBtn() {
-    const studies = JF.collections.studies.find({ status: 0 }).fetch();
+    const studies = JF.collections.studies.find({ status: { $gte: 0 }}).fetch();
 
     for (let study of studies) {
       if (!Roles.userIsInRole(Meteor.user(), 'js', study.organizationId)) {
@@ -45,9 +45,22 @@ Template.studylistToolbar.events({
     JF.studylist.applySelectedStudies();
   },
   'click #applyAllStudies'(event, instance) {
-    const filters = instance.data.filterOptions.get();
-    const studies = JF.collections.studies.find(filters).fetch();
-    JF.studylist.applyStudiesProgress(studies);
+    const dialogSettings = {
+        class: 'themed',
+        title: '提交申请',
+        message: '是否对列表中的所有图像提交申请?',
+        position: {
+            x: event.clientX,
+            y: event.clientY
+        },
+        cancelLabel: '取消',
+        confirmLabel: '确定'
+    };
+    OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
+      const filters = instance.data.filterOptions.get();
+      const studies = JF.collections.studies.find(filters).fetch();
+      JF.studylist.applyStudiesProgress(studies);
+    });
   },
   'click #removeStudies'(event, instance) {
     JF.studylist.removeSelectedStudies(event);
