@@ -1,7 +1,6 @@
 <template name="viewerSection">
     <div class="viewerSection">
         <div class="sidebarMenu sidebar-left {{#if leftSidebarOpen}}sidebar-open{{/if}}">
-            <!-- 
             {{#if isTimepointBrowser}}
                 {{>timepointBrowserSidebar (clone this)}}
             {{else}}
@@ -11,8 +10,7 @@
                     {{>studyBrowserSidebar (clone this studiesInformation=instance.studiesInformation.get)}}
                 {{/if}}
             {{/if}}
-            -->
-            {{>reportSidebar}}
+            <!-- {{>reportSidebar}} -->
         </div>
         <div class="mainContent {{#if leftSidebarOpen}}sidebar-left-open{{/if}} {{#if rightSidebarOpen}}sidebar-right-open{{/if}}">
             {{>viewerMain (clone this)}}
