@@ -5,35 +5,10 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { moment } from 'meteor/momentjs:moment';
 import { OHIF } from 'meteor/ohif:core';
 import { JF } from 'meteor/jf:core';
-import { _ } from 'meteor/underscore';
 
 Template.studylistResult.helpers({
   studies() {
-    const instance = Template.instance();
-    let studies;
-
-    let sortOption = instance.sortOption.get();
-    let filterOptions = instance.filterOptions.get();
-
-    // Pagination parameters
-    const rowsPerPage = instance.paginationData.rowsPerPage.get();
-    const currentPage = instance.paginationData.currentPage.get();
-    const offset = rowsPerPage * currentPage;
-    const limit = offset + rowsPerPage;
-
-    studies = JF.collections.studies.find(filterOptions, {
-        sort: sortOption
-    }).fetch();
-
-    if (!studies) {
-        return;
-    }
-
-    // Update record count
-    instance.paginationData.recordCount.set(studies.length);
-
-    // Limit studies
-    return studies.slice(offset, limit);
+    return JF.collections.studies.find().fetch();
   },
 
   numberOfStudies() {
@@ -54,7 +29,7 @@ Template.studylistResult.helpers({
       dicomTime: 'fa fa-fw',
       createdAt: 'fa fa-fw',
       organizationId: 'fa fa-fw',
-      descripton: 'fa fa-fw'
+      description: 'fa fa-fw'
     };
     const sortOption = instance.sortOption.get();
     Object.keys(sortOption).forEach(key => {
@@ -87,16 +62,8 @@ Template.studylistResult.onCreated(() => {
     JF.studylist.clearSelections();
 
     const instance = Template.instance();
-    instance.studyFilter = new ReactiveVar({});
     instance.sortOption = new ReactiveVar({ createdAt: -1 });
     instance.filterOptions = new ReactiveVar({});
-
-    instance.autorun(() => {
-      const filter = instance.studyFilter.get();
-      if (filter.createdAt) {
-        instance.subscribe('studies', { filter });
-      }
-    });
 
     instance.paginationData = {
         class: 'studylist-pagination',
@@ -104,11 +71,26 @@ Template.studylistResult.onCreated(() => {
         rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage()),
         recordCount: new ReactiveVar(0)
     };
+    
+    instance.autorun(() => {
+      const filters = instance.filterOptions.get();
+      const sort = instance.sortOption.get();
+      const limit = instance.paginationData.rowsPerPage.get();
+      const skip = limit * instance.paginationData.currentPage.get();
+      if (filters.createdAt) {
+        instance.subscribe('studies', { filters, sort, limit, skip });
+      }
+    });
+
+    instance.subscribe('studiesCount');
 
     instance.autorun(() => {
-      const studies = JF.collections.studies.find({}, { fields: { organizationId: 1 }}).fetch();
-      const orgIds = studies.map(s => s.organizationId);
-      _.uniq(orgIds).forEach(id => JF.organization.getOrganization(id));
+      let count = 0;
+      const rec = JF.collections.studiesCount.findOne({ userId: Meteor.userId() });
+      if (rec) {
+        count = rec.count;
+      }
+      instance.paginationData.recordCount.set(count);
     });
 });
 
@@ -190,14 +172,7 @@ Template.studylistResult.events({
           if (ranges.length === 2) {
             const start = new Date(ranges[0] + ' 00:00:00');
             const end = new Date(ranges[1] + ' 23:59:59');
-            const val = { $gte: start, $lte: end };
-            if (id === 'createdAt') {
-              const filter = instance.studyFilter.get();
-              filter[id] = val;
-              instance.studyFilter.set(filter);
-            } else {
-              filterOptions[id] = val;
-            }
+            filterOptions[id] = { $gte: start, $lte: end };
           }
           break;
       }

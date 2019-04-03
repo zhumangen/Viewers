@@ -103,7 +103,7 @@ Template.dicomListView.helpers({
       bodyPartExamined: 'fa fa-fw',
       dicomTime: 'fa fa-fw',
       institutionName: 'fa fa-fw',
-      descripton: 'fa fa-fw'
+      description: 'fa fa-fw'
     };
     const sortOption = instance.sortOption.get();
     Object.keys(sortOption).forEach(key => {
@@ -154,7 +154,7 @@ Template.dicomListView.events({
         case 'bodyPartExamined':
         case 'modalities':
         case 'institutionName':
-        case 'descripton':
+        case 'description':
           filterOptions[id] = { $regex: value };
           break;
         case 'dicomTime':

@@ -48,7 +48,7 @@ Template.selectForm.onDestroyed(() => {
 Template.selectForm.onRendered(() => {
     const instance = Template.instance();
     instance.$('#selectForm').resizable().draggable().bounded();
-    instance.autorun(instance.setTreeRect);
+    // instance.autorun(instance.setTreeRect);
 
     instance.autorun((computation) => {
         instance.removeTreeView();
@@ -183,10 +183,10 @@ Template.selectForm.events({
             JF.measurements.triggerTimepointUnsavedChanges(tool.id);
         }
 
-        instance.saveTreeRect();
+        // instance.saveTreeRect();
     },
     'click #cancel'(event, instance) {
-      instance.saveTreeRect();
+      // instance.saveTreeRect();
       Session.set('measurementData', false);
     }
 });

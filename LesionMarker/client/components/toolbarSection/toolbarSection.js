@@ -15,7 +15,7 @@ Template.toolbarSection.helpers({
         svgLink: '/packages/jf_viewerbase/assets/icons.svg#icon-studies',
         svgWidth: 15,
         svgHeight: 13,
-        bottomLabel: '报告'
+        bottomLabel: '检查'
       }]
     };
   },

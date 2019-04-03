@@ -13,11 +13,13 @@ Template.orderlistToolbar.helpers({
     const orders = JF.orderlist.getSelectedOrders();
 
     for (let order of orders) {
-      if (!Roles.userIsInRole(Meteor.user(), ['bg','sh','admin'], order.orderOrgId)) {
-        return true;
-      }
-      if (order.status < 0 || order.status >= 10) {
-        return true;
+      if (order) {
+        if (!Roles.userIsInRole(Meteor.user(), ['bg','sh','admin'], order.orderOrgId)) {
+          return true;
+        }
+        if (order.status < 0 || order.status >= 10) {
+          return true;
+        }
       }
     }
 

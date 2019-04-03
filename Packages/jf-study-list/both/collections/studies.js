@@ -5,4 +5,8 @@ const Studies = new Mongo.Collection('studies');
 Studies._debugName = 'Studies';
 JF.collections.studies = Studies;
 
-export { Studies };
+const StudiesCount = new Mongo.Collection('studies_count');
+StudiesCount._debugName = 'StudiesCount';
+JF.collections.studiesCount = StudiesCount;
+
+export { Studies, StudiesCount };

@@ -8,39 +8,36 @@ Template.orderlistView.onCreated(() => {
   const instance = Template.instance();
   instance.sortOption = new ReactiveVar({ orderTime: -1 });
   instance.filterOptions = new ReactiveVar({});
-  instance.orderFilter = new ReactiveVar({});
-
-  instance.autorun(() => {
-    const type = Session.get('locationType');
-    const filter = instance.orderFilter.get();
-    if (filter.orderTime) {
-      instance.subscribe('orders', { type, filter });
-    }
-  });
 
   instance.paginationData = {
     class: 'orderlist-pagination',
     currentPage: new ReactiveVar(0),
     rowsPerPage: new ReactiveVar(JF.managers.settings.rowsPerPage()),
-    recordCount: new ReactiveVar(0)
+    recordCount: new ReactiveVar(100)
   };
 
   instance.autorun(() => {
-    const orders = JF.collections.orders.find({}, { fields: { studyOrgId: 1, reporterId: 1, reviewerId: 1 }});
-    const orgIds = {};
-    const userIds = {};
-    orders.forEach(o => {
-      orgIds[o.studyOrgId] = 1;
-      userIds[o.reporterId] = 1;
-      userIds[o.reviewerId] = 1;
-    });
-    Object.keys(orgIds).forEach(id => JF.organization.getOrganization(id));
-    Object.keys(userIds).forEach(id => {
-      if (id != 'undefined' && id != 'null') {
-        JF.user.getUser(id);
-      }
-    });
+    const type = Session.get('locationType');
+    const sort = instance.sortOption.get();
+    const filters = instance.filterOptions.get();
+    const limit = instance.paginationData.rowsPerPage.get();
+    const skip = limit * instance.paginationData.currentPage.get();
+    if (filters.orderTime) {
+      instance.subscribe('orders', { type, filters, sort, skip, limit });
+    }
   });
+
+  instance.subscribe('ordersCount');
+
+  instance.autorun(() => {
+    let count = 0;
+    const rec = JF.collections.ordersCount.findOne({ userId: Meteor.userId() });
+    if (rec) {
+      count = rec.count;
+    }
+    instance.paginationData.recordCount.set(count);
+  });
+
 });
 
 Template.orderlistView.onRendered(() => {
@@ -87,30 +84,7 @@ Template.orderlistView.helpers({
     return Session.get('locationType')==='SCP'?'标注列表':'申请列表';
   },
   orders() {
-    const instance = Template.instance();
-    let orders;
-    let sortOption = instance.sortOption.get();
-    let filterOptions = instance.filterOptions.get();
-
-    // Pagination parameters
-    const rowsPerPage = instance.paginationData.rowsPerPage.get();
-    const currentPage = instance.paginationData.currentPage.get();
-    const offset = rowsPerPage * currentPage;
-    const limit = offset + rowsPerPage;
-
-    orders = JF.collections.orders.find(filterOptions, {
-        sort: sortOption
-    }).fetch();
-
-    if (!orders) {
-        return;
-    }
-
-    // Update record count
-    instance.paginationData.recordCount.set(orders.length);
-
-    // Limit orders
-    return orders.slice(offset, limit);
+    return JF.collections.orders.find().fetch();
   },
   numberOfOrders() {
     return Template.instance().paginationData.recordCount.get();
@@ -232,14 +206,7 @@ Template.orderlistView.events({
           if (ranges.length === 2) {
             const start = new Date(ranges[0] + ' 00:00:00');
             const end = new Date(ranges[1] + ' 23:59:59');
-            const val = { $gte: start, $lte: end };
-            if (id === 'orderTime') {
-              const filter = instance.orderFilter.get();
-              filter[id] = val;
-              instance.orderFilter.set(filter);
-            } else {
-              filterOptions[id] = val;
-            }
+            filterOptions[id] = { $gte: start, $lte: end };
           }
           break;
       }
