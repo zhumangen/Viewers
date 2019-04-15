@@ -12,7 +12,7 @@ JF.organization.retrieveOrganizations = (organizationIds, options) => {
         reject(error);
       } else {
         orgs.forEach(org => {
-          Organizations.update({ _id: org._id }, org, { upsert: true });
+          Organizations.upsert({ _id: org._id }, org);
         });
         resolve(orgs);
       }

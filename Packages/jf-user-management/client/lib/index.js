@@ -5,3 +5,4 @@ import './roles';
 import './updateUser';
 import './removeUsers';
 import './getUserItems';
+import './getUsersWithSameGroups';

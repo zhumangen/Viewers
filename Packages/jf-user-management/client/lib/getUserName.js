@@ -4,6 +4,8 @@ import { Template } from 'meteor/templating';
 const UserPromises = new Map();
 
 JF.user.getUser = userId => {
+  if (!userId) return;
+  
   if (UserPromises.has(userId)) {
     return UserPromises.get(userId);
   }

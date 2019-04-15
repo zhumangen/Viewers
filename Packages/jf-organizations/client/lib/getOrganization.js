@@ -5,6 +5,8 @@ import { JF } from 'meteor/jf:core';
 const OrganizationPromises = new Map();
 
 JF.organization.getOrganization = (organizationId, options) => {
+  if (!organizationId) return;
+  
   if (OrganizationPromises.has(organizationId)) {
     return OrganizationPromises.get(organizationId);
   }

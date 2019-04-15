@@ -27,7 +27,10 @@ Router.onBeforeAction(function() {
           c.stop();
           const orgIds = JF.user.getAllGroups();
           if (orgIds.length > 0) {
-            JF.organization.retrieveOrganizations(orgIds).then(() => next());
+            JF.organization.retrieveOrganizations(orgIds).then(() => {
+              JF.user.getUsersWithSameGroups(['bg', 'sh']);
+              next();
+            });
           } else {
             next();
           }
@@ -56,6 +59,7 @@ Router.route('/orderlist', {
       if (!Session.get('locationType')) {
         if (JF.user.hasScpRoles()) {
           Session.set('locationType', 'SCP');
+          JF.organization.retrieveOrganizations([], { type: 'SCU'});
         } else {
           Session.set('locationType', 'SCU');
         }
