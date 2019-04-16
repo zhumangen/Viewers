@@ -29,8 +29,10 @@ Template.applyStudyModal.onRendered(() => {
   instance.data.form = instance.$('form').first().data('component');
 
   instance.autorun(() => {
-    instance.applyOrgs.get();
-    Meteor.defer(() => instance.data.form.value(instance.data.applyInfo));
+    const orgs = instance.applyOrgs.get();
+    if (orgs && orgs.length > 0) {
+      Meteor.defer(() => instance.data.form.value(instance.data.applyInfo));
+    }
   });
 });
 

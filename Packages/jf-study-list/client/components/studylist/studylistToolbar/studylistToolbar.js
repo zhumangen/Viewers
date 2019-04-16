@@ -58,6 +58,9 @@ Template.studylistToolbar.events({
     };
     OHIF.ui.showDialog('dialogConfirm', dialogSettings).then(() => {
       const filters = instance.data.filterOptions.get();
+      if (!filters.status) {
+        filters.status = 0;
+      }
       const studies = JF.collections.studies.find(filters).fetch();
       JF.studylist.applyStudiesProgress(studies);
     });

@@ -7,7 +7,6 @@ Template.dicomListView.onCreated(() => {
   const instance = Template.instance();
 
   JF.dicomlist.clearSelections();
-  JF.collections.importDicoms.remove({});
 
   instance.sortOption = new ReactiveVar({ dicomTime: -1 });
   instance.filterOptions = new ReactiveVar({});
@@ -57,6 +56,7 @@ Template.dicomListView.onRendered(() => {
 Template.dicomListView.onDestroyed(() => {
   const instance = Template.instance();
   instance.dicomTimePicker.remove();
+  JF.collections.importDicoms.remove({});
 });
 
 Template.dicomListView.helpers({
