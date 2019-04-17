@@ -10,15 +10,19 @@ Meteor.methods({
     }
 
     const userId = this.userId;
-    let gs = JF.user.getAllGroupsForUser(userId);
 
     if (JF.user.isSuperAdmin(userId)) {
-      const orgs = JF.collections.organizations.find({}, {fields: { _id: 1 }}).fetch();
-      gs = [];
-      orgs.map(org => gs.push(org._id));
-    }
-
-    if (gs && gs.length > 0) {
+      Meteor.users.find({}).forEach(u => {
+        const gs = Object.keys(u.roles);
+        for (let g of gs) {
+          if (_.intersection(u.roles[g], roles).length > 0) {
+            users.push(u);
+            break;
+          }
+        }
+      });
+    } else {
+      let gs = JF.user.getAllGroupsForUser(userId);
       const filter = { $or: [] };
       gs.forEach(g => {
         const en = {};
