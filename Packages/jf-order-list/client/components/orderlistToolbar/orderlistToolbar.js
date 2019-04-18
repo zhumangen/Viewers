@@ -52,6 +52,16 @@ Template.orderlistToolbar.helpers({
     }
 
     return !orders.length;
+  },
+  disableExportBtn() {
+    const userId = Meteor.userId();
+    const options = Template.instance().data.filterOptions.get();
+
+    if (options.studyOrgId && Roles.userIsInRole(userId, 'admin', options.studyOrgId)) {
+      return false;
+    }
+
+    return true;
   }
 });
 
@@ -67,5 +77,8 @@ Template.orderlistToolbar.events({
   },
   'click #removeOrders'(event, instance) {
     JF.orderlist.removeSelectedOrders(event);
+  },
+  'click #exportOrders'(event, instance) {
+    JF.orderlist.exportOrders(event, instance.data.filterOptions.get());
   }
 });

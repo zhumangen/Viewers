@@ -7,6 +7,7 @@ import endOrder from './endOrder';
 import updateEditStatus from './updateEditStatus';
 import denyOrders from './denyOrders';
 import cancelOrders from './cancelOrders';
+import exportOrders from './exportOrders';
 
 const methods = {
   queryOrders,
@@ -14,7 +15,8 @@ const methods = {
   startOrder,
   endOrder,
   denyOrders,
-  cancelOrders
+  cancelOrders,
+  exportOrders
 };
 
 Meteor.methods(methods);
