@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { _ } from 'meteor/underscore';
 
 JF.organizationlist.clearSelections = () => {
   JF.ui.rowSelect.doClearSelections.call(JF.organizationlist);
@@ -10,5 +11,5 @@ JF.organizationlist.getSelectedOrgIds = () => {
 
 JF.organizationlist.getSelectedOrganizations = () => {
   const rowIds = JF.organizationlist.getSelectedOrgIds();
-  return rowIds.map(rowId => JF.collections.organizations.find({ _id: rowId }).fetch()[0]);
+  return _.compact(rowIds.map(rowId => JF.collections.organizations.findOne({ _id: rowId })));
 };

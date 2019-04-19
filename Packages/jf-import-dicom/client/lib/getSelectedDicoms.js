@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { _ } from 'meteor/underscore';
 
 JF.dicomlist.clearSelections = () => {
   JF.ui.rowSelect.doClearSelections.call(JF.dicomlist);
@@ -10,5 +11,5 @@ JF.dicomlist.getSelectedDicomIds = () => {
 
 JF.dicomlist.getSelectedDicoms = () => {
   const rowIds = JF.dicomlist.getSelectedDicomIds();
-  return rowIds.map(rowId => JF.collections.importDicoms.find({ _id: rowId }).fetch()[0]);
+  return _.compact(rowIds.map(rowId => JF.collections.importDicoms.findOne({ _id: rowId })));
 }

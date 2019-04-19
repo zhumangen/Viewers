@@ -25,6 +25,38 @@ export default function(options) {
   const pipeline = [{
     $match: options
   }, {
+    $project: {
+      dicomId: 1,
+      lesionCode: 1,
+      orderOrgId: 1,
+      orderTime: 1,
+      reportStart: 1,
+      reportEnd: 1,
+      reporterId: 1,
+      reportRating: 1,
+      reviewStart: 1,
+      reviewEnd: 1,
+      reviewerId: 1,
+      serialNumber: 1,
+      status: 1,
+      studyOrgId: 1,
+      userId: 1
+    }
+  }, {
+    $lookup: {
+      from: 'studies',
+      localField: 'dicomId',
+      foreignField: '_id',
+      as: 'studies'
+    }
+  }, {
+    $lookup: {
+      from: 'servers',
+      localField: 'studies.serverId',
+      foreignField: '_id',
+      as: 'servers'
+    }
+  }, {
     $lookup: {
       from: 'labels',
       localField: '_id',
@@ -46,6 +78,7 @@ export default function(options) {
       as: 'tissues'
     }
   }];
+
   result.data = JF.collections.orders.aggregate(pipeline);
   result.code = 200;
 

@@ -1,4 +1,5 @@
 import { JF } from 'meteor/jf:core';
+import { _ } from 'meteor/underscore';
 
 JF.orderlist.clearSelections = () => {
   JF.ui.rowSelect.doClearSelections.call(JF.orderlist);
@@ -10,5 +11,5 @@ JF.orderlist.getSelectedOrderIds = () => {
 
 JF.orderlist.getSelectedOrders = () => {
   const rowIds = JF.orderlist.getSelectedOrderIds();
-  return rowIds.map(rowId => JF.collections.orders.find({ _id: rowId }).fetch()[0]);
+  return _.compact(rowIds.map(rowId => JF.collections.orders.findOne({ _id: rowId })));
 };
