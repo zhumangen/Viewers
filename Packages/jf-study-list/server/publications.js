@@ -14,6 +14,7 @@ Meteor.publish('studies', function(options) {
   const sort = options.sort || {};
   let skip = 0;
   let limit = 100;
+  let timerHandle = null;
 
   if (options.skip) {
     JF.validation.checks.checkNonNegativeNumber(options.skip);
@@ -28,14 +29,33 @@ Meteor.publish('studies', function(options) {
   }
 
   const orgIds = JF.user.getScuGroupsForUser(userId);
-  if (orgIds.length > 0 || su) {
+  if (orgIds.length > 0) {
     filter.$or = [];
     orgIds.forEach(orgId => filter.$or.push({ organizationId: orgId }));
-    const count = Studies.find(filter).count();
-    StudiesCount.update({ userId }, { userId, count }, { upsert: true });
+  }
+
+  const clearTimer = () => {
+    if (timerHandle) {
+      Meteor.clearInterval(timerHandle);
+      timerHandle = null;
+    }
+  };
+
+  this.onStop(clearTimer);
+
+  if (orgIds.length > 0 || su) {
+    const updateCount = () => {
+      const count = Studies.find(filter).count();
+      StudiesCount.update({ userId }, { userId, count }, { upsert: true });
+    }
+    clearTimer();
+    timerHandle = Meteor.setInterval(updateCount, 5000);
+    updateCount();
+    
     return Studies.find(filter, { sort, skip, limit });
   } else {
+    clearTimer();
     StudiesCount.update({ userId }, { userId, count: 0 }, { upsert: true });
-    return this.ready();
+    return [];
   }
 });

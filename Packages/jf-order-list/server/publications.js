@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
-import { OrdersCount } from '../both/collections/orders';
 
 Meteor.publish('ordersCount', function(options) {
   return JF.collections.ordersCount.find({ userId: this.userId });
@@ -10,11 +9,12 @@ Meteor.publish('orders', function(options) {
   JF.validation.checks.checkNonEmptyString(options.type);
 
   const Orders = JF.collections.orders;
-  const ordersCount = JF.collections.ordersCount;
+  const OrdersCount = JF.collections.ordersCount;
   const filter = { status: { $gte: 0 }};
   const sort = options.sort || {};
   let skip = 0;
   let limit = 100;
+  let timerHandle = null;
 
   if (options.skip) {
     JF.validation.checks.checkNonNegativeNumber(options.skip);
@@ -56,12 +56,29 @@ Meteor.publish('orders', function(options) {
     });
   }
 
+  const clearTimer = () => {
+    if (timerHandle) {
+      Meteor.clearInterval(timerHandle);
+      timerHandle = null;
+    }
+  }
+
+  this.onStop(clearTimer);
+
   if (orgIds.length > 0 || su) {
-    const count = Orders.find(filter).count();
-    OrdersCount.update({ userId }, { userId, count }, { upsert: true });
+    const updateCount = () => {
+      const count = Orders.find(filter).count();
+      OrdersCount.update({ userId }, { userId, count }, { upsert: true });
+    }
+    
+    clearTimer();
+    timerHandle = Meteor.setInterval(updateCount, 3000);
+    updateCount();
+    
     return Orders.find(filter, { sort, skip, limit });
   } else {
+    clearTimer();
     OrdersCount.update({ userId }, { userId, count: 0 }, { upsert: true });
-    return this.ready();
+    return [];
   }
 });
