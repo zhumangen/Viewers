@@ -86,7 +86,7 @@ Template.studylistResult.onCreated(() => {
 
     instance.autorun(() => {
       let count = 0;
-      const rec = JF.collections.studiesCount.findOne({ userId: Meteor.userId() });
+      const rec = JF.collections.studiesCount.findOne({});
       if (rec) {
         count = rec.count;
       }

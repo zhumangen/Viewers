@@ -1,14 +1,23 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
+Meteor.startup(() => {
+  Meteor.server.onConnection(connection => {
+    connection.onClose(() => {
+      JF.collections.studiesCount.remove({ sessionId: connection.id });
+    });
+  });
+});
+
 Meteor.publish('studiesCount', function() {
-  return JF.collections.studiesCount.find({ userId: this.userId });
+  return JF.collections.studiesCount.find({ sessionId: this._session.id });
 });
 
 Meteor.publish('studies', function(options) {
   const Studies = JF.collections.studies;
   const StudiesCount = JF.collections.studiesCount;
   const userId = this.userId;
+  const sessionId = this._session.id;
   const su = JF.user.isSuperAdmin();
   const filter = { status: { $gte: 0 }};
   const sort = options.sort || {};
@@ -46,7 +55,7 @@ Meteor.publish('studies', function(options) {
   if (orgIds.length > 0 || su) {
     const updateCount = () => {
       const count = Studies.find(filter).count();
-      StudiesCount.update({ userId }, { userId, count }, { upsert: true });
+      StudiesCount.update({ sessionId }, { sessionId, count }, { upsert: true });
     }
     clearTimer();
     timerHandle = Meteor.setInterval(updateCount, 5000);
@@ -55,7 +64,7 @@ Meteor.publish('studies', function(options) {
     return Studies.find(filter, { sort, skip, limit });
   } else {
     clearTimer();
-    StudiesCount.update({ userId }, { userId, count: 0 }, { upsert: true });
+    StudiesCount.update({ sessionId }, { sessionId, count: 0 }, { upsert: true });
     return [];
   }
 });

@@ -1,8 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { JF } from 'meteor/jf:core';
 
+Meteor.startup(() => {
+  Meteor.server.onConnection(connection => {
+    connection.onClose(() => {
+      JF.collections.ordersCount.remove({ sessionId: connection.id });
+    });
+  });
+});
+
 Meteor.publish('ordersCount', function(options) {
-  return JF.collections.ordersCount.find({ userId: this.userId });
+  return JF.collections.ordersCount.find({ sessionId: this._session.id });
 });
 
 Meteor.publish('orders', function(options) {
@@ -26,6 +34,7 @@ Meteor.publish('orders', function(options) {
   }
 
   const userId = this.userId;
+  const sessionId = this._session.id;
   const su = JF.user.isSuperAdmin();
 
   if (options.filters) {
@@ -68,7 +77,7 @@ Meteor.publish('orders', function(options) {
   if (orgIds.length > 0 || su) {
     const updateCount = () => {
       const count = Orders.find(filter).count();
-      OrdersCount.update({ userId }, { userId, count }, { upsert: true });
+      OrdersCount.update({ sessionId }, { sessionId, count }, { upsert: true });
     }
     
     clearTimer();
@@ -78,7 +87,7 @@ Meteor.publish('orders', function(options) {
     return Orders.find(filter, { sort, skip, limit });
   } else {
     clearTimer();
-    OrdersCount.update({ userId }, { userId, count: 0 }, { upsert: true });
+    OrdersCount.update({ sessionId }, { sessionId, count: 0 }, { upsert: true });
     return [];
   }
 });

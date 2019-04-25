@@ -31,7 +31,7 @@ Template.orderlistView.onCreated(() => {
 
   instance.autorun(() => {
     let count = 0;
-    const rec = JF.collections.ordersCount.findOne({ userId: Meteor.userId() });
+    const rec = JF.collections.ordersCount.findOne({});
     if (rec) {
       count = rec.count;
     }
