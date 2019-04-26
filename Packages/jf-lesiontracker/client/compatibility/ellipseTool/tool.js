@@ -3,6 +3,7 @@ import { Viewerbase } from 'meteor/jf:viewerbase';
 import { cornerstone, cornerstoneMath, cornerstoneTools } from 'meteor/ohif:cornerstone';
 import { toolType } from './definitions';
 import addNewMeasurement from './addNewMeasurement';
+import addNewMeasurementTouch from './addNewMeasurementTouch';
 import doubleClickCallback from './doubleClickCallback';
 import onImageRendered from './onImageRendered';
 import createNewMeasurement from './createNewMeasurement';
@@ -37,13 +38,11 @@ toolInterface.mouse = cornerstoneTools.mouseButtonTool({
 Object.assign(toolInterface.mouse, {mouseMoveCallback, mouseDownCallback});
 
 toolInterface.touch = cornerstoneTools.touchTool({
-  addNewMeasurement,
+  addNewMeasurement: addNewMeasurementTouch,
   createNewMeasurement,
   onImageRendered,
   pointNearTool: pointNearToolTouch,
-  toolType,
-  mouseMoveCallback,
-  mouseDownCallback
+  toolType
 });
 
 cornerstoneTools[toolType] = toolInterface.mouse;

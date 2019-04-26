@@ -14,11 +14,14 @@ Meteor.publish('orders', function(options) {
   }
 
   let orgIds = [];
+  let orgKey = '';
   if (options.type === 'SCP') {
     filter.status.$lte = 10;
     orgIds = JF.user.getScpGroupsForUser(userId);
+    orgKey = 'orderOrgId';
   } else if (options.type === 'SCU') {
     orgIds = JF.user.getScuGroupsForUser(userId);
+    orgKey = 'studyOrgId';
   }
 
   if (su) {
@@ -28,7 +31,9 @@ Meteor.publish('orders', function(options) {
   if (orgIds.length > 0) {
     filter.$or = [];
     orgIds.forEach(orgId => {
-      filter.$or.push({ orderOrgId: orgId });
+      const item = {};
+      item[`${orgKey}`] = orgId;
+      filter.$or.push(item);
     });
   }
 
