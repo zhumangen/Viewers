@@ -17,7 +17,7 @@ export const prepareViewerData = ({ serverId, studyInstanceUids, seriesInstanceU
     // Retrieve the studies metadata
     const promise = new Promise((resolve, reject) => {
         const processData = viewerData => {
-            JF.studies.retrieveStudiesMetadata(viewerData.serverId, viewerData.studyInstanceUids, viewerData.seriesInstanceUids).then(studies => {
+            JF.studies.retrieveStudiesMetadata(viewerData.serverId, viewerData.studyInstanceUids, viewerData.seriesInstanceUids, viewerData.sopInstanceUids).then(studies => {
                 resolve({
                     studies,
                     viewerData
@@ -52,8 +52,7 @@ const buildViewerDataFromOrderId = serialNumber => {
     let viewerData = {
       serialNumber,
       serverId: '',
-      studyInstanceUids: [],
-      seriesInstanceUids: []
+      studyInstanceUids: []
     };
 
     JF.orderlist.queryOrders([serialNumber]).then(orders => {
@@ -64,24 +63,21 @@ const buildViewerDataFromOrderId = serialNumber => {
       const order = orders[0];
       viewerData.order = order;
       JF.studylist.retrieveStudies([order.dicomId]).then(studies => {
-        if (!studies || !studies.length) {
-          reject(new Error(`Cannot find study data for ID ${order.dicomId}`));
+        if (!studies || studies.length !== 1) {
+          reject(new Error(`Error find study data for ID ${order.dicomId}`));
         }
 
-        let studyLevel = false;
-        studies.forEach(study => {
-          if (study.qidoLevel === 'STUDY') {
-            studyLevel = true;
-          } else {
-            viewerData.seriesInstanceUids.push(study.seriesInstanceUid);
-          }
-          viewerData.studyInstanceUids.push(study.studyInstanceUid);
-          viewerData.serverId = study.serverId;
-        });
+        const study = studies[0];
+        viewerData.studyInstanceUids.push(study.studyInstanceUid);
 
-        if (studyLevel) {
-          delete viewerData.seriesInstanceUids;
+        if (study.qidoLevel === 'SERIES') {
+          viewerData.seriesInstanceUids = [study.seriesInstanceUid];
+        } else if (study.qidoLevel === 'INSTANCE') {
+          viewerData.seriesInstanceUids = [study.seriesInstanceUid];
+          viewerData.sopInstanceUids = [study.sopInstanceUid];
         }
+        
+        viewerData.serverId = study.serverId;
 
         resolve(viewerData);
       });

@@ -24,6 +24,8 @@ Meteor.methods({
                 return JF.studies.services.QIDO.Studies(server, filter);
               } else if (l === 'SERIES') {
                 return JF.studies.services.QIDO.Series(server, filter);
+              } else if (l === 'INSTANCE') {
+                return JF.studies.services.QIDO.Instances(server, filter);
               } else {
                 return new Error('Not supported query level: ' + level);
               }

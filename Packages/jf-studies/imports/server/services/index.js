@@ -5,6 +5,7 @@ import './qido/instancesOfStudy.js';
 import './qido/instancesOfSeries.js';
 import './qido/studies.js';
 import './qido/series.js';
+import './qido/instances.js';
 import './wado/retrieveMetadata.js';
 
 // DIMSE instance, study, and metadata retrieval

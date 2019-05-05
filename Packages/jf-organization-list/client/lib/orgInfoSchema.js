@@ -103,8 +103,8 @@ const scuOrgInfoDefinition = Object.assign({}, orgInfoDefinition, {
   qidoLevel: {
     type: String,
     label: '查询层级',
-    allowedValues: ['STUDY', 'SERIES'],
-    valuesLabels: ['检查', '序列']
+    allowedValues: ['STUDY', 'SERIES', 'INSTANCE'],
+    valuesLabels: ['检查', '序列', '单图']
   },
   filters: {
     type: ScuFilters,

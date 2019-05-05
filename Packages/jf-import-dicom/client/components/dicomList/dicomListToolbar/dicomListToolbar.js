@@ -85,19 +85,23 @@ function search(organization, dateRange, offset, callback) {
           }
           dicom.patientAge = JF.dicomlist.getPatientAge(dicom.patientAge, dicom.patientBirthdate, dicom.seriesDate||dicom.studyDate);
           delete dicom.patientBirthdate;
-          dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
-          delete dicom.studyDate;
-          delete dicom.studyTime;
-          if (level === 'SERIES' && dicom.seriesDate && dicom.seriesTime) {
+
+          if (level === 'INSTANCE') {
+            dicom.dicomTime = moment(dicom.contentDate+dicom.contentTime, 'YYYYMMDDHHmmss.SSS').toDate();
+          }
+          if (level === 'SERIES' || isNaN(dicom.dicomTime.valueOf())) {
             dicom.dicomTime = moment(dicom.seriesDate+dicom.seriesTime, 'YYYYMMDDHHmmss.SSS').toDate();
-            delete dicom.seriesDate;
-            delete dicom.seriesTime;
           }
-          if (isNaN(dicom.dicomTime.valueOf())) {
-            delete dicom.dicomTime;
+          if (level === 'STUDY' || isNaN(dicom.dicomTime.valueOf())) {
+            dicom.dicomTime = moment(dicom.studyDate+dicom.studyTime, 'YYYYMMDDHHmmss.SSS').toDate();
           }
-          dicom.numberOfStudyRelatedInstances = !isNaN(dicom.numberOfStudyRelatedInstances) ? parseInt(dicom.numberOfStudyRelatedInstances) : undefined;
-          dicom.numberOfSeriesRelatedInstances = !isNaN(dicom.numberOfSSeriesRelatedInstances) ? parseInt(dicom.numberOfSSeriesRelatedInstances) : undefined;
+
+          if (!isNaN(dicom.numberOfStudyRelatedInstances)) {
+            dicom.numberOfStudyRelatedInstances = parseInt(dicom.numberOfStudyRelatedInstances);
+          }
+          if (!isNaN(dicom.numberOfSSeriesRelatedInstances)) {
+            dicom.numberOfSeriesRelatedInstances = parseInt(dicom.numberOfSSeriesRelatedInstances);
+          }
           dicom.serverId = organization.serverId;
           dicom.qidoLevel = level;
           dicom.organizationId = organization._id;
