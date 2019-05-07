@@ -95,7 +95,10 @@ function getSourceImageInstanceUid(instance) {
     // Later we should probably parse the whole sequence.
     var SourceImageSequence = instance['00082112'];
     if (SourceImageSequence && SourceImageSequence.Value && SourceImageSequence.Value.length) {
-        return SourceImageSequence.Value[0]['00081155'].Value[0];
+        var item = SourceImageSequence.Value[0]['00081155'];
+        if (item && item.Value && item.Value.length) {
+            return item.Value[0];
+        }
     }
 }
 
