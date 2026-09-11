@@ -1,7 +1,7 @@
 {
-  "name": "OHIF Viewer",
-  "short_name": "Viewer",
-  "description": "OHIF Viewer",
+  "name": "Zelvyn",
+  "short_name": "Zelvyn",
+  "description": "Zelvyn medical imaging viewer",
   "dir": "auto",
   "lang": "en-US",
   "orientation": "any",

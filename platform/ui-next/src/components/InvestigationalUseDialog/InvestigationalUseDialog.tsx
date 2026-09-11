@@ -63,19 +63,20 @@ const InvestigationalUseDialog = ({
     return null;
   }
 
+  // Minimized chrome banner — required investigational notice retained.
   return (
-    <div className="fixed bottom-2 z-50 flex h-[86px] w-full justify-center">
-      <div className="bg-popover border-muted flex w-[90%] items-center justify-between rounded-lg border-2 pl-[22px] pr-[22px] pt-[10px] pb-[10px] shadow-lg">
-        <div className="flex items-center gap-4">
-          <Icons.InvestigationalUse className="h-18 w-18" />
-          <div className="flex flex-col">
-            <div className="text-foreground text-[19px]">
-              OHIF Viewer is{' '}
-              <span className="text-highlight">{t('for investigational use only')}</span>
+    <div className="pointer-events-none fixed bottom-3 z-50 flex w-full justify-center px-3">
+      <div className="bg-card/95 border-border pointer-events-auto flex max-w-3xl flex-1 items-center justify-between gap-3 rounded-md border px-3 py-2 shadow-lg backdrop-blur-sm">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <Icons.InvestigationalUse className="text-muted-foreground h-8 w-8 shrink-0 opacity-80" />
+          <div className="flex min-w-0 flex-col">
+            <div className="text-foreground text-sm leading-snug">
+              This viewer is{' '}
+              <span className="text-highlight font-medium">{t('for investigational use only')}</span>
             </div>
-            <div className="text-foreground text-[13px]">
+            <div className="text-muted-foreground truncate text-xs">
               <span
-                className="text-primary cursor-pointer"
+                className="text-primary cursor-pointer hover:underline"
                 onClick={() => window.open('https://ohif.org/', '_blank')}
               >
                 {t('Learn more about OHIF Viewer')}
@@ -84,6 +85,9 @@ const InvestigationalUseDialog = ({
           </div>
         </div>
         <Button
+          variant="ghost"
+          size="sm"
+          className="text-primary shrink-0"
           onClick={handleConfirmAndHide}
           dataCY="confirm-and-hide-button"
         >

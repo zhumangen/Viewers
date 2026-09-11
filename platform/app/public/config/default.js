@@ -19,7 +19,27 @@
 window.config = {
   name: 'config/default.js',
   routerBasename: null,
-  // whiteLabeling: {},
+  whiteLabeling: {
+    // Zelvyn product shell branding (temporary name; rename assets/strings together).
+    createLogoComponentFn: function (React) {
+      return React.createElement(
+        'a',
+        {
+          target: '_self',
+          rel: 'noopener noreferrer',
+          href: '/',
+          className: 'inline-flex items-center gap-2 no-underline',
+          'aria-label': 'Zelvyn',
+          'data-brand': 'Zelvyn',
+        },
+        React.createElement('img', {
+          src: '/assets/zelvyn/logo-wordmark.png',
+          alt: 'Zelvyn',
+          className: 'h-7 max-w-[148px] object-contain object-left',
+        })
+      );
+    },
+  },
   extensions: [],
   modes: [],
   customizationService: {},

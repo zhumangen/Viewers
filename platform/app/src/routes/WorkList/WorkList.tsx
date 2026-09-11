@@ -7,14 +7,16 @@ import { useStudyListStateSync, useWorkListToolbarActions } from '../../hooks';
 
 import {
   StudyList,
-  Icons,
   InvestigationalUseDialog,
   useSessionStorage,
+  COLUMN_IDS,
   type StudyRow,
   type OnStudyDoubleClick,
 } from '@ohif/ui-next';
 import { StudyListSettingsPopover } from './StudyListSettingsPopover';
 import { SidePanelPreview } from './SidePanelPreview';
+import { WorkListAppBar } from './WorkListAppBar';
+import { WorkListFilterChips } from './WorkListFilterChips';
 
 type Props = withAppTypes & {
   data: any[];
@@ -100,13 +102,6 @@ export default function WorkList({
     );
   }, [customizationService]);
 
-  const logoComponent = appConfig?.whiteLabeling?.createLogoComponentFn?.(React) ?? (
-    <Icons.OHIFLogoHorizontal
-      aria-label="OHIF logo"
-      className="h-[22px] w-[232px]"
-    />
-  );
-
   const toolbarActions = useWorkListToolbarActions(servicesManager, dataSource, onRefresh);
 
   const previewDefaultSize = useMemo(() => {
@@ -125,8 +120,50 @@ export default function WorkList({
     setIsFilterPending(false);
   }, [isLoadingData, data]);
 
+  const searchValue = useMemo(() => {
+    const patient = filters.find(f => f.id === COLUMN_IDS.PATIENT);
+    return typeof patient?.value === 'string' ? patient.value : '';
+  }, [filters]);
+
+  const onSearchChange = useCallback(
+    (value: string) => {
+      setIsFilterPending(true);
+      setFilters(prev => {
+        const rest = prev.filter(f => f.id !== COLUMN_IDS.PATIENT);
+        if (!value) {
+          return rest;
+        }
+        return [...rest, { id: COLUMN_IDS.PATIENT, value }];
+      });
+    },
+    [setFilters]
+  );
+
+  const onClearAllFilters = useCallback(() => {
+    setIsFilterPending(true);
+    setFilters([]);
+  }, [setFilters]);
+
+  const onRemoveFilter = useCallback(
+    (columnId: string) => {
+      setIsFilterPending(true);
+      setFilters(prev => prev.filter(f => f.id !== columnId));
+    },
+    [setFilters]
+  );
+
   return (
     <div className="bg-background flex h-screen min-h-0 flex-col overflow-hidden">
+      <WorkListAppBar
+        searchValue={searchValue}
+        onSearchChange={onSearchChange}
+        rightActions={toolbarActions}
+      />
+      <WorkListFilterChips
+        filters={filters}
+        onClearAll={onClearAllFilters}
+        onRemoveFilter={onRemoveFilter}
+      />
       <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} />
       <div className="flex h-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col">
@@ -159,11 +196,15 @@ export default function WorkList({
                   <div className="h-8 w-8" />
                 )
               }
-              title={'Study List'}
+              title={'Studies'}
               onStudyDoubleClick={studyDoubleClickCommand ? onStudyDoubleClick : undefined}
               onSelectionChange={sel => setSelected((sel as StudyRow[])[0] ?? null)}
-              toolbarLeftComponent={logoComponent}
-              toolbarRightActionsComponent={toolbarActions}
+              toolbarLeftComponent={
+                <span className="text-muted-foreground pl-1 text-xs font-medium uppercase tracking-wide">
+                  Study List
+                </span>
+              }
+              toolbarRightActionsComponent={undefined}
               toolbarRightComponent={
                 !isPreviewOpen ? (
                   <div className="relative -top-px mt-1 ml-2 flex items-center gap-1">
@@ -186,4 +227,3 @@ export default function WorkList({
     </div>
   );
 }
-
