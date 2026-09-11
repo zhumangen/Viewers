@@ -252,10 +252,11 @@ function ViewerLayout({
       >
         <ZelvynToolRail />
 
-        <React.Fragment>
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-row items-stretch overflow-hidden">
           {showLoadingIndicator && (
             <LoadingIndicatorProgress className="h-full w-full bg-background" />
           )}
+          <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
           <ResizablePanelGroup {...resizablePanelGroupProps}>
             {hasLeftPanels ? (
               <>
@@ -308,8 +309,10 @@ function ViewerLayout({
               </>
             ) : null}
           </ResizablePanelGroup>
+          </div>
+          {/* In-flow dock: shrinks viewport+series; never overlays viewport border */}
           <ZelvynMeasurementsDrawer />
-        </React.Fragment>
+        </div>
       </div>
       <ZelvynStatusBar />
       <Onboarding tours={customizationService.getCustomization('ohif.tours')} />

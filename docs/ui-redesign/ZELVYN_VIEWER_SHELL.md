@@ -11,7 +11,7 @@
 ├────┬──────────────────────────────────────────────┬───────────────┤
 │Rail│  Viewport grid (default 2×2 + MPR fill)      │ Series cards  │
 │…   │  overlays: stack glyph · W/L · Slice · mm    │ + thumbs      │
-│More│  Measurements drawer overlays (no tabs)      │ live n/m      │
+│More│  Measurements dock (in-flow, no overlay)     │ live n/m      │
 ├────┴──────────────────────────────────────────────┴───────────────┤
 │ Status bar                                                        │
 └───────────────────────────────────────────────────────────────────┘
@@ -22,7 +22,7 @@
 | Item | Approach |
 |------|----------|
 | Layout picker | `ZelvynLayoutPicker` — dense presets + teal hover grid; header monitor + More→Layout (stock LayoutSelector replaced) |
-| Measurements | Slide-over drawer with real `panelMeasurement`; open via More → Measurements or Length badge count; Series-only right unchanged |
+| Measurements | In-flow docked column (320px) with real `panelMeasurement`; shrinks viewport+series so teal border stays visible; More / Length badge |
 | Layout CSS | App.css skins leftover LayoutSelector popovers under `.zelvyn-shell` |
 
 ## Keep / closed
@@ -36,5 +36,5 @@
 
 - Basic pills still not a real mode switcher
 - Advanced HP presets (MPR/3D four-up) not in the Zelvyn layout picker (still via hanger / protocol APIs)
-- Measurements drawer is overlay UX, not a docked SidePanel tab
+- Measurements is a docked flex column (not SidePanel Seg·Measure tabs); sits right of Series when open
 - Hanger / calendar utilities remain thin stubs
