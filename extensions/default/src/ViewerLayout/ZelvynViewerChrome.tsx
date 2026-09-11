@@ -9,6 +9,9 @@ import {
 } from '@ohif/ui-next';
 import { ViewerStudyMeta } from './ViewerStudyMeta';
 
+const BRAND_NAME = 'Zelvyn';
+const LOGO_MARK_SRC = '/assets/zelvyn/logo-mark.png';
+
 type MenuOption = {
   title: string;
   icon?: string;
@@ -19,50 +22,33 @@ type ZelvynViewerChromeProps = {
   isReturnEnabled?: boolean;
   onClickReturnButton?: () => void;
   menuOptions: MenuOption[];
-  /** Undo/redo and other compact actions — right side before settings */
+  /** Extra thin utility icons before settings (e.g. layout) */
   rightActions?: ReactNode;
+  modeLabel?: string;
 };
 
 /**
- * Zelvyn product chrome for the Viewer — NOT the stock OHIF Header menu pattern.
- * Layout: brand+return left | patient/study meta center | compact actions right.
- * Primary tools: ZelvynToolRail. Secondary: ZelvynToolPill.
+ * Zelvyn product chrome — matches viewer-design.png top bar:
+ * brand+title | patient+check+study+Basic pills | thin utility icons.
  */
 export function ZelvynViewerChrome({
   isReturnEnabled = true,
   onClickReturnButton,
   menuOptions,
   rightActions,
+  modeLabel = 'Basic',
 }: ZelvynViewerChromeProps) {
   return (
     <header
-      className="relative z-30 flex h-12 shrink-0 items-center gap-3 border-b border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] px-3"
+      className="relative z-30 flex h-11 shrink-0 items-center gap-3 border-b border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] px-3"
       data-chrome="zelvyn-viewer-chrome"
     >
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-[color:var(--accent,#2DD4BF)] to-transparent opacity-90"
-        aria-hidden
-      />
-
       <div className="flex min-w-0 shrink-0 items-center gap-2">
-        {isReturnEnabled ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-[color:var(--accent,#2DD4BF)] hover:bg-[color:var(--accent,#2DD4BF)]/10 h-8 w-8"
-            onClick={onClickReturnButton}
-            data-cy="return-to-work-list"
-            aria-label="Return to worklist"
-            type="button"
-          >
-            <Icons.ArrowLeft className="h-4 w-4" />
-          </Button>
-        ) : null}
         <a
           href="/"
           className="inline-flex items-center gap-2 no-underline hover:opacity-90"
-          aria-label="Zelvyn"
-          data-brand="Zelvyn"
+          aria-label={BRAND_NAME}
+          data-brand={BRAND_NAME}
           onClick={e => {
             if (isReturnEnabled && onClickReturnButton) {
               e.preventDefault();
@@ -71,28 +57,40 @@ export function ZelvynViewerChrome({
           }}
         >
           <img
-            src="/assets/zelvyn/logo-wordmark.png"
-            alt="Zelvyn"
-            className="h-7 max-w-[132px] object-contain object-left"
+            src={LOGO_MARK_SRC}
+            alt=""
+            className="h-7 w-7 shrink-0 rounded-md object-contain"
+            aria-hidden
           />
+          <span className="flex flex-col leading-none">
+            <span className="text-[13px] font-semibold tracking-tight text-[color:var(--text-primary,#E8EEF4)]">
+              {BRAND_NAME}
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-[color:var(--text-muted,#6B7A8A)]">
+              Viewer
+            </span>
+          </span>
         </a>
-        <span className="bg-[color:var(--accent,#2DD4BF)]/20 text-[color:var(--accent,#2DD4BF)] hidden rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider sm:inline">
-          Viewer
-        </span>
       </div>
 
-      <div className="flex min-w-0 flex-1 items-center justify-center px-2">
-        <ViewerStudyMeta />
+      <span
+        className="hidden h-5 w-px shrink-0 bg-[color:var(--border-strong,#2A3A4A)] sm:block"
+        aria-hidden
+      />
+
+      <div className="flex min-w-0 flex-1 items-center px-1">
+        <ViewerStudyMeta modeLabel={modeLabel} />
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-0.5">
         {rightActions}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)] h-8 w-8"
+              className="h-8 w-8 text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)]"
               aria-label="Settings"
               type="button"
             >
@@ -116,12 +114,40 @@ export function ZelvynViewerChrome({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div
-          className="ml-1 hidden h-8 w-8 items-center justify-center rounded-full bg-[color:var(--accent,#2DD4BF)]/25 text-[10px] font-semibold text-[color:var(--accent,#2DD4BF)] sm:flex"
-          title="User (stub)"
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)]"
+          aria-label="Help"
+          type="button"
+          onClick={() => {
+            const about = menuOptions.find(o => /about/i.test(o.title));
+            about?.onClick();
+          }}
         >
-          RA
-        </div>
+          <Icons.Info className="h-4 w-4" />
+        </Button>
+
+        {isReturnEnabled ? (
+          <>
+            <span
+              className="mx-0.5 hidden h-5 w-px bg-[color:var(--border-strong,#2A3A4A)] sm:block"
+              aria-hidden
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)]"
+              onClick={onClickReturnButton}
+              data-cy="return-to-work-list"
+              aria-label="Exit to worklist"
+              type="button"
+            >
+              <Icons.Cancel className="h-4 w-4" />
+            </Button>
+          </>
+        ) : null}
       </div>
     </header>
   );

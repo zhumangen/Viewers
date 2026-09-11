@@ -33,8 +33,15 @@ export const longitudinalInstance = {
     // Literal panel lists; the mode route seeds them into the standard
     // `leftPanels` / `rightPanels` customizations so `mode` phase
     // blocks and global customizations can modify them.
-    leftPanels: [tracked.thumbnailList],
-    rightPanels: [cornerstone.segmentation, tracked.measurements],
+    leftPanels: [],
+    leftPanelClosed: true,
+    rightPanels: [
+      '@ohif/extension-default.panelModule.zelvynSeries',
+      cornerstone.segmentation,
+      tracked.measurements,
+    ],
+    rightPanelClosed: false,
+    rightPanelInitialExpandedWidth: 300,
     viewports: [
       {
         namespace: tracked.viewport,

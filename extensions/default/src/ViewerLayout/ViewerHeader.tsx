@@ -2,15 +2,15 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import { useModal } from '@ohif/ui-next';
+import { useModal, IconPresentationProvider, ToolButton } from '@ohif/ui-next';
 import { useSystem, Types } from '@ohif/core';
 import { preserveQueryParameters } from '@ohif/app';
 import { ZelvynViewerChrome } from './ZelvynViewerChrome';
-import HeaderUndoRedo from './HeaderUndoRedo';
+import { Toolbar } from '../Toolbar/Toolbar';
 
 /**
- * Viewer top bar — composes ZelvynViewerChrome (product chrome), not stock OHIF Header.
- * Primary tools live in ZelvynToolRail; secondary in ZelvynToolPill.
+ * Viewer top bar — ZelvynViewerChrome (product chrome).
+ * Primary tools: ZelvynToolRail. Layout/secondary: header utilities + pill.
  */
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
   const { servicesManager, extensionManager } = useSystem();
@@ -52,11 +52,6 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
   const UserPreferencesModal = customizationService.getCustomization(
     'ohif.userPreferencesModal'
   ) as Types.MenuComponentCustomization;
-
-  // Patient meta moves to chrome center (ViewerStudyMeta). Keep undo/redo + any
-  // custom right-side items except the default HeaderPatientInfo.
-  const rightSideItems =
-    customizationService.getCustomization('ohif.headerRightSide')?.items ?? [];
 
   const menuOptions = [
     {
@@ -105,18 +100,23 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     });
   }
 
-  // Prefer explicit undo/redo; fall back to customized right-side list
-  // (sites may replace items). Patient info is rendered in chrome center.
-  const rightActions =
-    rightSideItems.length > 0 ? (
-      <>
-        {rightSideItems.map((Item, index) => (
-          <Item key={index} />
-        ))}
-      </>
-    ) : (
-      <HeaderUndoRedo />
-    );
+  // Thin utility: Layout selector from secondary toolbar section (first button).
+  const rightActions = (
+    <div
+      className="zelvyn-header-utils flex items-center"
+      data-chrome="zelvyn-header-utils"
+    >
+      <IconPresentationProvider
+        size="medium"
+        IconContainer={ToolButton}
+      >
+        <Toolbar buttonSection="headerUtils" />
+      </IconPresentationProvider>
+    </div>
+  );
+
+  // Longitudinal/basic display as "Basic" to match mockup pills.
+  const modeLabel = 'Basic';
 
   return (
     <ZelvynViewerChrome
@@ -124,6 +124,7 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
       onClickReturnButton={onClickReturnButton}
       menuOptions={menuOptions}
       rightActions={rightActions}
+      modeLabel={modeLabel}
     />
   );
 }

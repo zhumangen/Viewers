@@ -11,11 +11,14 @@ const ellipsis = (str: string | null | undefined, max: number) => {
   return str.length > max ? `${str.substring(0, max)}…` : str;
 };
 
+type ViewerStudyMetaProps = {
+  modeLabel?: string;
+};
+
 /**
- * Center meta strip for ZelvynViewerChrome — patient + study + modality chips.
- * Replaces the stock OHIF right-side PatientInfo pattern for the product bar.
+ * Center meta for ZelvynViewerChrome — patient + green check + study + Basic pills.
  */
-export function ViewerStudyMeta() {
+export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
   const { extensionManager } = useSystem();
   const { showPatientInfo } = extensionManager.appConfig;
   const { patientInfo, isMixedPatients } = usePatientInfo();
@@ -28,37 +31,31 @@ export function ViewerStudyMeta() {
     ? 'Multiple Patients'
     : ellipsis(patientInfo.PatientName, 28) || 'Patient';
   const study = ellipsis(patientInfo.StudyDescription, 36);
-  const modality = patientInfo.Modality;
-  const studyDate = patientInfo.StudyDate;
-  const id = ellipsis(patientInfo.PatientID, 16);
 
   return (
     <div
-      className="flex max-w-[min(720px,52vw)] items-center gap-2 truncate"
+      className="flex max-w-[min(820px,70vw)] flex-wrap items-center gap-2 truncate"
       data-chrome="zelvyn-study-meta"
     >
-      {isMixedPatients ? (
-        <Icons.MultiplePatients className="text-[color:var(--accent,#2DD4BF)] h-4 w-4 shrink-0" />
-      ) : (
-        <Icons.Patient className="text-[color:var(--accent,#2DD4BF)] h-4 w-4 shrink-0" />
-      )}
       <span className="truncate text-[13px] font-semibold text-[color:var(--text-primary,#E8EEF4)]">
         {name}
       </span>
-      {!isMixedPatients && id ? (
-        <span className="hidden truncate font-mono text-[11px] text-[color:var(--text-muted,#6B7A8A)] md:inline">
-          {id}
+      {!isMixedPatients ? (
+        <span
+          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[color:var(--success,#34D399)]/20 text-[color:var(--success,#34D399)]"
+          title="Patient verified"
+          aria-label="Patient verified"
+        >
+          <Icons.StatusSuccess className="h-3 w-3" />
         </span>
-      ) : null}
-      {patientInfo.PatientSex || patientInfo.PatientDOB ? (
-        <span className="hidden text-[11px] text-[color:var(--text-secondary,#9AA8B6)] lg:inline">
-          {[patientInfo.PatientSex, patientInfo.PatientDOB].filter(Boolean).join(' · ')}
-        </span>
-      ) : null}
+      ) : (
+        <Icons.MultiplePatients className="h-4 w-4 shrink-0 text-[color:var(--accent,#2DD4BF)]" />
+      )}
+
       {study ? (
         <>
           <span
-            className="bg-[color:var(--border-subtle,#1E2A36)] hidden h-4 w-px shrink-0 sm:inline"
+            className="hidden h-4 w-px shrink-0 bg-[color:var(--border-subtle,#1E2A36)] sm:inline"
             aria-hidden
           />
           <span className="hidden truncate text-[12px] text-[color:var(--text-secondary,#9AA8B6)] sm:inline">
@@ -66,21 +63,17 @@ export function ViewerStudyMeta() {
           </span>
         </>
       ) : null}
-      {studyDate ? (
-        <span className="hidden text-[11px] text-[color:var(--text-muted,#6B7A8A)] xl:inline">
-          {studyDate}
+
+      {/* Mode pills — solid + outlined Basic (design mockup) */}
+      <span className="ml-1 inline-flex items-center gap-1.5">
+        <span className="inline-flex items-center rounded-full bg-[color:var(--bg-input,#161E27)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--text-secondary,#9AA8B6)] ring-1 ring-[color:var(--border-strong,#2A3A4A)]">
+          {modeLabel}
         </span>
-      ) : null}
-      {modality ? (
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/50 bg-[color:var(--accent,#2DD4BF)]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/60 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />
-          {modality}
+          {modeLabel}
         </span>
-      ) : (
-        <span className="inline-flex shrink-0 items-center rounded-full border border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-input,#161E27)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--text-secondary,#9AA8B6)]">
-          Viewer
-        </span>
-      )}
+      </span>
     </div>
   );
 }

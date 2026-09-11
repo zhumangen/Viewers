@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { HangingProtocolService, CommandsManager } from '@ohif/core';
@@ -6,20 +6,20 @@ import { useAppConfig } from '@state';
 import ViewerHeader from './ViewerHeader';
 import ZelvynToolRail from './ZelvynToolRail';
 import ZelvynToolPill from './ZelvynToolPill';
+import ZelvynStatusBar from './ZelvynStatusBar';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
 import { Onboarding, ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@ohif/ui-next';
 import useResizablePanels from './ResizablePanelsHook';
 
 const resizableHandleClassName = 'mt-px bg-border';
-const HEADER_H = 48; // ZelvynViewerChrome h-12
+const HEADER_H = 44; // ZelvynViewerChrome h-11
+const STATUS_H = 28; // ZelvynStatusBar h-7
 
 function ViewerLayout({
-  // From Extension Module Params
   extensionManager,
   servicesManager,
   hotkeysManager,
   commandsManager,
-  // From Modes
   viewports,
   ViewportGridComp,
   leftPanelClosed = false,
@@ -33,8 +33,10 @@ function ViewerLayout({
 }: withAppTypes): React.FunctionComponent {
   const [appConfig] = useAppConfig();
 
-  const { panelService, hangingProtocolService, customizationService } = servicesManager.services;
+  const { panelService, hangingProtocolService, customizationService, viewportGridService } =
+    servicesManager.services;
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(appConfig.showLoadingIndicator);
+  const appliedDefaultGrid = useRef(false);
 
   const hasPanels = useCallback(
     (side): boolean => !!panelService.getPanels(side).length,
@@ -110,6 +112,42 @@ function ViewerLayout({
     };
   }, [hangingProtocolService]);
 
+  // Default to 2x2 viewport grid once viewports are ready (design mockup).
+  useEffect(() => {
+    if (!viewportGridService) {
+      return;
+    }
+    const apply = () => {
+      if (appliedDefaultGrid.current) {
+        return;
+      }
+      const state = viewportGridService.getState?.();
+      const layout = state?.layout;
+      // Only promote 1x1 → 2x2 so user/HP multi-viewport choices are respected.
+      if (layout && layout.numRows === 1 && layout.numCols === 1) {
+        appliedDefaultGrid.current = true;
+        commandsManager.run('setViewportGridLayout', { numRows: 2, numCols: 2 });
+      } else if (layout && (layout.numRows > 1 || layout.numCols > 1)) {
+        appliedDefaultGrid.current = true;
+      }
+    };
+
+    const subs = [
+      viewportGridService.subscribe(viewportGridService.EVENTS.VIEWPORTS_READY, apply),
+      viewportGridService.subscribe(viewportGridService.EVENTS.LAYOUT_CHANGED, () => {
+        // mark applied if user already changed layout
+        const state = viewportGridService.getState?.();
+        const layout = state?.layout;
+        if (layout && (layout.numRows !== 1 || layout.numCols !== 1)) {
+          appliedDefaultGrid.current = true;
+        }
+      }),
+    ];
+    // Attempt once in case VIEWPORTS_READY already fired.
+    apply();
+    return () => subs.forEach(s => s.unsubscribe());
+  }, [viewportGridService, commandsManager]);
+
   const getViewportComponentData = viewportComponent => {
     const { entry } = getComponent(viewportComponent.namespace);
 
@@ -155,9 +193,8 @@ function ViewerLayout({
       />
       <div
         className="relative flex w-full flex-1 flex-row flex-nowrap items-stretch overflow-hidden bg-[color:var(--bg-canvas,#0B0F14)]"
-        style={{ height: `calc(100vh - ${HEADER_H}px)` }}
+        style={{ height: `calc(100vh - ${HEADER_H}px - ${STATUS_H}px)` }}
       >
-        {/* Product tool rail — left of panels/viewports */}
         <ZelvynToolRail />
 
         <React.Fragment>
@@ -185,7 +222,7 @@ function ViewerLayout({
             <ResizablePanel {...resizableViewportGridPanelProps}>
               <div className="relative flex h-full flex-1 flex-col">
                 <div
-                  className="zelvyn-viewport-frame relative flex h-full flex-1 items-center justify-center overflow-hidden rounded-sm border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--viewport-chrome,#0A0E12)] m-0.5"
+                  className="zelvyn-viewport-frame relative m-0.5 flex h-full flex-1 items-center justify-center overflow-hidden rounded-sm border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--viewport-chrome,#0A0E12)]"
                   onMouseEnter={handleMouseEnter}
                   data-chrome="zelvyn-viewport-frame"
                 >
@@ -218,6 +255,7 @@ function ViewerLayout({
           </ResizablePanelGroup>
         </React.Fragment>
       </div>
+      <ZelvynStatusBar />
       <Onboarding tours={customizationService.getCustomization('ohif.tours')} />
     </div>
   );

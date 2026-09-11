@@ -261,11 +261,17 @@ export const basicLayout = {
     // the mode scope, so `mode` phase blocks and global customizations can
     // modify them (e.g. swap in the segmentation panels with editing tools)
     // before the sidebars resolve.
-    leftPanels: [ohif.thumbnailList],
-    leftPanelResizable: true,
-    rightPanels: [cornerstone.segmentation, cornerstone.measurements],
-    rightPanelClosed: true,
+    leftPanels: [],
+    leftPanelClosed: true,
+    leftPanelResizable: false,
+    rightPanels: [
+      '@ohif/extension-default.panelModule.zelvynSeries',
+      cornerstone.segmentation,
+      cornerstone.measurements,
+    ],
+    rightPanelClosed: false,
     rightPanelResizable: true,
+    rightPanelInitialExpandedWidth: 300,
     viewports: [
       {
         namespace: cornerstone.viewport,
@@ -326,7 +332,14 @@ export const modeInstance = {
   // `toolGroupAdditions` keys), so `?customization=` modules extend them
   // through the `mode` phase (e.g.
   // `mode.basic.toolbarButtons: { $push: [{ $reference: '...' }] }`).
-  toolbarSections: [{ $reference: 'cornerstone.toolbarSections' }],
+  toolbarSections: [
+    { $reference: 'cornerstone.toolbarSections' },
+    {
+      primary: ['WindowLevel', 'Pan', 'Zoom', 'Length', 'Angle', 'Probe'],
+      headerUtils: ['Layout'],
+      secondary: ['MeasurementTools', 'MoreTools', 'Capture', 'Crosshairs'],
+    },
+  ],
   toolGroupAdditions: {
     default: [],
     mpr: [],

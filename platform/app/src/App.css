@@ -12,6 +12,17 @@ body {
   --zelvyn-bg-sidebar: #0e141b;
   --zelvyn-border: #1e2a36;
   --zelvyn-border-strong: #2a3a4a;
+  --accent: #2dd4bf;
+  --bg-canvas: #0b0f14;
+  --bg-elevated: #12181f;
+  --bg-sidebar: #0e141b;
+  --border-subtle: #1e2a36;
+  --border-strong: #2a3a4a;
+  --text-primary: #e8eef4;
+  --text-secondary: #9aa8b6;
+  --text-muted: #6b7a8a;
+  --success: #34d399;
+  --viewport-chrome: #0a0e12;
 }
 
 .zelvyn-shell {
@@ -34,17 +45,29 @@ body {
   font-feature-settings: 'ss01' on, 'cv11' on;
 }
 
-/* Vertical tool rail — stack tool buttons, teal active already from ToolButton */
-.zelvyn-tool-rail [data-tool],
-.zelvyn-tool-rail [data-cy] {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+/* Labeled vertical tool rail */
+.zelvyn-tool-rail {
+  scrollbar-width: thin;
 }
 
-.zelvyn-tool-rail button {
-  width: 2.25rem !important;
-  height: 2.25rem !important;
+.zelvyn-tool-rail button[data-active='true'] {
+  color: var(--zelvyn-accent);
+}
+
+/* Header utility strip — icon-only, denser */
+.zelvyn-header-utils button {
+  width: 2rem !important;
+  height: 2rem !important;
+}
+
+.zelvyn-header-utils {
+  max-width: 220px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.zelvyn-header-utils::-webkit-scrollbar {
+  display: none;
 }
 
 /* Viewport product frame */
@@ -52,13 +75,22 @@ body {
   box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.06);
 }
 
-/* Floating pill: denser icon hit targets */
+/* Floating pill: denser icon hit targets (secondary overflow) */
 [data-chrome='zelvyn-tool-pill'] button {
   width: 2rem !important;
   height: 2rem !important;
 }
 
-/* Side panels: stronger product edge inside viewer shell */
+/* Side panels inside viewer shell */
 [data-shell='zelvyn-viewer'] [data-cy^='side-panel'] {
   background-color: var(--zelvyn-bg-sidebar);
+}
+
+/* Series panel occupies tab body fully */
+[data-chrome='zelvyn-series-panel'] {
+  min-height: 100%;
+}
+
+[data-chrome='zelvyn-status-bar'] {
+  font-variant-numeric: tabular-nums;
 }
