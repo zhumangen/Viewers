@@ -41,7 +41,7 @@ function PatientInfo({ showPatientInfo }) {
 
   return (
     <div
-      className="hover:bg-muted flex cursor-pointer items-center justify-center gap-1 rounded-lg"
+      className="hover:bg-muted flex cursor-pointer items-center justify-center gap-1 rounded-md px-1.5 py-0.5"
       onClick={handleOnClick}
     >
       {isMixedPatients ? (
@@ -52,7 +52,7 @@ function PatientInfo({ showPatientInfo }) {
       <div className="flex flex-col justify-center">
         {expanded ? (
           <>
-            <div className="text-foreground self-start text-[13px] font-bold">
+            <div className="text-foreground self-start text-[13px] font-medium">
               {formattedPatientName}
             </div>
             <div className="text-muted-foreground flex gap-2 text-[11px]">
@@ -62,7 +62,7 @@ function PatientInfo({ showPatientInfo }) {
             </div>
           </>
         ) : (
-          <div className="text-primary self-center text-[13px]">
+          <div className="text-muted-foreground self-center text-[13px]">
             {isMixedPatients ? 'Multiple Patients' : 'Patient'}
           </div>
         )}

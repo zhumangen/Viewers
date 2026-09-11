@@ -29,9 +29,9 @@ Theme presets in `platform/ui-next/src/themes/themes.css` still override `:root`
 | `--warn` | `#FBBF24` | `--warn`; `--warn-hsl` / `--warning-text` | `text-warn`, status helpers |
 | `--danger` | `#F87171` | `--danger`; `--danger-hsl`; `--destructive` → `0 72% 55%` | `bg-destructive`, `text-danger` |
 | `--info` | `#38BDF8` | `--info`; `--info-hsl` / `--info-text` | Status helpers |
-| `--viewport-chrome` | `#0A0E12` | `--viewport-chrome` | Future viewport chrome |
-| `--viewport-active` | `#2DD4BF` | `--viewport-active` (= accent) | Future active viewport border |
-| `--viewport-inactive` | `#1A2430` | `--viewport-inactive` | Future inactive viewport border |
+| `--viewport-chrome` | `#0A0E12` | `--viewport-chrome` | `bg-viewport-chrome` (Phase 2 ViewportPane) |
+| `--viewport-active` | `#2DD4BF` | `--viewport-active` (= accent) | `border-viewport-active` (Phase 2) |
+| `--viewport-inactive` | `#1A2430` | `--viewport-inactive` | `border-viewport-inactive` (Phase 2) |
 | `--overlay-scrim` | `rgba(0,0,0,0.55)` | `--overlay-scrim` | Dialogs / drawers |
 | `--scrollbar` | `#2A3A4A` | `--scrollbar` | Scrollbars |
 

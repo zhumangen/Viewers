@@ -129,7 +129,7 @@ const Thumbnail = ({
       <div
         className={classnames(
           'flex h-full w-full flex-col items-center justify-center gap-[2px] p-[4px]',
-          isActive && 'bg-popover rounded'
+          isActive && 'bg-popover ring-1 ring-inset ring-highlight rounded'
         )}
       >
         <div className="h-[114px] w-[128px]">
@@ -233,7 +233,7 @@ const Thumbnail = ({
       <div
         className={classnames(
           'flex h-full w-full items-center justify-between pr-[8px] pl-[8px] pt-[4px] pb-[4px]',
-          isActive && 'bg-popover rounded'
+          isActive && 'bg-popover ring-1 ring-inset ring-highlight rounded'
         )}
       >
         <div className="relative flex h-[32px] w-full items-center gap-[8px] overflow-hidden">

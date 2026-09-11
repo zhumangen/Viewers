@@ -80,6 +80,12 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        /* Phase 2 Viewer viewport chrome */
+        viewport: {
+          chrome: 'var(--viewport-chrome)',
+          active: 'var(--viewport-active)',
+          inactive: 'var(--viewport-inactive)',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

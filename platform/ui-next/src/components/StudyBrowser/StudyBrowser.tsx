@@ -62,12 +62,12 @@ const StudyBrowser = ({
   return (
     <ScrollArea>
       <div
-        className="bg-background flex flex-1 flex-col gap-[4px]"
+        className="bg-bkg-med flex flex-1 flex-col gap-[4px]"
         data-cy={'studyBrowser-panel'}
       >
         <div className="flex flex-col gap-[4px]">
           {showSettings && (
-            <div className="w-100 bg-background flex h-[48px] items-center justify-center gap-[10px] px-[8px] py-[10px]">
+            <div className="w-100 border-border bg-bkg-med flex h-10 items-center justify-center gap-[10px] border-b px-2 py-1.5">
               <>
                 <StudyBrowserViewOptions
                   tabs={tabs}

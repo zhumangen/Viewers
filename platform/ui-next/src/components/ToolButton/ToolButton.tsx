@@ -5,21 +5,24 @@ import { Button } from '../Button';
 import { cn } from '../../lib/utils';
 import { useIconPresentation } from '../../contextProviders/IconPresentationProvider';
 
-const baseClasses = '!rounded-lg inline-flex items-center justify-center';
-const defaultClasses = 'bg-transparent text-foreground/80 hover:bg-background hover:text-highlight';
-const activeClasses = 'bg-highlight text-background hover:!bg-highlight/80';
+const baseClasses = '!rounded-md inline-flex items-center justify-center';
+const defaultClasses =
+  'bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground';
+/* Teal outline active — matches reading-room mockup, less chrome noise than filled. */
+const activeClasses =
+  'bg-accent text-highlight ring-1 ring-inset ring-highlight hover:!bg-accent/80';
 const toggledClasses = 'bg-transparent text-highlight hover:bg-muted';
 const disabledClasses =
-  'text-foreground hover:bg-muted hover:text-highlight opacity-40 cursor-not-allowed';
+  'text-muted-foreground hover:bg-muted opacity-40 cursor-not-allowed';
 
 const sizeClasses = {
   default: {
-    buttonSizeClass: 'w-10 h-10',
-    iconSizeClass: 'h-7 w-7',
+    buttonSizeClass: 'w-9 h-9',
+    iconSizeClass: 'h-5 w-5',
   },
   small: {
     buttonSizeClass: 'w-8 h-8',
-    iconSizeClass: 'h-6 w-6',
+    iconSizeClass: 'h-5 w-5',
   },
   tiny: {
     buttonSizeClass: 'w-6 h-6',

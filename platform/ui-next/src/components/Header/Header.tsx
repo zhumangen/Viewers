@@ -64,7 +64,7 @@ function Header({
         isSticky={isSticky}
         {...props}
       >
-        <div className="relative h-[48px] items-center">
+        <div className="relative h-10 items-center">
           <div className="absolute left-0 top-1/2 flex -translate-y-1/2 items-center">
             <div
               className={classNames(
@@ -74,7 +74,7 @@ function Header({
               onClick={onClickReturn}
               data-cy="return-to-work-list"
             >
-              {isReturnEnabled && <Icons.ArrowLeft className="text-primary ml-1 h-7 w-7" />}
+              {isReturnEnabled && <Icons.ArrowLeft className="text-primary ml-1 h-5 w-5" />}
               <div className="ml-1">
                 {WhiteLabeling?.createLogoComponentFn?.(React, props) || <Icons.OHIFLogo />}
               </div>
@@ -91,7 +91,7 @@ function Header({
               // nothing (e.g. patient info with `showPatientInfo: 'disabled'`).
               <div
                 key={index}
-                className="after:border-muted flex items-center empty:hidden after:mx-1.5 after:h-[25px] after:border-r after:content-['']"
+                className="after:border-border flex items-center empty:hidden after:mx-1 after:h-5 after:border-r after:content-['']"
               >
                 {item}
               </div>
@@ -102,7 +102,7 @@ function Header({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-primary hover:bg-muted mt-2 h-full w-full"
+                    className="text-muted-foreground hover:bg-muted hover:text-foreground h-8 w-8"
                   >
                     <Icons.GearSettings />
                   </Button>

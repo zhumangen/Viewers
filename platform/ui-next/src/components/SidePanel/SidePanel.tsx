@@ -58,7 +58,7 @@ const closeIconWidth = 30;
 const gridHorizontalPadding = 10;
 const tabSpacerWidth = 2;
 
-const baseClasses = 'bg-background border-background justify-start box-content flex flex-col';
+const baseClasses = 'bg-bkg-med justify-start box-content flex flex-col';
 
 const openStateIconName = {
   left: 'SidePanelCloseLeft',
@@ -111,7 +111,7 @@ const getTabClassNames = (
   isActiveTab: boolean,
   isTabDisabled: boolean
 ) =>
-  classnames('h-[28px] mb-[2px] cursor-pointer text-foreground bg-primary/10 hover:bg-primary/20', {
+  classnames('h-[28px] mb-[2px] cursor-pointer text-foreground bg-accent/40 hover:bg-accent/70', {
     'hover:text-primary': !isActiveTab && !isTabDisabled,
     'rounded-l': tabIndex % numColumns === 0,
     'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
@@ -287,7 +287,7 @@ const SidePanel = ({
       <>
         <div
           className={classnames(
-            'bg-popover flex h-[28px] w-full cursor-pointer items-center rounded-md',
+            'bg-bkg-med border-border flex h-7 w-full cursor-pointer items-center rounded-md border',
             side === 'left' ? 'justify-end pr-2' : 'justify-start pl-2'
           )}
           onClick={() => {
@@ -442,13 +442,13 @@ const SidePanel = ({
   const getOpenStateComponent = () => {
     return (
       <>
-        <div className="bg-muted flex h-[40px] flex-shrink-0 select-none rounded-t p-2">
+        <div className="bg-bkg-med border-border flex h-10 flex-shrink-0 select-none border-b p-2">
           {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
         </div>
         <Separator
           orientation="horizontal"
-          className="bg-background"
-          thickness="2px"
+          className="bg-border"
+          thickness="1px"
         />
       </>
     );
@@ -456,7 +456,11 @@ const SidePanel = ({
 
   return (
     <div
-      className={classnames(className, baseClasses)}
+      className={classnames(
+        className,
+        baseClasses,
+        side === 'left' ? 'border-border border-r' : 'border-border border-l'
+      )}
       style={style}
     >
       {panelOpen ? (

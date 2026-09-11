@@ -60,30 +60,30 @@ function ViewportActionBar({
 
   return (
     <div
-      className="pointer-events-auto flex h-8 shrink-0 select-none items-center overflow-visible whitespace-nowrap px-2 text-base"
+      className="pointer-events-auto flex h-7 shrink-0 select-none items-center overflow-visible whitespace-nowrap px-2 text-sm text-muted-foreground"
       onDoubleClick={onDoubleClick}
     >
       {getStatusComponent()}
       {!!label?.length && <span className="text-muted-foreground text-large ml-1">{label}</span>}
-      <div className="border-secondary-light mx-2 border-l py-2"></div>
+      <div className="border-border mx-1.5 border-l py-1.5"></div>
       <span
         data-cy="studyDate"
-        className="text-white"
+        className="text-foreground"
       >
         {studyDate}
       </span>
-      <div className="border-secondary-light mx-2 border-l py-2"></div>
+      <div className="border-border mx-1.5 border-l py-1.5"></div>
       <span className="text-muted-foreground mr-1 overflow-hidden text-ellipsis">
         {seriesDescription}
       </span>
       {/* Prev/Next icons */}
       <Icons.ByName
-        className="hover:text-highlight ml-auto mr-2 cursor-pointer text-white"
+        className="hover:text-highlight text-muted-foreground ml-auto mr-2 cursor-pointer"
         name="chevron-prev"
         onClick={() => onArrowsClick('left')}
       />
       <Icons.ByName
-        className="hover:text-highlight mr-2 cursor-pointer text-white"
+        className="hover:text-highlight text-muted-foreground mr-2 cursor-pointer"
         name="chevron-next"
         onClick={() => onArrowsClick('right')}
       />
