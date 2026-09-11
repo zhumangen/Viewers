@@ -22,7 +22,6 @@ import {
 } from '@ohif/ui';
 
 import {
-  Header,
   Icons,
   Tooltip,
   TooltipTrigger,
@@ -37,11 +36,9 @@ import {
   parseStudyDateTimestamp,
 } from '@ohif/ui-next';
 
-import { Types } from '@ohif/ui';
-
 import { preserveQueryParameters, preserveQueryStrings } from '../../utils/preserveQueryParameters';
-
-const PatientInfoVisibility = Types.PatientInfoVisibility;
+import { WorkListAppBar } from '../WorkList/WorkListAppBar';
+import { StudyListSettingsPopover } from '../WorkList/StudyListSettingsPopover';
 
 const { sortBySeriesDate } = utils;
 
@@ -473,46 +470,7 @@ function LegacyWorkList({
 
   const hasStudies = numOfStudies > 0;
 
-  const AboutModal = customizationService.getCustomization(
-    'ohif.aboutModal'
-  ) as coreTypes.MenuComponentCustomization;
-  const UserPreferencesModal = customizationService.getCustomization(
-    'ohif.userPreferencesModal'
-  ) as coreTypes.MenuComponentCustomization;
 
-  const menuOptions = [
-    {
-      title: AboutModal?.menuTitle ?? t('Header:About'),
-      icon: 'info',
-      onClick: () =>
-        show({
-          content: AboutModal,
-          title: AboutModal?.title ?? t('AboutModal:About OHIF Viewer'),
-          containerClassName: AboutModal?.containerClassName ?? 'max-w-md',
-        }),
-    },
-    {
-      title: UserPreferencesModal.menuTitle ?? t('Header:Preferences'),
-      icon: 'settings',
-      onClick: () =>
-        show({
-          content: UserPreferencesModal as React.ComponentType,
-          title: UserPreferencesModal.title ?? t('UserPreferencesModal:User preferences'),
-          containerClassName:
-            UserPreferencesModal?.containerClassName ?? 'flex max-w-4xl p-6 flex-col',
-        }),
-    },
-  ];
-
-  if (appConfig.oidc) {
-    menuOptions.push({
-      icon: 'power-off',
-      title: t('Header:Logout'),
-      onClick: () => {
-        navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
-      },
-    });
-  }
 
   const LoadingIndicatorProgress = customizationService.getCustomization(
     'ui.loadingIndicatorProgress'
@@ -551,16 +509,10 @@ function LegacyWorkList({
   );
 
   return (
-    <div className="flex h-screen flex-col bg-black">
-      <Header
-        isSticky
-        menuOptions={menuOptions}
-        isReturnEnabled={false}
-        WhiteLabeling={appConfig.whiteLabeling}
-        showPatientInfo={PatientInfoVisibility.DISABLED}
-      />
+    <div className="zelvyn-shell flex h-screen flex-col bg-[color:var(--bg-canvas,#0B0F14)]" data-shell="zelvyn-legacy-worklist">
+      <WorkListAppBar rightActions={<StudyListSettingsPopover />} />
       <Onboarding />
-<div className="flex h-full flex-col overflow-y-auto">
+      <div className="flex h-full flex-col overflow-y-auto">
         <ScrollArea>
           <div className="flex grow flex-col">
             <StudyListFilter

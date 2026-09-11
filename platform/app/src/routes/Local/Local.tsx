@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import classnames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { DicomMetadataStore, MODULE_TYPES, useSystem } from '@ohif/core';
 
@@ -9,6 +8,7 @@ import filesToStudies from './filesToStudies';
 import { extensionManager } from '../../App';
 
 import { Button, Icons } from '@ohif/ui-next';
+import { ProductBrand } from '../../components/ProductBrand';
 
 const getLoadButton = (onDrop, text, isDir) => {
   return (
@@ -20,7 +20,7 @@ const getLoadButton = (onDrop, text, isDir) => {
         <div {...getRootProps()}>
           <Button
             variant="default"
-            className="w-28"
+            className="bg-[color:var(--accent,#2DD4BF)] text-[color:var(--text-inverse,#0B0F14)] hover:bg-[color:var(--accent-hover,#5EEAD4)] w-32 font-semibold"
             disabled={false}
             onClick={() => {}}
           >
@@ -60,7 +60,6 @@ function Local({ modePath }: LocalProps) {
     'ui.loadingIndicatorProgress'
   );
 
-  // Initializing the dicom local dataSource
   const dataSourceModules = extensionManager.modules[MODULE_TYPES.DATA_SOURCE];
   const localDataSources = dataSourceModules.reduce((acc, curr) => {
     const mods = [];
@@ -85,9 +84,6 @@ function Local({ modePath }: LocalProps) {
     const query = new URLSearchParams();
 
     if (microscopyExtensionLoaded) {
-      // TODO: for microscopy, we are forcing microscopy mode, which is not ideal.
-      //     we should make the local drag and drop navigate to the worklist and
-      //     there user can select microscopy mode
       const smStudies = studies.filter(id => {
         const study = DicomMetadataStore.getStudy(id);
         return (
@@ -102,14 +98,12 @@ function Local({ modePath }: LocalProps) {
       }
     }
 
-    // Todo: navigate to work list and let user select a mode
     studies.forEach(id => query.append('StudyInstanceUIDs', id));
     query.append('datasources', 'dicomlocal');
 
     navigate(`/${modePath}?${decodeURIComponent(query.toString())}`);
   };
 
-  // Set body style
   useEffect(() => {
     document.body.classList.add('bg-background');
     return () => {
@@ -129,12 +123,42 @@ function Local({ modePath }: LocalProps) {
       {({ getRootProps }) => (
         <div
           {...getRootProps()}
+          className="zelvyn-shell h-full w-full"
+          data-shell="zelvyn-local"
           style={{ width: '100%', height: '100%' }}
         >
-          <div className="flex h-screen w-screen items-center justify-center">
-            <div className="bg-muted border-primary/60 mx-auto space-y-2 rounded-xl border border-dashed py-12 px-12 drop-shadow-md">
+          <header
+            className="relative flex h-12 items-center border-b border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] px-4"
+            data-chrome="zelvyn-app-bar"
+          >
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-[color:var(--accent,#2DD4BF)] to-transparent opacity-80"
+              aria-hidden
+            />
+            <ProductBrand variant="full" />
+            <span className="bg-[color:var(--accent,#2DD4BF)]/20 text-[color:var(--accent,#2DD4BF)] ml-2 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+              Local upload
+            </span>
+            <div className="ml-auto">
+              <Button
+                variant="ghost"
+                className="text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)] text-sm"
+                onClick={() => navigate('/')}
+                type="button"
+              >
+                Worklist
+              </Button>
+            </div>
+          </header>
+          <div className="flex h-[calc(100vh-48px)] w-screen items-center justify-center bg-[color:var(--bg-canvas,#0B0F14)]">
+            <div className="mx-auto space-y-2 rounded-xl border border-dashed border-[color:var(--accent,#2DD4BF)]/50 bg-[color:var(--bg-elevated,#12181F)] px-12 py-12 shadow-[0_8px_28px_rgba(0,0,0,0.45)]">
               <div className="flex items-center justify-center">
-                <Icons.OHIFLogoColorDarkBackground className="h-18" />
+                <img
+                  src="/assets/zelvyn/logo-mark.png"
+                  alt=""
+                  className="h-16 w-16 rounded-lg object-contain"
+                  aria-hidden
+                />
               </div>
               <div className="space-y-2 py-6 text-center">
                 {dropInitiated ? (
@@ -143,11 +167,11 @@ function Local({ modePath }: LocalProps) {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-primary pt-0 text-xl">
+                    <p className="pt-0 text-xl text-[color:var(--text-primary,#E8EEF4)]">
                       Drag and drop your DICOM files & folders here <br />
                       to load them locally.
                     </p>
-                    <p className="text-muted-foreground text-base">
+                    <p className="text-base text-[color:var(--text-muted,#6B7A8A)]">
                       Note: Your data remains locally within your browser
                       <br /> and is never uploaded to any server.
                     </p>

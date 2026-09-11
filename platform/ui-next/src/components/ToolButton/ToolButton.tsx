@@ -45,6 +45,8 @@ interface ToolButtonProps {
   onInteraction?: (details: { itemId: string; commands?: Record<string, unknown> }) => void;
   className?: string;
   children?: React.ReactNode;
+  /** Tooltip placement — use 'right' in vertical tool rails */
+  tooltipSide?: 'top' | 'right' | 'bottom' | 'left';
 }
 
 function ToolButton(props: ToolButtonProps) {
@@ -62,6 +64,7 @@ function ToolButton(props: ToolButtonProps) {
     onInteraction,
     className,
     children,
+    tooltipSide = 'bottom',
   } = props;
 
   const { className: iconClassName } = useIconPresentation();
@@ -117,7 +120,7 @@ function ToolButton(props: ToolButtonProps) {
         </span>
       </TooltipTrigger>
       <TooltipContent
-        side="bottom"
+        side={tooltipSide}
         className="text-wrap w-auto max-w-sm whitespace-normal break-words"
       >
         {showTooltip && (

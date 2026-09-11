@@ -2,12 +2,16 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import { Header, useModal } from '@ohif/ui-next';
-import { useSystem } from '@ohif/core';
-import { Toolbar } from '../Toolbar/Toolbar';
+import { useModal } from '@ohif/ui-next';
+import { useSystem, Types } from '@ohif/core';
 import { preserveQueryParameters } from '@ohif/app';
-import { Types } from '@ohif/core';
+import { ZelvynViewerChrome } from './ZelvynViewerChrome';
+import HeaderUndoRedo from './HeaderUndoRedo';
 
+/**
+ * Viewer top bar — composes ZelvynViewerChrome (product chrome), not stock OHIF Header.
+ * Primary tools live in ZelvynToolRail; secondary in ZelvynToolPill.
+ */
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
   const { servicesManager, extensionManager } = useSystem();
   const { customizationService } = servicesManager.services;
@@ -49,9 +53,8 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     'ohif.userPreferencesModal'
   ) as Types.MenuComponentCustomization;
 
-  // Whatever fills the right side of the menu bar, in order: undo/redo then
-  // patient info by default. Each item is rendered as a component, so it can
-  // bring its own hooks, and reordering the list reorders the header.
+  // Patient meta moves to chrome center (ViewerStudyMeta). Keep undo/redo + any
+  // custom right-side items except the default HeaderPatientInfo.
   const rightSideItems =
     customizationService.getCustomization('ohif.headerRightSide')?.items ?? [];
 
@@ -102,22 +105,26 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     });
   }
 
+  // Prefer explicit undo/redo; fall back to customized right-side list
+  // (sites may replace items). Patient info is rendered in chrome center.
+  const rightActions =
+    rightSideItems.length > 0 ? (
+      <>
+        {rightSideItems.map((Item, index) => (
+          <Item key={index} />
+        ))}
+      </>
+    ) : (
+      <HeaderUndoRedo />
+    );
+
   return (
-    <Header
-      menuOptions={menuOptions}
+    <ZelvynViewerChrome
       isReturnEnabled={!!appConfig.showStudyList}
       onClickReturnButton={onClickReturnButton}
-      WhiteLabeling={appConfig.whiteLabeling}
-      Secondary={<Toolbar buttonSection="secondary" />}
-      RightSide={rightSideItems.map((Item, index) => (
-        // The list is static per configuration, so the index is a stable key.
-        <Item key={index} />
-      ))}
-    >
-      <div className="relative flex justify-center gap-px" data-chrome="zelvyn-toolbar">
-        <Toolbar buttonSection="primary" />
-      </div>
-    </Header>
+      menuOptions={menuOptions}
+      rightActions={rightActions}
+    />
   );
 }
 

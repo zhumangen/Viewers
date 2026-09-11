@@ -69,3 +69,8 @@ pnpm run dev
 
 - Banner only: restore `InvestigationalUseDialog.tsx` and re-mount in WorkList / ViewerLayout; set config option back.
 - Shell chrome: revert this branch / files listed above; brand assets can stay.
+
+
+## Follow-up: Viewer shell rebuild
+
+See [`ZELVYN_VIEWER_SHELL.md`](./ZELVYN_VIEWER_SHELL.md) (`ui/zelvyn-viewer-shell`) — replaces stock Header/Toolbar composition with `ZelvynViewerChrome` + tool rail/pill.

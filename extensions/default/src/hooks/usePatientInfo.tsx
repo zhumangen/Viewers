@@ -12,6 +12,9 @@ function usePatientInfo() {
     PatientID: '',
     PatientSex: '',
     PatientDOB: '',
+    StudyDescription: '',
+    StudyDate: '',
+    Modality: '',
   });
   const [isMixedPatients, setIsMixedPatients] = useState(false);
 
@@ -31,7 +34,7 @@ function usePatientInfo() {
   };
 
   const updatePatientInfo = ({ displaySetsAdded }) => {
-    if (!displaySetsAdded.length) {
+    if (!displaySetsAdded?.length) {
       return;
     }
     const displaySet = displaySetsAdded[0];
@@ -45,11 +48,20 @@ function usePatientInfo() {
       PatientName: instance.PatientName ? formatPN(instance.PatientName) : null,
       PatientSex: instance.PatientSex || null,
       PatientDOB: formatDate(instance.PatientBirthDate) || null,
+      StudyDescription: instance.StudyDescription || displaySet?.SeriesDescription || null,
+      StudyDate: formatDate(instance.StudyDate) || null,
+      Modality: instance.Modality || displaySet?.Modality || null,
     });
     checkMixedPatients(instance.PatientID || null);
   };
 
   useEffect(() => {
+    // Seed from already-loaded display sets (study reopen / hot reload).
+    const active = displaySetService.getActiveDisplaySets?.() || [];
+    if (active.length) {
+      updatePatientInfo({ displaySetsAdded: active });
+    }
+
     const subscription = displaySetService.subscribe(
       displaySetService.EVENTS.DISPLAY_SETS_ADDED,
       props => updatePatientInfo(props)

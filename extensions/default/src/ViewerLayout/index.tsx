@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 import { HangingProtocolService, CommandsManager } from '@ohif/core';
 import { useAppConfig } from '@state';
 import ViewerHeader from './ViewerHeader';
+import ZelvynToolRail from './ZelvynToolRail';
+import ZelvynToolPill from './ZelvynToolPill';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
 import { Onboarding, ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@ohif/ui-next';
 import useResizablePanels from './ResizablePanelsHook';
 
 const resizableHandleClassName = 'mt-px bg-border';
+const HEADER_H = 48; // ZelvynViewerChrome h-12
 
 function ViewerLayout({
   // From Extension Module Params
@@ -72,11 +75,6 @@ function ViewerLayout({
     'ui.loadingIndicatorProgress'
   );
 
-  /**
-   * Set body classes (tailwindcss) that don't allow vertical
-   * or horizontal overflow (no scrolling). Also guarantee window
-   * is sized to our viewport.
-   */
   useEffect(() => {
     document.body.classList.add('bg-background');
     document.body.classList.add('overflow-hidden');
@@ -102,10 +100,6 @@ function ViewerLayout({
   useEffect(() => {
     const { unsubscribe } = hangingProtocolService.subscribe(
       HangingProtocolService.EVENTS.PROTOCOL_CHANGED,
-
-      // Todo: right now to set the loading indicator to false, we need to wait for the
-      // hangingProtocolService to finish applying the viewport matching to each viewport,
-      // however, this might not be the only approach to set the loading indicator to false. we need to explore this further.
       () => {
         setShowLoadingIndicator(false);
       }
@@ -149,7 +143,10 @@ function ViewerLayout({
   const viewportComponents = viewports.map(getViewportComponentData);
 
   return (
-    <div className="zelvyn-shell" data-shell="zelvyn-v2">
+    <div
+      className="zelvyn-shell flex h-screen flex-col overflow-hidden"
+      data-shell="zelvyn-viewer"
+    >
       <ViewerHeader
         hotkeysManager={hotkeysManager}
         extensionManager={extensionManager}
@@ -157,13 +154,17 @@ function ViewerLayout({
         appConfig={appConfig}
       />
       <div
-        className="relative flex w-full flex-row flex-nowrap items-stretch overflow-hidden bg-[color:var(--bg-canvas,#0B0F14)]"
-        style={{ height: 'calc(100vh - 40px)' }}
+        className="relative flex w-full flex-1 flex-row flex-nowrap items-stretch overflow-hidden bg-[color:var(--bg-canvas,#0B0F14)]"
+        style={{ height: `calc(100vh - ${HEADER_H}px)` }}
       >
+        {/* Product tool rail — left of panels/viewports */}
+        <ZelvynToolRail />
+
         <React.Fragment>
-          {showLoadingIndicator && <LoadingIndicatorProgress className="h-full w-full bg-background" />}
+          {showLoadingIndicator && (
+            <LoadingIndicatorProgress className="h-full w-full bg-background" />
+          )}
           <ResizablePanelGroup {...resizablePanelGroupProps}>
-            {/* LEFT SIDEPANELS */}
             {hasLeftPanels ? (
               <>
                 <ResizablePanel {...resizableLeftPanelProps}>
@@ -181,18 +182,19 @@ function ViewerLayout({
                 />
               </>
             ) : null}
-            {/* TOOLBAR + GRID */}
             <ResizablePanel {...resizableViewportGridPanelProps}>
-              <div className="flex h-full flex-1 flex-col">
+              <div className="relative flex h-full flex-1 flex-col">
                 <div
-                  className="relative flex h-full flex-1 items-center justify-center overflow-hidden bg-background"
+                  className="zelvyn-viewport-frame relative flex h-full flex-1 items-center justify-center overflow-hidden rounded-sm border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--viewport-chrome,#0A0E12)] m-0.5"
                   onMouseEnter={handleMouseEnter}
+                  data-chrome="zelvyn-viewport-frame"
                 >
                   <ViewportGridComp
                     servicesManager={servicesManager}
                     viewportComponents={viewportComponents}
                     commandsManager={commandsManager}
                   />
+                  <ZelvynToolPill />
                 </div>
               </div>
             </ResizablePanel>
@@ -217,23 +219,20 @@ function ViewerLayout({
         </React.Fragment>
       </div>
       <Onboarding tours={customizationService.getCustomization('ohif.tours')} />
-</div>
+    </div>
   );
 }
 
 ViewerLayout.propTypes = {
-  // From extension module params
   extensionManager: PropTypes.shape({
     getModuleEntry: PropTypes.func.isRequired,
   }).isRequired,
   commandsManager: PropTypes.instanceOf(CommandsManager),
   servicesManager: PropTypes.object.isRequired,
-  // From modes
   leftPanels: PropTypes.array,
   rightPanels: PropTypes.array,
   leftPanelClosed: PropTypes.bool.isRequired,
   rightPanelClosed: PropTypes.bool.isRequired,
-  /** Responsible for rendering our grid of viewports; provided by consuming application */
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   viewports: PropTypes.array,
 };
