@@ -264,11 +264,7 @@ export const basicLayout = {
     leftPanels: [],
     leftPanelClosed: true,
     leftPanelResizable: false,
-    rightPanels: [
-      '@ohif/extension-default.panelModule.zelvynSeries',
-      cornerstone.segmentation,
-      cornerstone.measurements,
-    ],
+    rightPanels: ['@ohif/extension-default.panelModule.zelvynSeries'],
     rightPanelClosed: false,
     rightPanelResizable: true,
     rightPanelInitialExpandedWidth: 300,
@@ -336,8 +332,9 @@ export const modeInstance = {
     { $reference: 'cornerstone.toolbarSections' },
     {
       primary: ['WindowLevel', 'Pan', 'Zoom', 'Length', 'Angle', 'Probe'],
-      headerUtils: ['Layout'],
-      secondary: ['MeasurementTools', 'MoreTools', 'Capture', 'Crosshairs'],
+      // Overflow for labeled rail "More" — not a floating pill
+      moreTools: ['Layout', 'MeasurementTools', 'MoreTools', 'Capture', 'Crosshairs'],
+      secondary: [],
     },
   ],
   toolGroupAdditions: {

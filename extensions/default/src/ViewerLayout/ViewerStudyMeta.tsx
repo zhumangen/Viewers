@@ -64,13 +64,13 @@ export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
         </>
       ) : null}
 
-      {/* Mode pills — solid + outlined Basic (design mockup) */}
+      {/* Mode pills — active (teal dot) + secondary solid (mockup) */}
       <span className="ml-1 inline-flex items-center gap-1.5">
-        <span className="inline-flex items-center rounded-full bg-[color:var(--bg-input,#161E27)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--text-secondary,#9AA8B6)] ring-1 ring-[color:var(--border-strong,#2A3A4A)]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/70 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />
           {modeLabel}
         </span>
-        <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/60 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />
+        <span className="inline-flex items-center rounded-full bg-[color:var(--bg-input,#161E27)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--text-secondary,#9AA8B6)] ring-1 ring-[color:var(--border-strong,#2A3A4A)]">
           {modeLabel}
         </span>
       </span>

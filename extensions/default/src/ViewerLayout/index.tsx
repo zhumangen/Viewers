@@ -5,7 +5,7 @@ import { HangingProtocolService, CommandsManager } from '@ohif/core';
 import { useAppConfig } from '@state';
 import ViewerHeader from './ViewerHeader';
 import ZelvynToolRail from './ZelvynToolRail';
-import ZelvynToolPill from './ZelvynToolPill';
+import ZelvynSeriesPanel from './ZelvynSeriesPanel';
 import ZelvynStatusBar from './ZelvynStatusBar';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
 import { Onboarding, ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@ohif/ui-next';
@@ -231,7 +231,6 @@ function ViewerLayout({
                     viewportComponents={viewportComponents}
                     commandsManager={commandsManager}
                   />
-                  <ZelvynToolPill />
                 </div>
               </div>
             </ResizablePanel>
@@ -243,12 +242,13 @@ function ViewerLayout({
                   className={resizableHandleClassName}
                 />
                 <ResizablePanel {...resizableRightPanelProps}>
-                  <SidePanelWithServices
-                    side="right"
-                    isExpanded={!rightPanelClosedState}
-                    servicesManager={servicesManager}
-                    {...rightPanelProps}
-                  />
+                  {/* Series-only chrome — no SidePanel tab strip (mockup) */}
+                  <div
+                    className="h-full w-full overflow-hidden border-l border-[color:var(--border-subtle,#1E2A36)]"
+                    data-chrome="zelvyn-series-host"
+                  >
+                    <ZelvynSeriesPanel />
+                  </div>
                 </ResizablePanel>
               </>
             ) : null}

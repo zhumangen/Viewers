@@ -54,20 +54,10 @@ body {
   color: var(--zelvyn-accent);
 }
 
-/* Header utility strip — icon-only, denser */
+/* Header utility strip — thin icon hit targets */
 .zelvyn-header-utils button {
   width: 2rem !important;
   height: 2rem !important;
-}
-
-.zelvyn-header-utils {
-  max-width: 220px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.zelvyn-header-utils::-webkit-scrollbar {
-  display: none;
 }
 
 /* Viewport product frame */
@@ -75,22 +65,32 @@ body {
   box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.06);
 }
 
-/* Floating pill: denser icon hit targets (secondary overflow) */
-[data-chrome='zelvyn-tool-pill'] button {
-  width: 2rem !important;
-  height: 2rem !important;
-}
-
-/* Side panels inside viewer shell */
-[data-shell='zelvyn-viewer'] [data-cy^='side-panel'] {
-  background-color: var(--zelvyn-bg-sidebar);
-}
-
-/* Series panel occupies tab body fully */
+/* Series panel host — full height, no SidePanel chrome */
+[data-chrome='zelvyn-series-host'],
 [data-chrome='zelvyn-series-panel'] {
   min-height: 100%;
+  height: 100%;
 }
 
 [data-chrome='zelvyn-status-bar'] {
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Viewport overlays — denser, quieter toward mockup (W/L · Slice · mm).
+ * Keep OHIF overlay wiring; only tighten type + spacing.
+ */
+[data-shell='zelvyn-viewer'] .viewport-overlay,
+[data-shell='zelvyn-viewer'] [data-cy='viewport-overlay'] {
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+[data-shell='zelvyn-viewer'] .viewport-overlay button,
+[data-shell='zelvyn-viewer'] [data-cy='viewport-overlay'] button {
+  min-height: 0 !important;
+  padding: 0 2px !important;
+  font-size: 11px !important;
 }

@@ -2,19 +2,20 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import { useModal, IconPresentationProvider, ToolButton } from '@ohif/ui-next';
+import { useModal } from '@ohif/ui-next';
 import { useSystem, Types } from '@ohif/core';
 import { preserveQueryParameters } from '@ohif/app';
 import { ZelvynViewerChrome } from './ZelvynViewerChrome';
-import { Toolbar } from '../Toolbar/Toolbar';
+import usePatientInfo from '../hooks/usePatientInfo';
 
 /**
- * Viewer top bar — ZelvynViewerChrome (product chrome).
- * Primary tools: ZelvynToolRail. Layout/secondary: header utilities + pill.
+ * Viewer top bar — ZelvynViewerChrome with mockup utility icons.
+ * Primary tools live in ZelvynToolRail (+ More overflow).
  */
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
-  const { servicesManager, extensionManager } = useSystem();
-  const { customizationService } = servicesManager.services;
+  const { servicesManager, extensionManager, commandsManager } = useSystem();
+  const { customizationService, hangingProtocolService } = servicesManager.services;
+  const { patientInfo } = usePatientInfo();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -100,31 +101,31 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     });
   }
 
-  // Thin utility: Layout selector from secondary toolbar section (first button).
-  const rightActions = (
-    <div
-      className="zelvyn-header-utils flex items-center"
-      data-chrome="zelvyn-header-utils"
-    >
-      <IconPresentationProvider
-        size="medium"
-        IconContainer={ToolButton}
-      >
-        <Toolbar buttonSection="headerUtils" />
-      </IconPresentationProvider>
-    </div>
-  );
+  const onSelectLayout = ({ numRows, numCols }: { numRows: number; numCols: number }) => {
+    commandsManager.run('setViewportGridLayout', { numRows, numCols });
+  };
 
-  // Longitudinal/basic display as "Basic" to match mockup pills.
-  const modeLabel = 'Basic';
+  const onHangingProtocol = () => {
+    // Cycle / toggle common stage when available; otherwise no-op safely.
+    try {
+      const protocols = hangingProtocolService?.getProtocols?.() || [];
+      if (protocols.length && commandsManager) {
+        commandsManager.run('toggleHangingProtocol', {});
+      }
+    } catch {
+      // Hanging protocol UI may be mode-specific; icon remains for chrome parity.
+    }
+  };
 
   return (
     <ZelvynViewerChrome
       isReturnEnabled={!!appConfig.showStudyList}
       onClickReturnButton={onClickReturnButton}
       menuOptions={menuOptions}
-      rightActions={rightActions}
-      modeLabel={modeLabel}
+      modeLabel="Basic"
+      onSelectLayout={onSelectLayout}
+      onHangingProtocol={onHangingProtocol}
+      studyDateLabel={patientInfo.StudyDate || undefined}
     />
   );
 }

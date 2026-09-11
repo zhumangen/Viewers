@@ -35,11 +35,7 @@ export const longitudinalInstance = {
     // blocks and global customizations can modify them.
     leftPanels: [],
     leftPanelClosed: true,
-    rightPanels: [
-      '@ohif/extension-default.panelModule.zelvynSeries',
-      cornerstone.segmentation,
-      tracked.measurements,
-    ],
+    rightPanels: ['@ohif/extension-default.panelModule.zelvynSeries'],
     rightPanelClosed: false,
     rightPanelInitialExpandedWidth: 300,
     viewports: [
