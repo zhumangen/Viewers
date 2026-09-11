@@ -8,6 +8,7 @@ import {
   AccordionGroup,
   StudyMeasurementsActions,
   MeasurementsOrAdditionalFindings,
+  useMeasurements,
 } from '@ohif/extension-cornerstone';
 
 import { useTrackedMeasurements } from '../getContextModule';
@@ -23,6 +24,8 @@ function PanelMeasurementTableTracking(props) {
   const [trackedMeasurements, sendTrackedMeasurementsEvent] = useTrackedMeasurements();
   const { trackedStudy, trackedSeries } = trackedMeasurements.context;
   const measurementFilter = trackedStudy ? filterMeasurementsBySeriesUID(trackedSeries) : filterAny;
+
+  const displayMeasurements = useMeasurements({ measurementFilter });
 
   const onUntrackConfirm = () => {
     sendTrackedMeasurementsEvent('UNTRACK_ALL', { trackedStudy, trackedSeries });
@@ -73,40 +76,48 @@ function PanelMeasurementTableTracking(props) {
       className="px-0"
     >
       <div data-cy="TrackingHeader">
-        <StudySummaryFromMetadata
-          {...props}
-          actions={actions}
-        />
+        <StudySummaryFromMetadata {...props} />
       </div>
     </AccordionTrigger>
   );
 
   return (
-    <ScrollArea>
-      <div data-cy="trackedMeasurements-panel">
-        <PanelMeasurement
-          measurementFilter={measurementFilter}
-          emptyComponent={EmptyComponent}
-          sourceChildren={props.children}
-        >
-          <StudyMeasurements grouping={props.grouping}>
-            <AccordionGroup.Trigger
-              key="trackingMeasurementsHeader"
-              asChild={true}
-            >
-              <Header key="trackingHeadChild" />
-            </AccordionGroup.Trigger>
-            <MeasurementsOrAdditionalFindings
-              key="measurementsOrAdditionalFindings"
-              activeStudyUID={trackedStudy}
-              customHeader={StudyMeasurementsActions}
-              measurementFilter={measurementFilter}
-              actions={actions}
-            />
-          </StudyMeasurements>
-        </PanelMeasurement>
-      </div>
-    </ScrollArea>
+    <div
+      className="flex h-full min-h-0 flex-col"
+      data-cy="trackedMeasurements-panel"
+    >
+      <ScrollArea className="min-h-0 flex-1">
+        <div>
+          <PanelMeasurement
+            measurementFilter={measurementFilter}
+            emptyComponent={EmptyComponent}
+            sourceChildren={props.children}
+          >
+            <StudyMeasurements grouping={props.grouping}>
+              <AccordionGroup.Trigger
+                key="trackingMeasurementsHeader"
+                asChild={true}
+              >
+                <Header key="trackingHeadChild" />
+              </AccordionGroup.Trigger>
+              <MeasurementsOrAdditionalFindings
+                key="measurementsOrAdditionalFindings"
+                activeStudyUID={trackedStudy}
+                measurementFilter={measurementFilter}
+                actions={actions}
+              />
+            </StudyMeasurements>
+          </PanelMeasurement>
+        </div>
+      </ScrollArea>
+
+      <StudyMeasurementsActions
+        items={displayMeasurements}
+        StudyInstanceUID={trackedStudy}
+        measurementFilter={measurementFilter}
+        actions={actions}
+      />
+    </div>
   );
 }
 

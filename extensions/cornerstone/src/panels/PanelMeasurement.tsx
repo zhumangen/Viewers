@@ -1,84 +1,61 @@
 import React from 'react';
+import { MeasurementTable, ScrollArea } from '@ohif/ui-next';
 
 import { useMeasurements } from '../hooks/useMeasurements';
 import StudyMeasurements from '../components/StudyMeasurements';
+import StudyMeasurementsActions from '../components/StudyMeasurementsActions';
+
 /**
  * The PanelMeasurement is a fairly simple wrapper that gets the filtered
  * measurements and then passes it on to the children component, default to
  * the StudyMeasurements sub-component if no children are specified.
- * Some example customizations that could work:
  *
- *
- * Creates a default study measurements panel with default children:
- * ```
- * <PanelMeasurement>
- *   <StudyMeasurements />
- * </PanelMeasurement>
- * ```
- *
- * A study measurements with body replacement
- * ```
- * <StudyMeasurements>
- *   <SeriesMeasurements />
- * </StudyMeasurements>
- * ```
- *
- * A study measurements replacing just the trigger, leaving the default body
- * ```
- * <StudyMeasurements>
- *    <AccordionGroup.Trigger>
- *        This is a new custom trigger
- *    </AccordionGroup.Trigger>
- *</StudyMeasurements>
- * ```
- *
- * A study measurements with the trigger and body replaced
- * ```
- * <StudyMeasurements>
- *    <AccordionGroup.Trigger>
- *        This is a new custom trigger
- *    </AccordionGroup.Trigger>
- *    <SeriesMeasurements />
- * </StudyMeasurements>
- * ```
- *
- * A study measurements with a custom header for the additional findings
- * ```
- * <StudyMeasurements>
- *    <MeasurementOrAdditionalFindings>
- *        <AccordionGroup.Trigger groupName="additionalFindings">
- *            <CustomAdditionalFindingsHeader />
- *        </AccordionGroup.Trigger>
- *        <AccordionGroup.Trigger groupName="measurements">
- *            <CustomMeasurementsHeader />
- *        </AccordionGroup.Trigger>
- *    </MeasurementOrAdditionalFindings>
- * </StudyMeasurements>
- *```
+ * Phase 3: sticky footer actions + denser empty state (visual only).
  */
 export default function PanelMeasurement(props): React.ReactNode {
   const { measurementFilter, emptyComponent: EmptyComponent, children } = props;
 
   const displayMeasurements = useMeasurements({ measurementFilter });
 
-  if (!displayMeasurements.length) {
-    return EmptyComponent ? (
-      <EmptyComponent items={displayMeasurements} />
-    ) : (
-      <span className="text-foreground">No Measurements</span>
-    );
-  }
+  const emptyNode = EmptyComponent ? (
+    <EmptyComponent items={displayMeasurements} />
+  ) : (
+    <MeasurementTable
+      title="Measurements"
+      data={[]}
+      isExpanded={true}
+    >
+      <MeasurementTable.Body />
+    </MeasurementTable>
+  );
 
-  if (children) {
-    const cloned = React.Children.map(children, child =>
-      React.cloneElement(child, {
-        items: displayMeasurements,
-        filter: measurementFilter,
-      })
-    );
-    return cloned;
-  }
+  const body = !displayMeasurements.length
+    ? emptyNode
+    : children
+      ? React.Children.map(children, child =>
+          React.cloneElement(child, {
+            items: displayMeasurements,
+            filter: measurementFilter,
+          })
+        )
+      : (
+          <StudyMeasurements items={displayMeasurements} />
+        );
 
-  // Need to merge defaults on the content props to ensure they get passed to children
-  return <StudyMeasurements items={displayMeasurements} />;
+  // Prefer StudyInstanceUID from first measurement's display set metadata when available
+  const StudyInstanceUID = displayMeasurements?.[0]?.referenceStudyUID;
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <ScrollArea className="min-h-0 flex-1">
+        <div>{body}</div>
+      </ScrollArea>
+      <StudyMeasurementsActions
+        items={displayMeasurements}
+        StudyInstanceUID={StudyInstanceUID}
+        measurementFilter={measurementFilter}
+        layout="footer"
+      />
+    </div>
+  );
 }

@@ -14,6 +14,11 @@ const badgeVariants = cva(
         destructive:
           'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
         outline: 'text-foreground',
+        /* Reading-room status chips (Phase 3 measurement panel) */
+        success:
+          'border-[var(--success-border)] bg-[var(--success-bg)] text-success-foreground',
+        warn: 'border-[var(--warning-border)] bg-[var(--warning-bg)] text-warn-foreground',
+        muted: 'border-border bg-muted text-muted-foreground',
       },
     },
     defaultVariants: {

@@ -1,12 +1,14 @@
 import React from 'react';
 import { StudySummaryFromMetadata } from './StudySummaryFromMetadata';
-import StudyMeasurementsActions from './StudyMeasurementsActions';
 
+/**
+ * Study accordion trigger content.
+ * Export / delete / save live in the panel sticky footer (Phase 3).
+ */
 export function StudySummaryWithActions(props) {
   return (
     <div>
       <StudySummaryFromMetadata {...props} />
-      <StudyMeasurementsActions {...props} />
     </div>
   );
 }

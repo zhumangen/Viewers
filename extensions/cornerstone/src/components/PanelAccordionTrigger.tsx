@@ -25,15 +25,22 @@ export default function PanelAccordionTrigger(props) {
       style={{ marginLeft: `${marginLeft}px`, padding: 0 }}
       asChild={true}
     >
-      <div className={`inline-flex text-base ${isActive ? 'bg-popover' : 'bg-muted'} flex-grow`}>
-        <button onClick={onClickDefault.bind(props)}>
+      <div
+        className={`inline-flex text-[13px] ${isActive ? 'bg-row-selected' : 'bg-muted'} border-border/50 group flex-grow border-b`}
+      >
+        <button
+          className="flex min-w-0 flex-1 items-center gap-1 py-1 text-left"
+          onClick={onClickDefault.bind(props)}
+        >
           <span
-            className={`inline-flex rounded-l border-r border-background ${isActive ? 'bg-highlight' : 'bg-muted'}`}
+            className={`inline-flex items-center rounded-l border-r border-border ${isActive ? 'bg-primary/90 text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
           >
-            {count !== undefined ? <span className="px-2">{count}</span> : null}
+            {count !== undefined ? <span className="px-2 text-[12px] font-medium">{count}</span> : null}
             {colorHex && <ColorCircle colorHex={colorHex} />}
           </span>
-          <span>{text}</span>
+          <span className={`truncate ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {text}
+          </span>
         </button>
         {Menu && (
           <Menu
@@ -41,7 +48,7 @@ export default function PanelAccordionTrigger(props) {
             classNames="justify-end flex-grow"
           />
         )}
-        <ChevronDownIcon className="text-primary h-4 w-4 shrink-0 transition-transform duration-200" />
+        <ChevronDownIcon className="text-muted-foreground group-data-[state=open]:text-primary mr-1 h-4 w-4 shrink-0 transition-transform duration-200" />
       </div>
     </AccordionTrigger>
   );

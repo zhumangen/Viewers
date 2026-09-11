@@ -111,11 +111,15 @@ const getTabClassNames = (
   isActiveTab: boolean,
   isTabDisabled: boolean
 ) =>
-  classnames('h-[28px] mb-[2px] cursor-pointer text-foreground bg-accent/40 hover:bg-accent/70', {
-    'hover:text-primary': !isActiveTab && !isTabDisabled,
-    'rounded-l': tabIndex % numColumns === 0,
-    'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
-  });
+  classnames(
+    'h-[28px] mb-[2px] cursor-pointer text-muted-foreground bg-transparent hover:bg-accent/40 border-b-2 border-transparent',
+    {
+      'text-primary border-primary bg-accent/30': isActiveTab && !isTabDisabled,
+      'hover:text-primary': !isActiveTab && !isTabDisabled,
+      'rounded-l': tabIndex % numColumns === 0,
+      'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
+    }
+  );
 
 const getTabStyle = (numTabs: number) => {
   return {
@@ -125,8 +129,8 @@ const getTabStyle = (numTabs: number) => {
 
 const getTabIconClassNames = (numTabs: number, isActiveTab: boolean) => {
   return classnames('h-full w-full flex items-center justify-center', {
-    'bg-primary/20': isActiveTab,
-    rounded: isActiveTab,
+    'text-primary': isActiveTab,
+    'text-muted-foreground': !isActiveTab,
   });
 };
 const createStyleMap = (
@@ -367,7 +371,7 @@ const SidePanel = ({
       <>
         {getCloseIcon()}
         <div className={classnames('flex grow justify-center')}>
-          <div className={classnames('bg-muted text-primary flex flex-wrap')}>
+          <div className={classnames('border-border/60 bg-bkg-med text-primary flex flex-wrap border-b')}>
             {tabs.map((tab, tabIndex) => {
               const { disabled } = tab;
               return (
@@ -468,7 +472,15 @@ const SidePanel = ({
           {getOpenStateComponent()}
           {tabs.map((tab, tabIndex) => {
             if (tabIndex === activeTabIndex) {
-              return <tab.content key={tabIndex} />;
+              return (
+                <div
+                  key={tabIndex}
+                  className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                  data-cy={`side-panel-content-${side}`}
+                >
+                  <tab.content />
+                </div>
+              );
             }
             return null;
           })}
