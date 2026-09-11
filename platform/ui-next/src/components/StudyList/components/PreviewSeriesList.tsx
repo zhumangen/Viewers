@@ -45,15 +45,19 @@ export function PreviewSeriesList({ series, onSeriesClick }: PreviewSeriesListPr
             return (
               <TableRow
                 key={seriesUID}
-                className="hover:text-muted-foreground cursor-default hover:bg-transparent"
+                className="hover:bg-row-hover data-[state=selected]:shadow-none cursor-default"
               >
                 <TableCell className="pl-0 text-base">
                   <div className="flex items-center gap-2">
-                    <span className="text-foreground font-normal">{modality}</span>
-                    <span className="font-normal">{description}</span>
+                    <span className="bg-primary/20 text-primary rounded px-1.5 py-0.5 text-xs font-medium">
+                      {modality}
+                    </span>
+                    <span className="text-foreground truncate font-normal">{description}</span>
                   </div>
                 </TableCell>
-                <TableCell className="w-8 pr-0 text-right text-base">{numInstances}</TableCell>
+                <TableCell className="text-muted-foreground w-8 pr-0 text-right text-sm">
+                  {numInstances}
+                </TableCell>
               </TableRow>
             );
           })}

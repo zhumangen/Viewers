@@ -58,19 +58,19 @@ function ViewportPane({
       onScroll={onInteractionHandler}
       onWheel={onInteractionHandler}
       className={classNames(
-        'group/pane relative h-full w-full overflow-hidden bg-black transition duration-300',
+        'group/pane relative h-full w-full overflow-hidden bg-viewport-chrome transition duration-300',
         className
       )}
       style={customStyle}
     >
       <div className={classNames('relative h-full w-full', className)}>{children}</div>
 
-      {/* Border overlay */}
+      {/* Border overlay — active teal outline, inactive subtle viewport border */}
       <div
-        className={classNames('pointer-events-none absolute inset-0 rounded-md border', {
-          'border-highlight': isActive,
-          'group-hover/pane:border-highlight/50 border-transparent': !isActive,
-          '!border-input border-dashed': isHighlighted,
+        className={classNames('pointer-events-none absolute inset-0 rounded-sm border', {
+          'border-2 border-viewport-active': isActive,
+          'border-viewport-inactive group-hover/pane:border-highlight/40': !isActive,
+          '!border-dashed !border-input': isHighlighted,
         })}
       />
     </div>

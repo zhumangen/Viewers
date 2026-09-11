@@ -111,7 +111,8 @@ export default function WorkList({
 
   const previewDefaultSize = useMemo(() => {
     if (typeof window !== 'undefined' && window.innerWidth > 0) {
-      const percent = (325 / window.innerWidth) * 100;
+      // DESIGN.md --preview-drawer-width ≈ 320px
+      const percent = (320 / window.innerWidth) * 100;
       return Math.min(Math.max(percent, 15), 50);
     }
     return 30;
@@ -125,7 +126,7 @@ export default function WorkList({
   }, [isLoadingData, data]);
 
   return (
-    <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-black">
+    <div className="bg-background flex h-screen min-h-0 flex-col overflow-hidden">
       <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} />
       <div className="flex h-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col">
@@ -153,7 +154,7 @@ export default function WorkList({
               isLoading={showStudyListLoading}
               loadingComponent={
                 LoadingIndicatorProgress ? (
-                  <LoadingIndicatorProgress className="bg-background !relative" />
+                  <LoadingIndicatorProgress className="bg-background/80 !relative rounded-md" />
                 ) : (
                   <div className="h-8 w-8" />
                 )

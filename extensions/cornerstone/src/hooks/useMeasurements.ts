@@ -43,10 +43,30 @@ function mapMeasurementToDisplay(measurement, displaySetService) {
     displayText.primary.push(finding.text);
   }
 
+  const seriesNumber = displaySets[0]?.SeriesNumber;
+  const seriesDescription = displaySets[0]?.SeriesDescription || '';
+  const imageCount =
+    displaySets[0]?.numImageFrames ||
+    displaySets[0]?.numberOfFrames ||
+    displaySets[0]?.images?.length ||
+    displaySets[0]?.instanceNumber ||
+    undefined;
+
+  const seriesGroupLabel = [
+    seriesNumber != null ? `Series ${seriesNumber}` : 'Series',
+    seriesDescription,
+  ]
+    .filter(Boolean)
+    .join(' – ');
+
   return {
     ...measurement,
     displayText,
     label,
+    displaySetInstanceUID: displaySets[0]?.displaySetInstanceUID,
+    seriesGroupKey: referenceSeriesUID,
+    seriesGroupLabel,
+    seriesGroupMeta: imageCount != null ? `${imageCount} images` : undefined,
   };
 }
 

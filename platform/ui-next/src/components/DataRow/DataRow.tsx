@@ -110,6 +110,8 @@ interface DataRowProps {
   onCopy?: (e) => void;
   className?: string;
   children?: React.ReactNode;
+  /** Extra controls rendered in the row action cluster (e.g. Jump to image) */
+  trailingActions?: React.ReactNode;
 }
 
 const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
@@ -133,6 +135,7 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
       disableEditing = false,
       className,
       children,
+      trailingActions,
     },
     ref
   ) => {
@@ -245,7 +248,7 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
       >
         <div
           className={`flex items-center ${
-            isSelected ? 'bg-popover' : 'bg-muted'
+            isSelected ? 'bg-row-selected' : 'bg-muted'
           } group relative cursor-pointer`}
           onClick={onSelect}
           data-cy="data-row"
@@ -255,13 +258,13 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
             <div className="bg-primary/20 pointer-events-none absolute inset-0"></div>
           )}
 
-          <div className="bg-primary/20 pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"></div>
+          <div className="bg-row-hover pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"></div>
 
           {/* Number Box */}
           {number !== null && (
             <div
-              className={`flex h-7 max-h-7 w-7 flex-shrink-0 items-center justify-center rounded-l border-r border-background text-base ${
-                isSelected ? 'bg-highlight text-black' : 'bg-muted text-muted-foreground'
+              className={`flex h-7 max-h-7 w-7 flex-shrink-0 items-center justify-center rounded-l border-r border-border text-base ${
+                isSelected ? 'bg-primary/90 text-primary-foreground' : 'bg-muted text-muted-foreground'
               } overflow-hidden`}
             >
               {number}
@@ -288,7 +291,7 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
                   <span
                     data-cy="data-row-title"
                     className={`cursor-default text-base ${
-                      isSelected ? 'text-highlight' : 'text-muted-foreground'
+                      isSelected ? 'text-primary' : 'text-foreground'
                     } [overflow:hidden] [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]`}
                   >
                     {title}
@@ -305,7 +308,7 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
               <span
                 data-cy="data-row-title"
                 className={`text-base ${
-                  isSelected ? 'text-highlight' : 'text-muted-foreground'
+                  isSelected ? 'text-primary' : 'text-foreground'
                 } [overflow:hidden] [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]`}
               >
                 {title}
@@ -336,6 +339,9 @@ const DataRowComponent = React.forwardRef<HTMLDivElement, DataRowProps>(
             {isLocked && !disableEditing && (
               <Icons.Lock className="text-muted-foreground h-6 w-6" />
             )}
+
+            {/* Trailing actions (e.g. Jump to image) */}
+            {trailingActions}
 
             {/* Status Components */}
             {statusComponents}

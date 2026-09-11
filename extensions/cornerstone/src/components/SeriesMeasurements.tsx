@@ -39,10 +39,15 @@ export const groupByDisplaySet = (items, grouping, childProps) => {
 export function SeriesMeasurementTrigger(props) {
   const { group, isSelected, displaySet, menu } = props;
   const { SeriesNumber = 1, SeriesDescription } = displaySet;
+  const imageCount =
+    displaySet?.numImageFrames ||
+    displaySet?.numberOfFrames ||
+    displaySet?.images?.length;
+  const meta = imageCount != null ? ` · ${imageCount} images` : '';
 
   return (
     <PanelAccordionTrigger
-      text={`Series #${SeriesNumber} ${SeriesDescription}`}
+      text={`Series ${SeriesNumber}${SeriesDescription ? ` – ${SeriesDescription}` : ''}${meta}`}
       count={group.items.length}
       isActive={isSelected}
       group={group}

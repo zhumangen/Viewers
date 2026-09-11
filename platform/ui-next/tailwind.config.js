@@ -80,6 +80,12 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        /* Phase 2 Viewer viewport chrome */
+        viewport: {
+          chrome: 'var(--viewport-chrome)',
+          active: 'var(--viewport-active)',
+          inactive: 'var(--viewport-inactive)',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -100,19 +106,42 @@ module.exports = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      /* Phase 0 reading-room surfaces / legacy class bridges */
       bkg: {
-        low: '#050615',
-        med: '#090C29',
-        full: '#041C4A',
+        low: 'var(--bg-canvas)',
+        med: 'var(--bg-sidebar)',
+        full: 'var(--bg-elevated)',
+      },
+      /* Phase 1 WorkList row states */
+      row: {
+        hover: 'var(--bg-row-hover)',
+        selected: 'var(--bg-row-selected)',
       },
       info: {
-        primary: '#FFFFFF',
-        secondary: '#7BB2CE',
+        primary: 'var(--text-primary)',
+        secondary: 'var(--text-secondary)',
       },
       actions: {
-        primary: '#348CFD',
-        highlight: '#5ACCE6',
-        hover: 'rgba(52, 140, 253, 0.2)',
+        primary: 'var(--accent-color)',
+        highlight: 'var(--accent-hover)',
+        hover: 'var(--accent-muted)',
+      },
+      /* Semantic status colors from DESIGN.md */
+      success: {
+        DEFAULT: 'hsl(var(--success-hsl))',
+        foreground: 'var(--success-text)',
+      },
+      warn: {
+        DEFAULT: 'hsl(var(--warn-hsl))',
+        foreground: 'var(--warning-text)',
+      },
+      danger: {
+        DEFAULT: 'hsl(var(--danger-hsl))',
+        foreground: 'var(--error-text)',
+      },
+      statusinfo: {
+        DEFAULT: 'hsl(var(--info-hsl))',
+        foreground: 'var(--info-text)',
       },
     },
   },

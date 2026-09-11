@@ -30,75 +30,77 @@
 }
 
 @layer base {
+  /* Phase 0 — mirror reading-room defaults (canonical source: ui-next/src/tailwind.css) */
   :root {
-    --highlight: 191 74% 63%;
-    --neutral: 213 22% 59%;
-    --background: 236 62% 5%;
-    --foreground: 0 0% 98%;
-    --card: 236 62% 5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 219 90% 15%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 214 98% 60%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 214 66% 48%;
-    --secondary-foreground: 200 50% 84%;
-    --muted: 234 64% 10%;
-    --muted-foreground: 200 46% 65%;
-    --accent: 217 79% 24%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 236 52% 30%;
-    --ring: 214 98% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
-    --success-bg: hsl(143, 85%, 96%);
-    --success-border: hsl(145, 92%, 91%);
-    --success-text: hsl(140, 100%, 27%);
+    --highlight: 172 66% 50%;
+    --neutral: 210 16% 66%;
+    --background: 213 29% 6%;
+    --foreground: 210 35% 93%;
+    --card: 212 27% 10%;
+    --card-foreground: 210 35% 93%;
+    --popover: 212 27% 10%;
+    --popover-foreground: 210 35% 93%;
+    --primary: 172 66% 50%;
+    --primary-foreground: 213 29% 6%;
+    --secondary: 210 28% 23%;
+    --secondary-foreground: 210 16% 66%;
+    --muted: 212 32% 8%;
+    --muted-foreground: 210 16% 66%;
+    --accent: 172 40% 14%;
+    --accent-foreground: 210 35% 93%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 35% 93%;
+    --border: 210 29% 16%;
+    --input: 212 28% 12%;
+    --ring: 172 66% 50%;
+    --chart-1: 172 66% 50%;
+    --chart-2: 158 64% 52%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 198 93% 60%;
+    --chart-5: 0 91% 71%;
+    --radius: 0.375rem;
+    --success-bg: hsl(158 64% 52% / 0.12);
+    --success-border: hsl(158 64% 52% / 0.35);
+    --success-text: #34d399;
 
-    --info-bg: hsl(208, 100%, 97%);
-    --info-border: hsl(221, 91%, 91%);
-    --info-text: hsl(210, 92%, 45%);
+    --info-bg: hsl(198 93% 60% / 0.12);
+    --info-border: hsl(198 93% 60% / 0.35);
+    --info-text: #38bdf8;
 
-    --warning-bg: hsl(49, 100%, 97%);
-    --warning-border: hsl(49, 91%, 91%);
-    --warning-text: hsl(31, 92%, 45%);
+    --warning-bg: hsl(43 96% 56% / 0.12);
+    --warning-border: hsl(43 96% 56% / 0.35);
+    --warning-text: #fbbf24;
 
-    --error-bg: hsl(359, 100%, 97%);
-    --error-border: hsl(359, 100%, 94%);
-    --error-text: hsl(360, 100%, 45%);
+    --error-bg: hsl(0 91% 71% / 0.12);
+    --error-border: hsl(0 91% 71% / 0.35);
+    --error-text: #f87171;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 214 98% 60%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 236 52% 30%;
-    --ring: 214 98% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --highlight: 172 66% 50%;
+    --background: 213 29% 6%;
+    --foreground: 210 35% 93%;
+    --card: 212 27% 10%;
+    --card-foreground: 210 35% 93%;
+    --popover: 212 27% 10%;
+    --popover-foreground: 210 35% 93%;
+    --primary: 172 66% 50%;
+    --primary-foreground: 213 29% 6%;
+    --secondary: 210 28% 23%;
+    --secondary-foreground: 210 16% 66%;
+    --muted: 212 32% 8%;
+    --muted-foreground: 210 16% 66%;
+    --accent: 172 40% 14%;
+    --accent-foreground: 210 35% 93%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 35% 93%;
+    --border: 210 29% 16%;
+    --input: 212 28% 12%;
+    --ring: 172 66% 50%;
+    --chart-1: 172 66% 50%;
+    --chart-2: 158 64% 52%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 198 93% 60%;
+    --chart-5: 0 91% 71%;
   }
 }

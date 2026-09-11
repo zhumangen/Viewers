@@ -17,11 +17,11 @@ const classes = {
   bottomLeft: 'overlay-bottom left-viewport',
 };
 
-function ViewportOverlay({ topLeft, topRight, bottomRight, bottomLeft, color = 'text-highlight', shadowClass = 'shadow-dark' }) {
+function ViewportOverlay({ topLeft, topRight, bottomRight, bottomLeft, color = 'text-foreground/90', shadowClass = 'shadow-dark' }) {
   const overlay = 'absolute pointer-events-none viewport-overlay';
 
   return (
-    <div className={classNames(color, 'overlay-text', shadowClass, 'text-base leading-5')}>
+    <div className={classNames(color, 'overlay-text', shadowClass, 'text-sm leading-4')}>
       <div
         data-cy="viewport-overlay-top-left"
         className={classNames(overlay, classes.topLeft)}

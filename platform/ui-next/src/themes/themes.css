@@ -1,10 +1,13 @@
 /* Theme Presets
  * Complete token sets applied via .theme-* class on <body>.
- * Default theme ("Tonal: OHIF Blue") = no class (uses :root values from tailwind.css).
+ * Default theme (reading-room dark / teal accent) = no class
+ *   (uses :root values from platform/ui-next/src/tailwind.css — Phase 0 tokens).
  * Outside @layer base so presets override :root via proximity on <body>.
  *
  * Tonal themes: full hue-shifted palettes (surfaces, borders, text all carry the theme hue).
  * Neutral themes: desaturated/achromatic surfaces with a colored primary accent.
+ *
+ * See docs/ui-redesign/PHASE0_TOKEN_MAP.md for design-token → CSS variable mapping.
  */
 
 /* ─── Tonal: Orchid ──────────────────────────────────────────────────── */

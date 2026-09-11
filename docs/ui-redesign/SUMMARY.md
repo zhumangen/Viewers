@@ -16,6 +16,6 @@ Header 元数据 | Toolbar 工具 | 左系列 / 右测量与追踪 | Viewport Gr
 按 Study→Series 分组；状态 + jump-to-image；Tracking 与 Report 清 IA；导出固定面板底 sticky，不改 measurement-tracking 状态机。
 
 **落地顺序**  
-Phase 0 Tokens → 1 Study List 皮肤 → 2 Viewer chrome → 3 测量面板。组件一律映射现有 ui-next（Button、DataTable、Dialog、Tabs、Header 等）。
+Phase 0 Tokens → 1 Study List 皮肤 → 2 Viewer chrome → 3 测量面板（见 `PHASE3_MEASUREMENT_REPORT.md`）。组件一律映射现有 ui-next（Button、DataTable、Dialog、Tabs、Header、Badge 等）。
 
 详见 `DESIGN.md`。

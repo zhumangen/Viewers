@@ -2,7 +2,7 @@
   display: none;
 }
 .ViewportOverlay {
-  color: hsl(var(--highlight));
+  color: hsl(var(--foreground) / 0.9);
 }
 .ViewportOverlay .overlay-element {
   position: absolute;

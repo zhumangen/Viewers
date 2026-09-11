@@ -121,14 +121,14 @@ function TableContent({
   const { getDefaultWorkflowForStudy, getWorkflowsForStudy } = useWorkflows();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="bg-background flex h-full flex-col">
       {(showColumnVisibility || title) && (
         <DataTable.Toolbar>
-          <div className="absolute left-0">{toolbarLeftComponent}</div>
+          <div className="absolute left-0 pl-1">{toolbarLeftComponent}</div>
           {title ? <DataTable.Title>{title}</DataTable.Title> : null}
-          <div className="absolute right-0 flex items-center">
+          <div className="absolute right-0 flex items-center pr-1">
             {toolbarRightActionsComponent}
-            {toolbarRightActionsComponent && <div className="bg-input mx-2 h-4 w-px" />}
+            {toolbarRightActionsComponent && <div className="bg-border mx-2 h-4 w-px" />}
             {/* Pagination appears to the left of the "View" button */}
             <DataTable.Pagination<StudyRow> />
             {showColumnVisibility && <DataTable.ViewOptions<StudyRow> />}
@@ -147,10 +147,11 @@ function TableContent({
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="text-primary"
                     onClick={() => table.setColumnFilters([])}
                     aria-label="Reset filters"
                   >
-                    Reset
+                    Clear
                   </Button>
                 </div>
               );
@@ -207,11 +208,18 @@ function TableContent({
           }}
         />
         <DataTable.Body<StudyRow>
-          emptyMessage={t('No studies available')}
+          emptyMessage={
+            <div className="flex flex-col items-center gap-1">
+              <span>{t('No studies available')}</span>
+              <span className="text-sm font-normal text-[color:var(--text-muted)]">
+                Clear filters or widen the date range to see more studies.
+              </span>
+            </div>
+          }
           isLoading={isLoading}
           loadingComponent={loadingComponent}
           rowProps={{
-            className: 'group cursor-pointer',
+            className: 'group cursor-pointer h-9',
             onClick: row => {
               const original = row.original as StudyRow;
               const canDoubleClickLaunch =

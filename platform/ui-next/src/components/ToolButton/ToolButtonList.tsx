@@ -97,8 +97,8 @@ const ToolButtonListDropDown = React.forwardRef<HTMLDivElement, ToolButtonListDr
           variant="ghost"
           size="icon"
           className={cn(
-            'text-foreground/80 hover:bg-background hover:text-highlight border-primary',
-            'inline-flex h-10 w-5 items-center justify-center',
+            'text-muted-foreground hover:bg-muted hover:text-highlight border-primary',
+            'inline-flex h-9 w-5 items-center justify-center',
             '!rounded-tr-lg !rounded-br-lg !rounded-tl-none !rounded-bl-none',
             'bg-transparent',
             className
@@ -191,7 +191,7 @@ const ToolButtonListDivider = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('bg-primary h-5 w-px self-center', className)}
+    className={cn('bg-border h-5 w-px self-center', className)}
     {...props}
   />
 ));

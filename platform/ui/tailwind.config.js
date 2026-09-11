@@ -28,50 +28,51 @@ module.exports = {
         pale: '#7bb2ce',
       },
 
+      /* Phase 0 — align legacy @ohif/ui palette with reading-room tokens */
       primary: {
-        light: '#5acce6',
-        main: '#0944b3',
-        dark: '#090c29',
-        active: '#348cfd',
+        light: '#5EEAD4', /* accent-hover */
+        main: '#0E141B', /* sidebar */
+        dark: '#0B0F14', /* canvas */
+        active: '#2DD4BF', /* accent */
       },
       inputfield: {
-        main: '#3a3f99',
-        disabled: '#2b166b',
-        focus: '#5acce6',
-        placeholder: '#39383f',
+        main: '#161E27', /* bg-input */
+        disabled: '#0E141B',
+        focus: '#2DD4BF',
+        placeholder: '#6B7A8A', /* text-muted */
       },
 
       secondary: {
-        light: '#3a3f99',
-        main: '#2b166b',
-        dark: '#041c4a',
-        active: '#1f1f27',
+        light: '#2A3A4A', /* border-strong */
+        main: '#1E2A36', /* border-subtle */
+        dark: '#0B0F14',
+        active: '#12181F', /* elevated */
       },
 
       indigo: {
-        dark: '#0b1a42',
+        dark: '#0E141B',
       },
 
       common: {
-        bright: '#e1e1e1',
-        light: '#a19fad',
-        main: '#fff',
-        dark: '#726f7e',
-        active: '#2c3074',
+        bright: '#E8EEF4', /* text-primary */
+        light: '#9AA8B6', /* text-secondary */
+        main: '#E8EEF4',
+        dark: '#6B7A8A', /* text-muted */
+        active: '#12181F',
       },
       bkg: {
-        low: '#050615',
-        med: '#090C29',
-        full: '#041C4A',
+        low: '#0B0F14', /* canvas */
+        med: '#0E141B', /* sidebar */
+        full: '#12181F', /* elevated */
       },
       info: {
-        primary: '#FFFFFF',
-        secondary: '#7BB2CE',
+        primary: '#E8EEF4',
+        secondary: '#9AA8B6',
       },
       actions: {
-        primary: '#348CFD',
-        highlight: '#5ACCE6',
-        hover: 'rgba(52, 140, 253, 0.2)',
+        primary: '#2DD4BF',
+        highlight: '#5EEAD4',
+        hover: 'rgba(45, 212, 191, 0.2)',
       },
       customgreen: {
         100: '#05D97C',
