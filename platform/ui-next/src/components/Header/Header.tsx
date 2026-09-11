@@ -64,25 +64,30 @@ function Header({
         isSticky={isSticky}
         {...props}
       >
-        <div className="relative h-10 items-center">
+        <div className="relative h-11 items-center" data-chrome="zelvyn-viewer-header">
           <div className="absolute left-0 top-1/2 flex -translate-y-1/2 items-center">
             <div
               className={classNames(
-                'mr-3 inline-flex items-center',
-                isReturnEnabled && 'cursor-pointer'
+                'mr-2 inline-flex items-center gap-1 rounded-md px-1 py-0.5',
+                isReturnEnabled && 'hover:bg-accent/30 cursor-pointer'
               )}
               onClick={onClickReturn}
               data-cy="return-to-work-list"
             >
-              {isReturnEnabled && <Icons.ArrowLeft className="text-primary ml-1 h-5 w-5" />}
-              <div className="ml-1">
+              {isReturnEnabled && <Icons.ArrowLeft className="text-primary ml-0.5 h-4 w-4" />}
+              <div className="ml-0.5">
                 {WhiteLabeling?.createLogoComponentFn?.(React, props) || <Icons.OHIFLogo />}
               </div>
             </div>
+            <span className="bg-primary/15 text-primary ml-1 hidden rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider md:inline">
+              Viewer
+            </span>
           </div>
-          <div className="absolute top-1/2 left-[250px] h-8 -translate-y-1/2">{Secondary}</div>
+          <div className="absolute top-1/2 left-[220px] h-8 -translate-y-1/2">{Secondary}</div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-            <div className="flex items-center justify-center space-x-2">{children}</div>
+            <div className="flex items-center justify-center gap-0.5 rounded-lg border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-input,#161E27)]/60 px-1 py-0.5">
+              {children}
+            </div>
           </div>
           <div className="absolute right-0 top-1/2 flex -translate-y-1/2 select-none items-center">
             {RightSide.map((item, index) => (

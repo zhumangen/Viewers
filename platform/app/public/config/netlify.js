@@ -23,6 +23,10 @@ window.config = {
   },
 
   showStudyList: true,
+  // Zelvyn shell v2: never show investigational-use footer
+  investigationalUseDialog: {
+    option: 'never',
+  },
   // some windows systems have issues with more than 3 web workers
   maxNumberOfWebWorkers: 3,
   // below flag is for performance reasons, but it might not work for all servers

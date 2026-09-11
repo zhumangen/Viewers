@@ -58,7 +58,7 @@ const closeIconWidth = 30;
 const gridHorizontalPadding = 10;
 const tabSpacerWidth = 2;
 
-const baseClasses = 'bg-bkg-med justify-start box-content flex flex-col';
+const baseClasses = 'bg-[color:var(--bg-sidebar,#0E141B)] justify-start box-content flex flex-col';
 
 const openStateIconName = {
   left: 'SidePanelCloseLeft',
@@ -112,9 +112,9 @@ const getTabClassNames = (
   isTabDisabled: boolean
 ) =>
   classnames(
-    'h-[28px] mb-[2px] cursor-pointer text-muted-foreground bg-transparent hover:bg-accent/40 border-b-2 border-transparent',
+    'h-[28px] mb-[2px] cursor-pointer text-muted-foreground bg-transparent hover:bg-[color:var(--accent,#2DD4BF)]/10 border-b-2 border-transparent',
     {
-      'text-primary border-primary bg-accent/30': isActiveTab && !isTabDisabled,
+      'text-[color:var(--accent,#2DD4BF)] border-[color:var(--accent,#2DD4BF)] bg-[color:var(--accent,#2DD4BF)]/15': isActiveTab && !isTabDisabled,
       'hover:text-primary': !isActiveTab && !isTabDisabled,
       'rounded-l': tabIndex % numColumns === 0,
       'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
@@ -446,7 +446,7 @@ const SidePanel = ({
   const getOpenStateComponent = () => {
     return (
       <>
-        <div className="bg-bkg-med border-border flex h-10 flex-shrink-0 select-none border-b p-2">
+        <div className="flex h-10 flex-shrink-0 select-none border-b border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] p-2">
           {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
         </div>
         <Separator
@@ -463,7 +463,7 @@ const SidePanel = ({
       className={classnames(
         className,
         baseClasses,
-        side === 'left' ? 'border-border border-r' : 'border-border border-l'
+        side === 'left' ? 'border-[color:var(--border-strong,#2A3A4A)] border-r' : 'border-[color:var(--border-strong,#2A3A4A)] border-l'
       )}
       style={style}
     >

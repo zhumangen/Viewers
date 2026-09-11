@@ -8,25 +8,26 @@ import { useIconPresentation } from '../../contextProviders/IconPresentationProv
 const baseClasses = '!rounded-md inline-flex items-center justify-center';
 const defaultClasses =
   'bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground';
-/* Teal outline active — matches reading-room mockup, less chrome noise than filled. */
+/* Zelvyn v2: denser teal outline active — stronger product cue vs stock OHIF. */
 const activeClasses =
-  'bg-accent text-highlight ring-1 ring-inset ring-highlight hover:!bg-accent/80';
-const toggledClasses = 'bg-transparent text-highlight hover:bg-muted';
+  'bg-[color:var(--accent,#2DD4BF)]/15 text-[color:var(--accent,#2DD4BF)] ring-2 ring-inset ring-[color:var(--accent,#2DD4BF)] hover:!bg-[color:var(--accent,#2DD4BF)]/25';
+const toggledClasses =
+  'bg-transparent text-[color:var(--accent,#2DD4BF)] ring-1 ring-inset ring-[color:var(--accent,#2DD4BF)]/60 hover:bg-muted';
 const disabledClasses =
   'text-muted-foreground hover:bg-muted opacity-40 cursor-not-allowed';
 
 const sizeClasses = {
   default: {
-    buttonSizeClass: 'w-9 h-9',
-    iconSizeClass: 'h-5 w-5',
+    buttonSizeClass: 'w-8 h-8',
+    iconSizeClass: 'h-4 w-4',
   },
   small: {
-    buttonSizeClass: 'w-8 h-8',
-    iconSizeClass: 'h-5 w-5',
+    buttonSizeClass: 'w-7 h-7',
+    iconSizeClass: 'h-4 w-4',
   },
   tiny: {
     buttonSizeClass: 'w-6 h-6',
-    iconSizeClass: 'h-4 w-4',
+    iconSizeClass: 'h-3.5 w-3.5',
   },
 };
 

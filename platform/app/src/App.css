@@ -2,3 +2,42 @@ body {
   overscroll-behavior: none;
   touch-action: none;
 }
+
+/* ─── Zelvyn shell v2 — product chrome overrides ─────────────────────────
+ * Aggressive layout cues so WorkList / Viewer do not read as stock OHIF.
+ * Tokens align with docs/ui-redesign/DESIGN.md.
+ */
+:root {
+  --zelvyn-accent: #2dd4bf;
+  --zelvyn-accent-muted: rgba(45, 212, 191, 0.18);
+  --zelvyn-bg-canvas: #0b0f14;
+  --zelvyn-bg-elevated: #12181f;
+  --zelvyn-bg-sidebar: #0e141b;
+}
+
+.zelvyn-shell {
+  background: var(--zelvyn-bg-canvas);
+  color: #e8eef4;
+}
+
+/* Stronger selected-row teal wash if CSS vars present */
+.zelvyn-shell [data-state='selected'] {
+  background-color: rgba(45, 212, 191, 0.12) !important;
+}
+
+/* Soften purple leftovers on common OHIF primary fills inside shell */
+.zelvyn-shell .bg-primary\/50,
+.zelvyn-shell .bg-primary\/40 {
+  background-color: var(--zelvyn-accent-muted) !important;
+}
+
+/* DataTable toolbar denser */
+.zelvyn-shell [class*='DataTable'] ,
+.zelvyn-shell .sticky.top-0 {
+  /* no-op safety — specific chrome uses data-chrome attrs */
+}
+
+[data-chrome='zelvyn-app-bar'],
+[data-chrome='zelvyn-viewer-navbar'] {
+  font-feature-settings: 'ss01' on, 'cv11' on;
+}

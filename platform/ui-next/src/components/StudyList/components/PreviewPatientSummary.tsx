@@ -75,10 +75,19 @@ function Patient({ className }: { className?: string } = {}) {
   const mrnTitle =
     typeof mrn === 'string' || typeof mrn === 'number' ? String(mrn) : undefined;
 
+  const isEmpty = !patientName;
   return (
-    <div className={cn('bg-card border-border/50 flex items-center gap-3 rounded-md border px-3 py-2.5', className)}>
+    <div
+      className={cn(
+        'flex items-center gap-3 rounded-lg border px-3 py-3',
+        isEmpty
+          ? 'border-dashed border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-canvas,#0B0F14)]/60'
+          : 'border-[color:var(--accent,#2DD4BF)]/25 bg-[color:var(--bg-elevated,#12181F)] shadow-[inset_3px_0_0_0_var(--accent,#2DD4BF)]',
+        className
+      )}
+    >
       <div
-        className="text-primary shrink-0"
+        className={cn('shrink-0', isEmpty ? 'text-muted-foreground/50' : 'text-primary')}
         aria-hidden
         style={{ width: 33, height: 33 }}
       >
@@ -86,14 +95,17 @@ function Patient({ className }: { className?: string } = {}) {
       </div>
       <div className="flex h-[38px] min-w-0 flex-col justify-center gap-px">
         <span
-          className="text-foreground truncate text-lg font-medium leading-tight"
+          className={cn(
+            'truncate text-base font-semibold leading-tight',
+            isEmpty ? 'text-muted-foreground' : 'text-foreground'
+          )}
           title={nameTitle}
         >
-          {nameContent}
+          {isEmpty ? 'No study selected' : nameContent}
         </span>
         {showMrn && (
           <span
-            className="text-muted-foreground truncate text-lg leading-tight"
+            className="text-muted-foreground truncate font-mono text-xs leading-tight"
             title={mrnTitle}
           >
             {mrn}

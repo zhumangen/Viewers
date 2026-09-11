@@ -171,15 +171,25 @@ export const defaultColumns: ColumnDef<StudyRow, unknown>[] = [
       }
       return (
         <div className="flex flex-wrap items-center gap-1">
-          {tokens.map(token => (
-            <Badge
-              key={token}
-              variant="default"
-              className="rounded-full px-1.5 py-0 text-xs leading-4"
-            >
-              {token}
-            </Badge>
-          ))}
+          {tokens.map(token => {
+            const tone =
+              token === 'CT'
+                ? 'border-[color:var(--accent,#2DD4BF)]/40 bg-[color:var(--accent,#2DD4BF)]/20 text-[color:var(--accent,#2DD4BF)]'
+                : token === 'MR'
+                  ? 'border-sky-400/30 bg-sky-400/15 text-sky-300'
+                  : token === 'PT'
+                    ? 'border-amber-400/30 bg-amber-400/15 text-amber-300'
+                    : 'border-transparent bg-primary/25 text-primary';
+            return (
+              <Badge
+                key={token}
+                variant="outline"
+                className={`rounded-full px-2 py-0 text-[11px] font-semibold leading-4 tracking-wide ${tone}`}
+              >
+                {token}
+              </Badge>
+            );
+          })}
         </div>
       );
     },

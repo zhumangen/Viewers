@@ -3,16 +3,14 @@ import { Icons, Button, Input } from '@ohif/ui-next';
 import { ProductBrand } from '../../components/ProductBrand';
 
 type WorkListAppBarProps = {
-  /** Current free-text search (patient / MRN / accession / description proxy). */
   searchValue?: string;
   onSearchChange?: (value: string) => void;
-  /** Optional right-side actions (upload, datasource config). */
   rightActions?: React.ReactNode;
 };
 
 /**
- * Top app bar for Study List — brand left, prominent search center, stubs right.
- * Matches mockup 02 chrome without changing query plumbing beyond patientName filter.
+ * Zelvyn Study List product app bar — brand left, large centered search (⌘K),
+ * account cluster right. Intentionally not the stock OHIF header pattern.
  */
 export function WorkListAppBar({
   searchValue = '',
@@ -29,16 +27,42 @@ export function WorkListAppBar({
     onSearchChange?.(local.trim());
   }, [local, onSearchChange]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const el = document.getElementById('zelvyn-worklist-search') as HTMLInputElement | null;
+        el?.focus();
+        el?.select();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
-    <header className="bg-card border-border z-20 flex h-12 shrink-0 items-center gap-3 border-b px-3">
-      <div className="flex min-w-[120px] shrink-0 items-center">
+    <header
+      className="relative z-30 flex h-14 shrink-0 items-center gap-4 border-b border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] px-4"
+      data-chrome="zelvyn-app-bar"
+    >
+      {/* Teal accent rail under the bar */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-[color:var(--accent,#2DD4BF)] to-transparent opacity-80"
+        aria-hidden
+      />
+
+      <div className="flex min-w-[132px] shrink-0 items-center gap-2">
         <ProductBrand variant="full" />
+        <span className="bg-primary/20 text-primary hidden rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider lg:inline">
+          Worklist
+        </span>
       </div>
 
-      <div className="mx-auto flex w-full max-w-xl flex-1 items-center">
-        <div className="bg-input border-border/80 relative flex h-9 w-full items-center rounded-full border px-3">
-          <Icons.Search className="text-muted-foreground mr-2 h-4 w-4 shrink-0" />
+      <div className="mx-auto flex w-full max-w-2xl flex-1 items-center">
+        <div className="relative flex h-10 w-full items-center rounded-full border border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-input,#161E27)] px-3.5 shadow-[inset_0_0_0_1px_rgba(45,212,191,0.08)] focus-within:border-[color:var(--accent,#2DD4BF)] focus-within:ring-2 focus-within:ring-[color:var(--accent,#2DD4BF)]/25">
+          <Icons.Search className="mr-2.5 h-4 w-4 shrink-0 text-[color:var(--accent,#2DD4BF)]" />
           <Input
+            id="zelvyn-worklist-search"
             value={local}
             onChange={e => setLocal(e.target.value)}
             onKeyDown={e => {
@@ -48,43 +72,49 @@ export function WorkListAppBar({
             }}
             onBlur={commit}
             placeholder="Search patients, MRN, accession, or description…"
-            className="placeholder:text-muted-foreground h-8 flex-1 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
+            className="h-9 flex-1 border-0 bg-transparent px-0 text-sm text-[color:var(--text-primary,#E8EEF4)] shadow-none placeholder:text-[color:var(--text-muted,#6B7A8A)] focus-visible:ring-0"
             aria-label="Search studies"
           />
-          <kbd className="text-muted-foreground pointer-events-none ml-2 hidden rounded border border-[color:var(--border-subtle)] px-1.5 py-0.5 text-[10px] font-medium sm:inline">
+          <kbd className="pointer-events-none ml-2 hidden rounded-md border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-canvas,#0B0F14)] px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--text-muted,#6B7A8A)] sm:inline">
             ⌘K
           </kbd>
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1.5">
         {rightActions}
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground h-8 w-8"
+          className="relative h-9 w-9 text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)]"
           aria-label="Notifications"
           type="button"
         >
           <Icons.NotificationInfo className="h-4 w-4" />
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground h-8 w-8"
+          className="h-9 w-9 text-[color:var(--text-secondary,#9AA8B6)] hover:text-[color:var(--accent,#2DD4BF)]"
           aria-label="Help"
           type="button"
         >
           <Icons.Info className="h-4 w-4" />
         </Button>
         <div
-          className="border-border ml-1 flex items-center gap-2 rounded-full border py-0.5 pl-0.5 pr-2"
+          className="ml-1 flex items-center gap-2 rounded-full border border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-input,#161E27)] py-0.5 pl-0.5 pr-2.5"
           title="User (stub — no auth)"
         >
-          <span className="bg-primary/25 text-primary inline-flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-semibold">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--accent,#2DD4BF)]/25 text-[11px] font-semibold text-[color:var(--accent,#2DD4BF)]">
             RA
           </span>
-          <span className="text-muted-foreground hidden text-xs sm:inline">Radiologist</span>
+          <div className="hidden flex-col leading-tight sm:flex">
+            <span className="text-xs font-medium text-[color:var(--text-primary,#E8EEF4)]">
+              Radiologist
+            </span>
+            <span className="text-[10px] text-[color:var(--text-muted,#6B7A8A)]">Admin</span>
+          </div>
         </div>
       </div>
     </header>

@@ -41,8 +41,9 @@ function PatientInfo({ showPatientInfo }) {
 
   return (
     <div
-      className="hover:bg-muted flex cursor-pointer items-center justify-center gap-1 rounded-md px-1.5 py-0.5"
+      className="hover:bg-[color:var(--accent,#2DD4BF)]/10 flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-input,#161E27)]/50 px-2 py-1"
       onClick={handleOnClick}
+      data-chrome="zelvyn-patient-meta"
     >
       {isMixedPatients ? (
         <Icons.MultiplePatients className="text-primary" />

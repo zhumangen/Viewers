@@ -114,7 +114,7 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
         <Item key={index} />
       ))}
     >
-      <div className="relative flex justify-center gap-0.5">
+      <div className="relative flex justify-center gap-px" data-chrome="zelvyn-toolbar">
         <Toolbar buttonSection="primary" />
       </div>
     </Header>

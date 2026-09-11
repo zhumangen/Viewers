@@ -1,21 +1,23 @@
+/* Zelvyn shell v2 — quieter first-run tour chrome (less stock Shepherd / OHIF look) */
 .shepherd-header {
-  @apply !bg-popover !w-[100%] !p-0;
+  @apply !bg-[color:var(--bg-elevated,#12181F)] !w-[100%] !p-0;
 }
 
 .shepherd-title {
-  @apply !text-highlight !w-[100%] !break-words !text-xl !leading-[1.5];
+  @apply !text-[color:var(--accent,#2DD4BF)] !w-[100%] !break-words !text-base !font-semibold !leading-[1.4];
 }
 
 .shepherd-content {
-  @apply flex flex-col gap-[8px] p-[12px];
+  @apply flex flex-col gap-[6px] p-[10px];
 }
 
 .shepherd-element {
-  @apply !bg-popover !max-w-[260px];
+  @apply !bg-[color:var(--bg-elevated,#12181F)] !max-w-[240px] !rounded-lg !border !border-[color:var(--border-strong,#2A3A4A)] !shadow-lg;
+  opacity: 0.96;
 }
 
 .shepherd-text {
-  @apply text-foreground !w-[100%] p-0 text-lg leading-normal;
+  @apply !text-[color:var(--text-secondary,#9AA8B6)] !w-[100%] p-0 text-sm leading-normal;
 }
 
 .shepherd-footer {
@@ -23,15 +25,15 @@
 }
 
 .shepherd-button {
-  @apply !text-foreground !inline-flex !h-[36px] !min-w-[62px] !flex-row !items-center !justify-center !gap-[5px] !whitespace-nowrap !rounded !bg-primary !px-[10px] !text-center !font-sans !text-[14px] !leading-[1.2] !outline-none !transition !duration-300 !ease-in-out focus:!outline-none;
+  @apply !inline-flex !h-[32px] !min-w-[56px] !flex-row !items-center !justify-center !gap-[5px] !whitespace-nowrap !rounded-md !bg-[color:var(--accent,#2DD4BF)] !px-[10px] !text-center !font-sans !text-[13px] !font-semibold !leading-[1.2] !text-[color:var(--text-inverse,#0B0F14)] !outline-none !transition !duration-200 !ease-in-out focus:!outline-none;
 }
 
 .shepherd-button.shepherd-button-secondary {
-  @apply !bg-transparent !text-primary;
+  @apply !bg-transparent !text-[color:var(--accent,#2DD4BF)];
 }
 
 .shepherd-arrow::before {
-  @apply !bg-popover !h-[30px] !w-[30px];
+  @apply !bg-[color:var(--bg-elevated,#12181F)] !h-[24px] !w-[24px];
 }
 
 .shepherd-element[data-popper-placement^='left'] > .shepherd-arrow {
@@ -39,10 +41,6 @@
   top: 6px !important;
 }
 
-.shepherd-element[data-popper-placement^='top'] > .shepherd-arrow {
-  bottom: 2px !important;
-}
-
-.shepherd-modal-overlay-container.shepherd-modal-is-visible {
-  @apply !opacity-70;
+.shepherd-modal-overlay-container {
+  opacity: 0.35 !important;
 }

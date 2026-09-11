@@ -7,7 +7,6 @@ import { useStudyListStateSync, useWorkListToolbarActions } from '../../hooks';
 
 import {
   StudyList,
-  InvestigationalUseDialog,
   useSessionStorage,
   COLUMN_IDS,
   type StudyRow,
@@ -153,7 +152,7 @@ export default function WorkList({
   );
 
   return (
-    <div className="bg-background flex h-screen min-h-0 flex-col overflow-hidden">
+    <div className="zelvyn-shell bg-background flex h-screen min-h-0 flex-col overflow-hidden" data-shell="zelvyn-v2">
       <WorkListAppBar
         searchValue={searchValue}
         onSearchChange={onSearchChange}
@@ -163,8 +162,11 @@ export default function WorkList({
         filters={filters}
         onClearAll={onClearAllFilters}
         onRemoveFilter={onRemoveFilter}
+        onFiltersChange={updater => {
+          setIsFilterPending(true);
+          setFilters(updater);
+        }}
       />
-      <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} />
       <div className="flex h-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col">
           <StudyList
@@ -200,8 +202,8 @@ export default function WorkList({
               onStudyDoubleClick={studyDoubleClickCommand ? onStudyDoubleClick : undefined}
               onSelectionChange={sel => setSelected((sel as StudyRow[])[0] ?? null)}
               toolbarLeftComponent={
-                <span className="text-muted-foreground pl-1 text-xs font-medium uppercase tracking-wide">
-                  Study List
+                <span className="text-foreground pl-1 text-xs font-semibold tracking-wide">
+                  Studies
                 </span>
               }
               toolbarRightActionsComponent={undefined}

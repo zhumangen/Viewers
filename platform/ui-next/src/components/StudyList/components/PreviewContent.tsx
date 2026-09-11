@@ -59,13 +59,25 @@ function PreviewContent({
     s => s.thumbnailStatus?.status === PreviewThumbnailStatusState.NotApplicable
   );
 
-  // Handle empty state when no study is provided
+  // Handle empty state when no study is provided — productized empty chrome
   if (!study) {
     return (
-      <PreviewPatientSummary>
-        <PreviewPatientSummary.Patient />
-        <PreviewPatientSummary.Workflows />
-      </PreviewPatientSummary>
+      <div className="flex h-full min-h-0 w-full flex-col gap-3">
+        <PreviewPatientSummary>
+          <PreviewPatientSummary.Patient />
+        </PreviewPatientSummary>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-canvas,#0B0F14)]/50 px-4 py-10 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--accent,#2DD4BF)]/10 text-[color:var(--accent,#2DD4BF)]">
+            <Icons.Series className="h-6 w-6" />
+          </div>
+          <div className="text-sm font-semibold text-[color:var(--text-primary,#E8EEF4)]">
+            Select a study
+          </div>
+          <div className="max-w-[220px] text-xs leading-relaxed text-[color:var(--text-muted,#6B7A8A)]">
+            Patient metadata and series cards will appear here when a row is selected.
+          </div>
+        </div>
+      </div>
     );
   }
 

@@ -68,8 +68,8 @@ function ViewportPane({
       {/* Border overlay — active teal outline, inactive subtle viewport border */}
       <div
         className={classNames('pointer-events-none absolute inset-0 rounded-sm border', {
-          'border-2 border-viewport-active': isActive,
-          'border-viewport-inactive group-hover/pane:border-highlight/40': !isActive,
+          'border-2 border-[color:var(--viewport-active,#2DD4BF)] shadow-[0_0_0_1px_rgba(45,212,191,0.35)]': isActive,
+          'border-viewport-inactive group-hover/pane:border-[color:var(--accent,#2DD4BF)]/40': !isActive,
           '!border-dashed !border-input': isHighlighted,
         })}
       />

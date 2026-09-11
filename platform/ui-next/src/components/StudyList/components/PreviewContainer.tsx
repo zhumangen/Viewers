@@ -32,7 +32,10 @@ function PreviewContainerRoot({ children }: PreviewContainerProps) {
   }
 
   return (
-    <div className="bg-bkg-med border-border/60 relative flex h-full w-full flex-col border-l">
+    <div
+      className="relative flex h-full w-full flex-col border-l border-[color:var(--border-strong,#2A3A4A)] bg-[color:var(--bg-sidebar,#0E141B)] shadow-[-8px_0_24px_rgba(0,0,0,0.35)]"
+      data-chrome="zelvyn-study-preview"
+    >
       {header}
       <div className="direction-y flex min-h-0 flex-1 px-3 pb-3 pt-2">{content}</div>
     </div>
