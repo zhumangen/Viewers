@@ -76,7 +76,7 @@ function Patient({ className }: { className?: string } = {}) {
     typeof mrn === 'string' || typeof mrn === 'number' ? String(mrn) : undefined;
 
   return (
-    <div className={cn('bg-muted flex items-center gap-3 rounded-lg px-4 py-3', className)}>
+    <div className={cn('bg-card border-border/50 flex items-center gap-3 rounded-md border px-3 py-2.5', className)}>
       <div
         className="text-primary shrink-0"
         aria-hidden
@@ -153,7 +153,7 @@ function Workflows({ className }: { className?: string } = {}) {
   return (
     <div
       className={cn(
-        'border-border/50 bg-muted w-full rounded-lg px-4 py-3 text-left transition',
+        'border-border/50 bg-card w-full rounded-md border px-3 py-2.5 text-left transition',
         className
       )}
     >

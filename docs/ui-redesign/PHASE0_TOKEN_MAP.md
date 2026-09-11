@@ -12,8 +12,8 @@ Theme presets in `platform/ui-next/src/themes/themes.css` still override `:root`
 | `--bg-canvas` | `#0B0F14` | `--bg-canvas`; `--background` → `213 29% 6%` | `bg-background`, `bkg-low` |
 | `--bg-elevated` | `#12181F` | `--bg-elevated`; `--card` / `--popover` → `212 27% 10%` | `bg-card`, `bg-popover`, `bkg-full` |
 | `--bg-sidebar` | `#0E141B` | `--bg-sidebar`; `--muted` → `212 32% 8%` | `bg-muted`, `bkg-med` |
-| `--bg-row-hover` | `rgba(94, 234, 212, 0.06)` | `--bg-row-hover` | Future WorkList row styles |
-| `--bg-row-selected` | `rgba(45, 212, 191, 0.12)` | `--bg-row-selected` | Future WorkList selection |
+| `--bg-row-hover` | `rgba(94, 234, 212, 0.06)` | `--bg-row-hover` | `bg-row-hover` (Phase 1 Study List) |
+| `--bg-row-selected` | `rgba(45, 212, 191, 0.12)` | `--bg-row-selected` | `bg-row-selected` (Phase 1 Study List) |
 | `--bg-input` | `#161E27` | `--bg-input`; `--input` → `212 28% 12%` | `bg-input` / `border-input` |
 | `--border-subtle` | `#1E2A36` | `--border-subtle`; `--border` → `210 29% 16%` | `border-border` |
 | `--border-strong` | `#2A3A4A` | `--border-strong`; `--neutral-dark` / `--secondary` | Secondary surfaces |

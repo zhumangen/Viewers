@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ScrollArea } from '../../ScrollArea';
 import { PreviewContent } from './PreviewContent';
 import { PreviewHeader } from './PreviewHeader';
 
@@ -33,9 +32,9 @@ function PreviewContainerRoot({ children }: PreviewContainerProps) {
   }
 
   return (
-    <div className="bg-background relative flex h-full w-full flex-col">
+    <div className="bg-bkg-med border-border/60 relative flex h-full w-full flex-col border-l">
       {header}
-      <div className="direction-y flex min-h-0 flex-1 pr-3 pb-3 pt-[15px]">{content}</div>
+      <div className="direction-y flex min-h-0 flex-1 px-3 pb-3 pt-2">{content}</div>
     </div>
   );
 }

@@ -106,6 +106,11 @@ module.exports = {
         med: 'var(--bg-sidebar)',
         full: 'var(--bg-elevated)',
       },
+      /* Phase 1 WorkList row states */
+      row: {
+        hover: 'var(--bg-row-hover)',
+        selected: 'var(--bg-row-selected)',
+      },
       info: {
         primary: 'var(--text-primary)',
         secondary: 'var(--text-secondary)',

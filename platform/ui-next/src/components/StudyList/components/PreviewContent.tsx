@@ -71,12 +71,12 @@ function PreviewContent({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="flex h-full min-h-0 w-full flex-col gap-3">
+      <div className="flex h-full min-h-0 w-full flex-col gap-2">
         <PreviewPatientSummary data={study}>
           <PreviewPatientSummary.Patient />
           <PreviewPatientSummary.Workflows />
         </PreviewPatientSummary>
-        <div className="text-muted-foreground flex h-5 w-full items-center justify-between gap-1 px-2 text-base">
+        <div className="text-muted-foreground flex h-5 w-full items-center justify-between gap-1 px-1 text-sm">
           <span className="leading-tight">
             {series?.length ? study?.description || 'No Description' : 'No Series'}
           </span>

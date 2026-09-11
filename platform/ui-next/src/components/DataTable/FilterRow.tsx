@@ -19,7 +19,7 @@ export function FilterRow<TData>({ excludeColumnIds = [], renderFilterCell }: Fi
   return (
     <TableRow
       data-filter-row
-      className="hover:bg-transparent"
+      className="bg-card hover:bg-card data-[state=selected]:bg-card data-[state=selected]:shadow-none"
     >
       {cols.map(col => {
         const id = col.id;

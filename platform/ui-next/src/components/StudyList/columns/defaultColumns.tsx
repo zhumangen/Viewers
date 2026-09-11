@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '../../DataTable';
 import type { ColumnMeta } from '../../DataTable/types';
 import { Icons } from '../../Icons';
+import { Badge } from '../../Badge';
 import type { StudyDateRangeFilter, StudyRow } from '../types/types';
 import { ActionCell } from '../components/ActionCell';
 import { tokenizeModalities } from '../utils/tokenizeModalities';
@@ -66,7 +67,9 @@ export const defaultColumns: ColumnDef<StudyRow, unknown>[] = [
       return r.patientName ?? '';
     },
     header: ({ column }) => <DataTable.ColumnHeader column={column} />,
-    cell: ({ row }) => <div className="truncate">{row.getValue(COLUMN_IDS.PATIENT)}</div>,
+    cell: ({ row }) => (
+      <div className="text-foreground truncate font-medium">{row.getValue(COLUMN_IDS.PATIENT)}</div>
+    ),
     meta: {
       label: 'Patient',
       headerClassName: 'min-w-[165px]',
@@ -82,7 +85,11 @@ export const defaultColumns: ColumnDef<StudyRow, unknown>[] = [
       return r.mrn ?? '';
     },
     header: ({ column }) => <DataTable.ColumnHeader column={column} />,
-    cell: ({ row }) => <div className="truncate">{row.getValue(COLUMN_IDS.MRN)}</div>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground truncate font-mono text-sm">
+        {row.getValue(COLUMN_IDS.MRN)}
+      </div>
+    ),
     meta: {
       label: 'MRN',
       headerClassName: 'min-w-[120px]',
@@ -156,7 +163,26 @@ export const defaultColumns: ColumnDef<StudyRow, unknown>[] = [
       return r.modalities ?? '';
     },
     header: ({ column }) => <DataTable.ColumnHeader column={column} />,
-    cell: ({ row }) => <div className="truncate">{row.getValue(COLUMN_IDS.MODALITIES)}</div>,
+    cell: ({ row }) => {
+      const raw = String(row.getValue(COLUMN_IDS.MODALITIES) ?? '');
+      const tokens = tokenizeModalities(raw);
+      if (!tokens.length) {
+        return <div className="text-muted-foreground/50 truncate">—</div>;
+      }
+      return (
+        <div className="flex flex-wrap items-center gap-1">
+          {tokens.map(token => (
+            <Badge
+              key={token}
+              variant="default"
+              className="rounded-full px-1.5 py-0 text-xs leading-4"
+            >
+              {token}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
     filterFn: (row, colId, filter) => {
       const selected = Array.isArray(filter) ? (filter as string[]) : [];
       if (!selected.length) {

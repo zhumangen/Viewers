@@ -145,9 +145,9 @@ function Table({
   const content = children ? (
     children
   ) : (
-    <div className="flex h-full min-h-0 w-full flex-col px-3 pb-3 pt-0">
+    <div className="bg-background flex h-full min-h-0 w-full flex-col px-2 pb-2 pt-0">
       <div className="min-h-0 flex-1">
-        <div className="h-full rounded-md px-2 pb-2 pt-0">
+        <div className="h-full rounded-md px-1 pb-1 pt-0">
           <StudyListTable
             columns={columns}
             data={data}
@@ -192,10 +192,11 @@ function Preview({
   }
   return (
     <>
-      <ResizableHandle />
+      <ResizableHandle className="bg-border/60 w-px" />
       <ResizablePanel
         defaultSize={defaultPreviewSizePercent}
         minSize={minSizePercent ?? minPreviewSizePercent}
+        className="bg-bkg-med"
       >
         {children}
       </ResizablePanel>

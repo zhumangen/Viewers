@@ -47,6 +47,7 @@ import {
 } from '../Table';
 import { ScrollArea } from '../ScrollArea';
 import { cn } from '../../lib/utils';
+import { Icons } from '../Icons';
 
 // Type for state update functions that accept either a value or an updater function
 type Updater<T> = T | ((prev: T) => T);
@@ -256,11 +257,11 @@ function Table<TData>({ children, className, tableClassName }: TableProps) {
   return (
     <div
       ref={wrapperRef}
-      className={cn('border-input/50 min-h-0 flex-1 rounded-md border', className)}
+      className={cn('border-border/60 bg-background min-h-0 flex-1 rounded-md border', className)}
     >
       <div className="flex h-full flex-col">
-        {/* Header + filter row */}
-        <div className="border-input/50 shrink-0 border-b">
+        {/* Header + filter row — sticky clinical filter bar */}
+        <div className="border-border/60 bg-card sticky top-0 z-[5] shrink-0 border-b">
           <BasicTable
             className={cn('table-fixed', tableClassName)}
             containerClassName="overflow-x-hidden"
@@ -309,7 +310,7 @@ function Header<TData>() {
             return (
               <BasicTableHead
                 key={header.id}
-                className={cn('bg-muted', headerClassName)}
+                className={cn('bg-card text-muted-foreground', headerClassName)}
                 aria-sort={
                   sortState === 'asc' ? 'ascending' : sortState === 'desc' ? 'descending' : 'none'
                 }
@@ -338,7 +339,7 @@ type BodyProps<TData> = {
   /**
    * Message shown when there are no rows to render.
    */
-  emptyMessage?: string;
+  emptyMessage?: ReactNode;
   /**
    * When true and there are no rows, show loadingComponent centered instead of emptyMessage.
    */
@@ -374,20 +375,25 @@ function Body<TData>({
   if (!rows.length) {
     if (isLoading && loadingComponent) {
       return (
-        <BasicTableRow className="hover:bg-transparent hover:text-inherit hover:[&>td]:text-inherit hover:[&>th]:text-inherit">
+        <BasicTableRow className="hover:bg-transparent hover:text-inherit hover:[&>td]:text-inherit hover:[&>th]:text-inherit data-[state=selected]:shadow-none">
           <BasicTableCell colSpan={table.getAllLeafColumns().length}>
-            <div className="flex h-full w-full items-center justify-center">{loadingComponent}</div>
+            <div className="text-muted-foreground flex h-full min-h-[12rem] w-full flex-col items-center justify-center gap-3">
+              {loadingComponent}
+            </div>
           </BasicTableCell>
         </BasicTableRow>
       );
     }
     return (
-      <BasicTableRow className="hover:bg-transparent hover:text-inherit hover:[&>td]:text-inherit hover:[&>th]:text-inherit">
+      <BasicTableRow className="hover:bg-transparent hover:text-inherit hover:[&>td]:text-inherit hover:[&>th]:text-inherit data-[state=selected]:shadow-none">
         <BasicTableCell
           colSpan={table.getAllLeafColumns().length}
-          className="!pt-10 text-center align-text-top"
+          className="text-center align-middle"
         >
-          {resolvedEmptyMessage}
+          <div className="text-muted-foreground flex min-h-[12rem] flex-col items-center justify-center gap-2 px-4 py-10">
+            <Icons.Search className="text-muted-foreground/50 h-8 w-8" aria-hidden />
+            <div className="text-foreground text-base font-medium">{resolvedEmptyMessage}</div>
+          </div>
         </BasicTableCell>
       </BasicTableRow>
     );
