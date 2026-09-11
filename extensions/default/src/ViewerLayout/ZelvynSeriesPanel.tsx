@@ -101,6 +101,11 @@ export function ZelvynSeriesPanel() {
   const { patientInfo } = usePatientInfo();
   const [cards, setCards] = useState<SeriesCard[]>([]);
   const [thumbnailMap, setThumbnailMap] = useState<Record<string, string>>({});
+  const [liveSlice, setLiveSlice] = useState<{
+    uid: string;
+    current: number;
+    total: number;
+  } | null>(null);
   const thumbInflight = useRef<Set<string>>(new Set());
   const thumbReady = useRef<Set<string>>(new Set());
 
@@ -140,6 +145,13 @@ export function ZelvynSeriesPanel() {
       // Cornerstone viewport may not be ready yet
     }
 
+    if (liveSlice?.uid) {
+      sliceByUid.set(liveSlice.uid, {
+        current: liveSlice.current,
+        total: liveSlice.total,
+      });
+    }
+
     const sets = (displaySetService.getActiveDisplaySets?.() || []).filter(
       (ds: any) => !ds?.unsupported && !ds?.excludeFromThumbnailBrowser
     );
@@ -154,6 +166,7 @@ export function ZelvynSeriesPanel() {
     activeViewportId,
     cornerstoneViewportService,
     thumbnailMap,
+    liveSlice,
   ]);
 
   useEffect(() => {
@@ -170,6 +183,116 @@ export function ZelvynSeriesPanel() {
   useEffect(() => {
     refresh();
   }, [activeViewportId, viewports, refresh]);
+
+  // Live n/m on the selected series card while the active viewport scrolls.
+  // Uses cornerstone element events (string names — no @cornerstonejs/core import).
+  useEffect(() => {
+    if (!activeViewportId || !cornerstoneViewportService) {
+      return;
+    }
+
+    const SLICE_EVENTS = [
+      'CORNERSTONE_STACK_NEW_IMAGE',
+      'CORNERSTONE_VOLUME_NEW_IMAGE',
+      'CORNERSTONE_STACK_VIEWPORT_SCROLL',
+      'VOLUME_VIEWPORT_SCROLL',
+      'CORNERSTONE_CAMERA_MODIFIED',
+    ];
+
+    let raf = 0;
+    let element: HTMLElement | null = null;
+
+    const readSlice = (event?: any) => {
+      try {
+        const csVp = cornerstoneViewportService.getCornerstoneViewport?.(activeViewportId);
+        if (!csVp || typeof csVp.getCurrentImageIdIndex !== 'function') {
+          return;
+        }
+        const detail = event?.detail || {};
+        const idxRaw =
+          detail.newImageIdIndex ?? detail.imageIdIndex ?? detail.imageIndex;
+        const idx =
+          typeof idxRaw === 'number' ? idxRaw : csVp.getCurrentImageIdIndex();
+        const total =
+          typeof csVp.getNumberOfSlices === 'function'
+            ? csVp.getNumberOfSlices()
+            : 0;
+        const activeVp =
+          typeof viewports?.get === 'function'
+            ? viewports.get(activeViewportId)
+            : viewports?.[activeViewportId];
+        const uid = activeVp?.displaySetInstanceUIDs?.[0];
+        if (!uid) {
+          return;
+        }
+        const next = { uid, current: (idx ?? 0) + 1, total: total || 0 };
+        setLiveSlice(prev =>
+          prev &&
+          prev.uid === next.uid &&
+          prev.current === next.current &&
+          prev.total === next.total
+            ? prev
+            : next
+        );
+      } catch {
+        // Viewport may be mid-rebuild
+      }
+    };
+
+    const onSliceEvent = (event: Event) => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
+      raf = requestAnimationFrame(() => readSlice(event));
+    };
+
+    const detach = () => {
+      if (!element) {
+        return;
+      }
+      SLICE_EVENTS.forEach(name => element!.removeEventListener(name, onSliceEvent));
+      element = null;
+    };
+
+    const attach = () => {
+      const csVp = cornerstoneViewportService.getCornerstoneViewport?.(activeViewportId);
+      const next = (csVp?.element as HTMLElement) || null;
+      if (!next) {
+        return false;
+      }
+      if (element === next) {
+        readSlice();
+        return true;
+      }
+      detach();
+      element = next;
+      SLICE_EVENTS.forEach(name => element!.addEventListener(name, onSliceEvent));
+      readSlice();
+      return true;
+    };
+
+    attach();
+    const sub = cornerstoneViewportService.subscribe?.(
+      cornerstoneViewportService.EVENTS?.VIEWPORT_DATA_CHANGED,
+      ({ viewportId }: { viewportId?: string }) => {
+        if (viewportId && viewportId !== activeViewportId) {
+          return;
+        }
+        attach();
+      }
+    );
+    const retryTimer = window.setTimeout(() => attach(), 120);
+
+    return () => {
+      window.clearTimeout(retryTimer);
+      sub?.unsubscribe?.();
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
+      detach();
+    };
+  }, [activeViewportId, viewports, cornerstoneViewportService]);
+
 
   // Load thumbnails via OHIF StudyBrowser pattern (getThumbnailSrc / middle imageId).
   useEffect(() => {

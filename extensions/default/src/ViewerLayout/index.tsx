@@ -119,8 +119,8 @@ function ViewerLayout({
   }, [hangingProtocolService]);
 
   const fillUnusedIntoEmpty = useCallback(() => {
-    // Layout set is async (setTimeout 0 in setViewportGridLayout); retry while
-    // empties exist and unused series may still be registering.
+    // Layout set is async; retry while empties exist — unique series or MPR
+    // reconstructability may still be settling.
     const attempt = (triesLeft: number) => {
       const result = fillEmptyViewportsWithUnusedSeries({
         viewportGridService,
@@ -130,20 +130,15 @@ function ViewerLayout({
       if (result.filled > 0) {
         return;
       }
-      // No empty cells yet (layout still settling) → retry.
-      if (result.empty === 0 && triesLeft > 0) {
-        window.setTimeout(() => attempt(triesLeft - 1), 50);
+      if (result.empty === 0) {
         return;
       }
-      // Empties exist but no unused image series → honest single-series leftover.
-      if (result.candidates === 0) {
-        return;
-      }
+      // Empties remain: retry briefly for late display sets / isReconstructable.
       if (triesLeft > 0) {
         window.setTimeout(() => attempt(triesLeft - 1), 50);
       }
     };
-    attempt(10);
+    attempt(12);
   }, [viewportGridService, displaySetService, commandsManager]);
 
   // Default to 2x2 viewport grid once viewports are ready (design mockup),

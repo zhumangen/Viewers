@@ -1,25 +1,71 @@
+import React from 'react';
+
 /**
  * Zelvyn viewport overlays — denser mockup layout:
- *   top-left: light series cue
+ *   top-left: stacked-layers glyph (mockup)
  *   top-right: W / L
  *   bottom-left: Slice n/m
  *   bottom-right: thickness mm
  * L/R markers remain ViewportOrientationMarkers (unchanged).
+ *
+ * Top-left omits inheritsFrom so contentF is rendered as React (SVG), not
+ * stringified through ohif.overlayItem / formatValue.
  */
 export default {
   'viewportOverlay.topLeft': [
     {
-      id: 'SeriesDescription',
-      inheritsFrom: 'ohif.overlayItem',
-      label: '',
-      title: 'Series',
-      condition: ({ referenceInstance, displaySet }) =>
-        !!(referenceInstance?.SeriesDescription || displaySet?.SeriesDescription),
-      contentF: ({ referenceInstance, displaySet }) => {
-        const desc =
-          referenceInstance?.SeriesDescription || displaySet?.SeriesDescription || '';
-        return desc.length > 28 ? `${desc.slice(0, 28)}…` : desc;
-      },
+      id: 'ZelvynStackGlyph',
+      title: 'Series stack',
+      condition: () => true,
+      contentF: () => (
+        <div
+          className="overlay-item zelvyn-stack-glyph flex items-center"
+          title="Series stack"
+          data-cy="zelvyn-stack-glyph"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden
+            className="opacity-90"
+          >
+            {/* Three slanted stacked squares — mockup top-left cue */}
+            <rect
+              x="3.2"
+              y="1.2"
+              width="8.2"
+              height="5.2"
+              rx="0.6"
+              transform="rotate(-12 3.2 1.2)"
+              stroke="currentColor"
+              strokeWidth="1.15"
+            />
+            <rect
+              x="2.4"
+              y="4.2"
+              width="8.2"
+              height="5.2"
+              rx="0.6"
+              transform="rotate(-12 2.4 4.2)"
+              stroke="currentColor"
+              strokeWidth="1.15"
+            />
+            <rect
+              x="1.6"
+              y="7.2"
+              width="8.2"
+              height="5.2"
+              rx="0.6"
+              transform="rotate(-12 1.6 7.2)"
+              stroke="currentColor"
+              strokeWidth="1.15"
+            />
+          </svg>
+        </div>
+      ),
     },
   ],
   'viewportOverlay.topRight': [
