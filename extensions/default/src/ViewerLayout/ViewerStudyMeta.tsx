@@ -16,7 +16,8 @@ type ViewerStudyMetaProps = {
 };
 
 /**
- * Center meta for ZelvynViewerChrome — patient + green check + study + Basic pills.
+ * Center meta for ZelvynViewerChrome — patient + green check + study label + Basic pills.
+ * Study label prefers StudyDescription, else "CT Chest"-style Modality + body/series.
  */
 export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
   const { extensionManager } = useSystem();
@@ -30,7 +31,14 @@ export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
   const name = isMixedPatients
     ? 'Multiple Patients'
     : ellipsis(patientInfo.PatientName, 28) || 'Patient';
-  const study = ellipsis(patientInfo.StudyDescription, 36);
+
+  const studyLabel =
+    ellipsis(patientInfo.StudyLabel, 40) ||
+    ellipsis(patientInfo.StudyDescription, 40) ||
+    ellipsis(
+      [patientInfo.Modality, patientInfo.SeriesDescription].filter(Boolean).join(' '),
+      40
+    );
 
   return (
     <div
@@ -52,19 +60,33 @@ export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
         <Icons.MultiplePatients className="h-4 w-4 shrink-0 text-[color:var(--accent,#2DD4BF)]" />
       )}
 
-      {study ? (
+      {studyLabel ? (
         <>
           <span
-            className="hidden h-4 w-px shrink-0 bg-[color:var(--border-subtle,#1E2A36)] sm:inline"
+            className="h-4 w-px shrink-0 bg-[color:var(--border-subtle,#1E2A36)]"
             aria-hidden
           />
-          <span className="hidden truncate text-[12px] text-[color:var(--text-secondary,#9AA8B6)] sm:inline">
-            {study}
+          <span
+            className="truncate text-[12px] font-medium text-[color:var(--text-secondary,#9AA8B6)]"
+            title={patientInfo.StudyDescription || studyLabel}
+            data-cy="zelvyn-study-label"
+          >
+            {studyLabel}
+          </span>
+        </>
+      ) : patientInfo.Modality ? (
+        <>
+          <span
+            className="h-4 w-px shrink-0 bg-[color:var(--border-subtle,#1E2A36)]"
+            aria-hidden
+          />
+          <span className="text-[12px] font-medium text-[color:var(--text-secondary,#9AA8B6)]">
+            {patientInfo.Modality}
           </span>
         </>
       ) : null}
 
-      {/* Mode pills — active (teal dot) + secondary solid (mockup) */}
+      {/* Mode pills — active teal-dot + secondary solid */}
       <span className="ml-1 inline-flex items-center gap-1.5">
         <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/70 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />

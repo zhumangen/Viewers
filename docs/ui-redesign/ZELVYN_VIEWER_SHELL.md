@@ -18,6 +18,14 @@
 └───────────────────────────────────────────────────────────────────┘
 ```
 
+## Polish (visual)
+
+| Item | Approach |
+|------|----------|
+| Study label in top bar | `usePatientInfo` builds `StudyLabel` (StudyDescription → Modality+BodyPart/Series) |
+| Viewport overlays | `viewportOverlayCustomization`: W/L top-right, Slice n/m bottom-left, mm bottom-right |
+| Series cards | denser name / resolution / thickness / slice progress + teal selected border |
+
 ## Closed vs prior gaps
 
 | Gap | Status |

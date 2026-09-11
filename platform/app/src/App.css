@@ -77,15 +77,23 @@ body {
 }
 
 /*
- * Viewport overlays — denser, quieter toward mockup (W/L · Slice · mm).
- * Keep OHIF overlay wiring; only tighten type + spacing.
+ * Viewport overlays — mockup density: W/L top-right, Slice + mm bottom.
+ * L/R markers come from ViewportOrientationMarkers (unchanged).
  */
-[data-shell='zelvyn-viewer'] .viewport-overlay,
-[data-shell='zelvyn-viewer'] [data-cy='viewport-overlay'] {
+[data-shell='zelvyn-viewer'] .viewport-overlay {
   font-size: 11px !important;
-  line-height: 1.25 !important;
+  line-height: 1.2 !important;
   letter-spacing: 0.01em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  max-width: 42%;
+}
+
+[data-shell='zelvyn-viewer'] .viewport-overlay .overlay-item {
+  margin-bottom: 1px;
+}
+
+[data-shell='zelvyn-viewer'] .viewport-overlay span {
+  font-variant-numeric: tabular-nums;
 }
 
 [data-shell='zelvyn-viewer'] .viewport-overlay button,
@@ -93,4 +101,13 @@ body {
   min-height: 0 !important;
   padding: 0 2px !important;
   font-size: 11px !important;
+}
+
+/* Orientation markers — slightly quieter to match mockup */
+[data-shell='zelvyn-viewer'] .ViewportOrientationMarkers,
+[data-shell='zelvyn-viewer'] .orientation-marker {
+  font-size: 12px !important;
+  font-weight: 500;
+  opacity: 0.85;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
