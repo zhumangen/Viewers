@@ -20,6 +20,13 @@ provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF
   📰 <a href="https://ohif.org/news/"><strong>Join OHIF Newsletter</strong></a> 📰
 </div>
 
+## Customization / 定制化开发
+
+- **[Customization guide (简体中文)](docs/customization/README.md)** — OHIF Viewers **3.x** (React monorepo): extensions, modes, app config, services, build/deploy, tests, syncing with [OHIF/Viewers](https://github.com/OHIF/Viewers)
+- **[Index (EN + 中文入口)](docs/customization/INDEX.md)**
+
+> Note: the historical Meteor-era tree lives on the `legacy-meteor` branch; 3.x customization targets `master` aligned with upstream.
+
 
 
 <hr />
