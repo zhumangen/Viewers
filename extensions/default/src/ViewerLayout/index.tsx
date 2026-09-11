@@ -7,6 +7,8 @@ import ViewerHeader from './ViewerHeader';
 import ZelvynToolRail from './ZelvynToolRail';
 import ZelvynSeriesPanel from './ZelvynSeriesPanel';
 import ZelvynStatusBar from './ZelvynStatusBar';
+import { ZelvynChromeProvider } from './ZelvynChromeContext';
+import ZelvynMeasurementsDrawer from './ZelvynMeasurementsDrawer';
 import { fillEmptyViewportsWithUnusedSeries } from './fillEmptyViewports';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
 import { Onboarding, ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@ohif/ui-next';
@@ -233,6 +235,7 @@ function ViewerLayout({
   const viewportComponents = viewports.map(getViewportComponentData);
 
   return (
+    <ZelvynChromeProvider>
     <div
       className="zelvyn-shell flex h-screen flex-col overflow-hidden"
       data-shell="zelvyn-viewer"
@@ -305,11 +308,13 @@ function ViewerLayout({
               </>
             ) : null}
           </ResizablePanelGroup>
+          <ZelvynMeasurementsDrawer />
         </React.Fragment>
       </div>
       <ZelvynStatusBar />
       <Onboarding tours={customizationService.getCustomization('ohif.tours')} />
     </div>
+    </ZelvynChromeProvider>
   );
 }
 

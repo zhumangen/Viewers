@@ -111,3 +111,46 @@ body {
   opacity: 0.85;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
+
+
+/* ---- Zelvyn layout picker + menus (dismiss stock LayoutSelector look) ---- */
+/* zelvyn-layout-picker */
+.zelvyn-layout-picker {
+  min-width: 200px;
+}
+
+.zelvyn-layout-menu,
+.zelvyn-shell [data-radix-popper-content-wrapper] [data-chrome='zelvyn-layout-picker'] {
+  background: var(--zelvyn-bg-elevated, #12181f) !important;
+  color: var(--text-primary, #e8eef4);
+}
+
+/* Skin stock LayoutSelector if it still appears (popover portal) */
+.zelvyn-shell ~ div [data-radix-popper-content-wrapper] .bg-popover,
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .bg-popover {
+  background: var(--zelvyn-bg-elevated, #12181f) !important;
+  border: 1px solid var(--zelvyn-border, #1e2a36) !important;
+  color: #e8eef4;
+}
+
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .bg-muted {
+  background: var(--zelvyn-bg-sidebar, #0e141b) !important;
+  border-color: var(--zelvyn-border, #1e2a36) !important;
+}
+
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .bg-primary,
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .bg-accent {
+  background-color: var(--zelvyn-accent, #2dd4bf) !important;
+}
+
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .text-muted-foreground {
+  color: #6b7a8a !important;
+}
+
+body:has(.zelvyn-shell) [data-radix-popper-content-wrapper] .text-foreground {
+  color: #e8eef4 !important;
+}
+
+[data-chrome='zelvyn-measurements-drawer'] .bg-background {
+  background: transparent !important;
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   DropdownMenu,
@@ -8,6 +8,7 @@ import {
   Icons,
 } from '@ohif/ui-next';
 import { ViewerStudyMeta } from './ViewerStudyMeta';
+import { ZelvynLayoutPicker } from './ZelvynLayoutPicker';
 
 const BRAND_NAME = 'Zelvyn';
 const LOGO_MARK_SRC = '/assets/zelvyn/logo-mark.png';
@@ -16,12 +17,6 @@ type MenuOption = {
   title: string;
   icon?: string;
   onClick: () => void;
-};
-
-type LayoutOption = {
-  label: string;
-  numRows: number;
-  numCols: number;
 };
 
 type ZelvynViewerChromeProps = {
@@ -133,13 +128,6 @@ function IconHelp({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
-const LAYOUTS: LayoutOption[] = [
-  { label: '1 × 1', numRows: 1, numCols: 1 },
-  { label: '1 × 2', numRows: 1, numCols: 2 },
-  { label: '2 × 2', numRows: 2, numCols: 2 },
-  { label: '2 × 3', numRows: 2, numCols: 3 },
-];
-
 /**
  * Zelvyn product chrome — mockup top bar:
  * brand+title | patient+check+study+Basic pills | monitor·hanger·calendar·⚙·?·⏻
@@ -154,6 +142,7 @@ export function ZelvynViewerChrome({
   studyDateLabel,
 }: ZelvynViewerChromeProps) {
   const aboutOption = menuOptions.find(o => /about/i.test(o.title));
+  const [layoutOpen, setLayoutOpen] = useState(false);
 
   return (
     <header
@@ -204,7 +193,7 @@ export function ZelvynViewerChrome({
         data-chrome="zelvyn-header-utils"
       >
         {/* Monitor / display layout */}
-        <DropdownMenu>
+        <DropdownMenu open={layoutOpen} onOpenChange={setLayoutOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -217,15 +206,12 @@ export function ZelvynViewerChrome({
               <IconMonitor />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {LAYOUTS.map(layout => (
-              <DropdownMenuItem
-                key={layout.label}
-                onSelect={() => onSelectLayout?.(layout)}
-              >
-                {layout.label}
-              </DropdownMenuItem>
-            ))}
+          <DropdownMenuContent
+            align="end"
+            className="zelvyn-layout-menu border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] p-0 shadow-xl"
+            onCloseAutoFocus={e => e.preventDefault()}
+          >
+            <ZelvynLayoutPicker onAfterSelect={() => setLayoutOpen(false)} />
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -273,7 +259,10 @@ export function ZelvynViewerChrome({
               <Icons.GearSettings className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent
+            align="end"
+            className="border-[color:var(--border-subtle,#1E2A36)] bg-[color:var(--bg-elevated,#12181F)] text-[color:var(--text-primary,#E8EEF4)]"
+          >
             {menuOptions.map((option, index) => (
               <DropdownMenuItem
                 key={index}
