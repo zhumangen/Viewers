@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Icons } from '@ohif/ui-next';
 import { useSystem } from '@ohif/core';
 import usePatientInfo from '../hooks/usePatientInfo';
@@ -17,12 +17,33 @@ type ViewerStudyMetaProps = {
 
 /**
  * Center meta for ZelvynViewerChrome — patient + green check + study label + Basic pills.
- * Study label prefers StudyDescription, else "CT Chest"-style Modality + body/series.
+ *
+ * Pills are intentional chrome (active mode + secondary context), not a live mode
+ * switcher: mid-viewer mode/route changes require a full navigate + mode teardown
+ * in OHIF and would be a large rewrite. Secondary pill shows study modality when
+ * known, otherwise the active hanging-protocol name / "Default".
  */
 export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
-  const { extensionManager } = useSystem();
+  const { extensionManager, servicesManager } = useSystem();
   const { showPatientInfo } = extensionManager.appConfig;
   const { patientInfo, isMixedPatients } = usePatientInfo();
+  const hangingProtocolService = servicesManager?.services?.hangingProtocolService;
+
+  const secondaryPill = useMemo(() => {
+    if (patientInfo.Modality) {
+      return String(patientInfo.Modality).toUpperCase();
+    }
+    try {
+      const active = hangingProtocolService?.getActiveProtocol?.();
+      const name = active?.protocol?.name || active?.protocol?.id;
+      if (name && String(name).toLowerCase() !== 'default') {
+        return String(name);
+      }
+    } catch {
+      // HP may not be ready
+    }
+    return 'Default';
+  }, [patientInfo.Modality, hangingProtocolService]);
 
   if (showPatientInfo === PatientInfoVisibility.DISABLED) {
     return null;
@@ -86,14 +107,21 @@ export function ViewerStudyMeta({ modeLabel = 'Basic' }: ViewerStudyMetaProps) {
         </>
       ) : null}
 
-      {/* Mode pills — active teal-dot + secondary solid */}
-      <span className="ml-1 inline-flex items-center gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/70 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]">
+      {/* Mode pills — active = current mode; secondary = modality/protocol context (not clickable) */}
+      <span
+        className="ml-1 inline-flex items-center gap-1.5"
+        title="Mode pills are decorative: switching OHIF modes mid-viewer needs a full route remount"
+        data-chrome="zelvyn-mode-pills"
+      >
+        <span
+          className="inline-flex items-center gap-1 rounded-full border border-[color:var(--accent,#2DD4BF)]/70 bg-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--accent,#2DD4BF)]"
+          aria-current="true"
+        >
           <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent,#2DD4BF)]" />
           {modeLabel}
         </span>
         <span className="inline-flex items-center rounded-full bg-[color:var(--bg-input,#161E27)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--text-secondary,#9AA8B6)] ring-1 ring-[color:var(--border-strong,#2A3A4A)]">
-          {modeLabel}
+          {secondaryPill}
         </span>
       </span>
     </div>

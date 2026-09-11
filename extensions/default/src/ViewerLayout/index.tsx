@@ -7,6 +7,7 @@ import ViewerHeader from './ViewerHeader';
 import ZelvynToolRail from './ZelvynToolRail';
 import ZelvynSeriesPanel from './ZelvynSeriesPanel';
 import ZelvynStatusBar from './ZelvynStatusBar';
+import { fillEmptyViewportsWithUnusedSeries } from './fillEmptyViewports';
 import SidePanelWithServices from '../Components/SidePanelWithServices';
 import { Onboarding, ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@ohif/ui-next';
 import useResizablePanels from './ResizablePanelsHook';
@@ -33,8 +34,13 @@ function ViewerLayout({
 }: withAppTypes): React.FunctionComponent {
   const [appConfig] = useAppConfig();
 
-  const { panelService, hangingProtocolService, customizationService, viewportGridService } =
-    servicesManager.services;
+  const {
+    panelService,
+    hangingProtocolService,
+    customizationService,
+    viewportGridService,
+    displaySetService,
+  } = servicesManager.services;
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(appConfig.showLoadingIndicator);
   const appliedDefaultGrid = useRef(false);
 
@@ -112,7 +118,36 @@ function ViewerLayout({
     };
   }, [hangingProtocolService]);
 
-  // Default to 2x2 viewport grid once viewports are ready (design mockup).
+  const fillUnusedIntoEmpty = useCallback(() => {
+    // Layout set is async (setTimeout 0 in setViewportGridLayout); retry while
+    // empties exist and unused series may still be registering.
+    const attempt = (triesLeft: number) => {
+      const result = fillEmptyViewportsWithUnusedSeries({
+        viewportGridService,
+        displaySetService,
+        commandsManager,
+      });
+      if (result.filled > 0) {
+        return;
+      }
+      // No empty cells yet (layout still settling) → retry.
+      if (result.empty === 0 && triesLeft > 0) {
+        window.setTimeout(() => attempt(triesLeft - 1), 50);
+        return;
+      }
+      // Empties exist but no unused image series → honest single-series leftover.
+      if (result.candidates === 0) {
+        return;
+      }
+      if (triesLeft > 0) {
+        window.setTimeout(() => attempt(triesLeft - 1), 50);
+      }
+    };
+    attempt(10);
+  }, [viewportGridService, displaySetService, commandsManager]);
+
+  // Default to 2x2 viewport grid once viewports are ready (design mockup),
+  // then fill empty cells with unused series when multiple display sets exist.
   useEffect(() => {
     if (!viewportGridService) {
       return;
@@ -127,8 +162,10 @@ function ViewerLayout({
       if (layout && layout.numRows === 1 && layout.numCols === 1) {
         appliedDefaultGrid.current = true;
         commandsManager.run('setViewportGridLayout', { numRows: 2, numCols: 2 });
+        fillUnusedIntoEmpty();
       } else if (layout && (layout.numRows > 1 || layout.numCols > 1)) {
         appliedDefaultGrid.current = true;
+        fillUnusedIntoEmpty();
       }
     };
 
@@ -140,13 +177,33 @@ function ViewerLayout({
         const layout = state?.layout;
         if (layout && (layout.numRows !== 1 || layout.numCols !== 1)) {
           appliedDefaultGrid.current = true;
+          fillUnusedIntoEmpty();
         }
       }),
     ];
     // Attempt once in case VIEWPORTS_READY already fired.
     apply();
     return () => subs.forEach(s => s.unsubscribe());
-  }, [viewportGridService, commandsManager]);
+  }, [viewportGridService, commandsManager, fillUnusedIntoEmpty]);
+
+  // When more series arrive after the grid is already 2×2, fill remaining empties.
+  useEffect(() => {
+    if (!displaySetService) {
+      return;
+    }
+    const onSets = () => {
+      if (!appliedDefaultGrid.current) {
+        return;
+      }
+      fillUnusedIntoEmpty();
+    };
+    const { EVENTS } = displaySetService;
+    const subs = [
+      displaySetService.subscribe(EVENTS.DISPLAY_SETS_ADDED, onSets),
+      displaySetService.subscribe(EVENTS.DISPLAY_SETS_CHANGED, onSets),
+    ];
+    return () => subs.forEach(s => s.unsubscribe());
+  }, [displaySetService, fillUnusedIntoEmpty]);
 
   const getViewportComponentData = viewportComponent => {
     const { entry } = getComponent(viewportComponent.namespace);

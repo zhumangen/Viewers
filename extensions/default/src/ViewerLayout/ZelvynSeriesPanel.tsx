@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSystem } from '@ohif/core';
 import { useViewportGrid, Icons, cn } from '@ohif/ui-next';
+import { thumbnailNoImageModalities } from '@ohif/core/src/utils/thumbnailNoImageModalities';
 import usePatientInfo from '../hooks/usePatientInfo';
+import getImageSrcFromImageId from '../Panels/getImageSrcFromImageId';
 
 type SeriesCard = {
   displaySetInstanceUID: string;
@@ -15,6 +17,8 @@ type SeriesCard = {
   isActive: boolean;
   /** Current slice (1-based) when series is in a viewport */
   currentSlice?: number;
+  thumbnailSrc?: string | null;
+  noImage?: boolean;
 };
 
 function formatThickness(raw: string | number | undefined | null): string | null {
@@ -25,10 +29,39 @@ function formatThickness(raw: string | number | undefined | null): string | null
   return Number.isFinite(n) ? `${n.toFixed(1)} mm` : `${raw} mm`;
 }
 
+function getImageIdForThumbnail(displaySet: any, imageIds: string[]) {
+  if (!imageIds?.length) {
+    return undefined;
+  }
+  if (displaySet.isDynamicVolume) {
+    const timePoints = displaySet.dynamicVolumeInfo?.timePoints;
+    if (!timePoints?.length) {
+      return imageIds[Math.floor(imageIds.length / 2)];
+    }
+    const middleIndex = Math.floor(timePoints.length / 2);
+    const middleTimePointImageIds = timePoints[middleIndex];
+    return middleTimePointImageIds[Math.floor(middleTimePointImageIds.length / 2)];
+  }
+  return imageIds[Math.floor(imageIds.length / 2)];
+}
+
+function createGetImageSrc(extensionManager: any) {
+  try {
+    const utilities = extensionManager.getModuleEntry(
+      '@ohif/extension-cornerstone.utilityModule.common'
+    );
+    const { cornerstone } = utilities.exports.getCornerstoneLibraries();
+    return getImageSrcFromImageId.bind(null, cornerstone);
+  } catch {
+    return null;
+  }
+}
+
 function mapDisplaySet(
   ds: any,
   activeUIDs: Set<string>,
-  sliceByUid: Map<string, { current: number; total: number }>
+  sliceByUid: Map<string, { current: number; total: number }>,
+  thumbnailSrc?: string | null
 ): SeriesCard {
   const instance = ds?.instances?.[0] || ds?.instance || {};
   const rows = instance.Rows || ds.rows;
@@ -36,30 +69,49 @@ function mapDisplaySet(
   const thickness = instance.SliceThickness ?? ds.SliceThickness;
   const numInstances = ds.numImageFrames || ds.instances?.length || 0;
   const sliceInfo = sliceByUid.get(ds.displaySetInstanceUID);
+  const modality = ds.Modality || instance.Modality || '';
+  const noImage =
+    thumbnailNoImageModalities.includes(modality) ||
+    ds?.unsupported ||
+    ds.thumbnailSrc === null;
   return {
     displaySetInstanceUID: ds.displaySetInstanceUID,
     seriesNumber: ds.SeriesNumber ?? instance.SeriesNumber ?? '—',
     description: ds.SeriesDescription || instance.SeriesDescription || ds.label || 'Series',
-    modality: ds.Modality || instance.Modality || '',
+    modality,
     numInstances,
     rows,
     columns,
     sliceThickness: thickness,
     isActive: activeUIDs.has(ds.displaySetInstanceUID),
     currentSlice: sliceInfo?.current,
+    thumbnailSrc: thumbnailSrc ?? ds.thumbnailSrc ?? null,
+    noImage,
   };
 }
 
 /**
- * Right Series panel — denser mockup cards + footer totals from real display sets.
+ * Right Series panel — denser mockup cards with StudyBrowser-style thumbnails.
  */
 export function ZelvynSeriesPanel() {
-  const { servicesManager, commandsManager } = useSystem();
+  const { servicesManager, commandsManager, extensionManager } = useSystem();
   const { displaySetService, hangingProtocolService, uiNotificationService, cornerstoneViewportService } =
     servicesManager.services;
   const [{ activeViewportId, viewports, isHangingProtocolLayout }] = useViewportGrid();
   const { patientInfo } = usePatientInfo();
   const [cards, setCards] = useState<SeriesCard[]>([]);
+  const [thumbnailMap, setThumbnailMap] = useState<Record<string, string>>({});
+  const thumbInflight = useRef<Set<string>>(new Set());
+  const thumbReady = useRef<Set<string>>(new Set());
+
+  const getImageSrc = useMemo(() => createGetImageSrc(extensionManager), [extensionManager]);
+  const dataSource = useMemo(() => {
+    try {
+      return extensionManager.getActiveDataSource()?.[0];
+    } catch {
+      return null;
+    }
+  }, [extensionManager]);
 
   const refresh = useCallback(() => {
     const activeUIDs = new Set<string>();
@@ -69,7 +121,6 @@ export function ZelvynSeriesPanel() {
       (vp?.displaySetInstanceUIDs || []).forEach((uid: string) => activeUIDs.add(uid));
     });
 
-    // Current slice for active viewport's display sets (Map from useViewportGrid)
     try {
       const csVp = cornerstoneViewportService?.getCornerstoneViewport?.(activeViewportId);
       if (csVp && typeof csVp.getCurrentImageIdIndex === 'function') {
@@ -92,8 +143,18 @@ export function ZelvynSeriesPanel() {
     const sets = (displaySetService.getActiveDisplaySets?.() || []).filter(
       (ds: any) => !ds?.unsupported && !ds?.excludeFromThumbnailBrowser
     );
-    setCards(sets.map((ds: any) => mapDisplaySet(ds, activeUIDs, sliceByUid)));
-  }, [displaySetService, viewports, activeViewportId, cornerstoneViewportService]);
+    setCards(
+      sets.map((ds: any) =>
+        mapDisplaySet(ds, activeUIDs, sliceByUid, thumbnailMap[ds.displaySetInstanceUID])
+      )
+    );
+  }, [
+    displaySetService,
+    viewports,
+    activeViewportId,
+    cornerstoneViewportService,
+    thumbnailMap,
+  ]);
 
   useEffect(() => {
     refresh();
@@ -110,9 +171,77 @@ export function ZelvynSeriesPanel() {
     refresh();
   }, [activeViewportId, viewports, refresh]);
 
-  // Slice progress on cards updates when viewports/active set change (live
-  // index also shown in viewport overlays). Avoid importing @cornerstonejs/core
-  // from extension-default.
+  // Load thumbnails via OHIF StudyBrowser pattern (getThumbnailSrc / middle imageId).
+  useEffect(() => {
+    if (!getImageSrc || !dataSource || !displaySetService) {
+      return;
+    }
+
+    const loadForSets = () => {
+      const sets = (displaySetService.getActiveDisplaySets?.() || []).filter(
+        (ds: any) => !ds?.unsupported && !ds?.excludeFromThumbnailBrowser
+      );
+
+      sets.forEach(async (dSet: any) => {
+        const uid = dSet.displaySetInstanceUID;
+        if (!uid || thumbReady.current.has(uid) || thumbInflight.current.has(uid)) {
+          return;
+        }
+
+        const displaySet = displaySetService.getDisplaySetByUID(uid) || dSet;
+        const modality = displaySet.Modality || '';
+        if (
+          thumbnailNoImageModalities.includes(modality) ||
+          displaySet.thumbnailSrc === null
+        ) {
+          thumbReady.current.add(uid);
+          return;
+        }
+
+        if (displaySet.thumbnailSrc) {
+          thumbReady.current.add(uid);
+          setThumbnailMap(prev =>
+            prev[uid] ? prev : { ...prev, [uid]: displaySet.thumbnailSrc }
+          );
+          return;
+        }
+
+        thumbInflight.current.add(uid);
+        try {
+          let thumbnailSrc: string | null = null;
+          if (displaySet.getThumbnailSrc) {
+            thumbnailSrc = await displaySet.getThumbnailSrc({ getImageSrc });
+          }
+          if (!thumbnailSrc) {
+            const imageIds = dataSource.getImageIdsForDisplaySet?.(displaySet) || [];
+            const imageId = getImageIdForThumbnail(displaySet, imageIds);
+            if (imageId) {
+              thumbnailSrc = await getImageSrc(imageId);
+            }
+          }
+          if (thumbnailSrc) {
+            displaySet.thumbnailSrc = thumbnailSrc;
+            thumbReady.current.add(uid);
+            setThumbnailMap(prev =>
+              prev[uid] === thumbnailSrc ? prev : { ...prev, [uid]: thumbnailSrc }
+            );
+          }
+        } catch {
+          // Thumbnail generation can fail for some SOP classes; keep card text-only.
+        } finally {
+          thumbInflight.current.delete(uid);
+        }
+      });
+    };
+
+    loadForSets();
+    const { EVENTS } = displaySetService;
+    const subs = [
+      displaySetService.subscribe(EVENTS.DISPLAY_SETS_ADDED, loadForSets),
+      displaySetService.subscribe(EVENTS.DISPLAY_SETS_CHANGED, loadForSets),
+    ];
+    return () => subs.forEach(s => s.unsubscribe());
+  }, [displaySetService, dataSource, getImageSrc]);
 
   const totals = useMemo(() => {
     const seriesCount = cards.length;
@@ -207,6 +336,7 @@ export function ZelvynSeriesPanel() {
                   ? `${total}/${total}`
                   : null;
             const countLabel = card.isActive && card.currentSlice ? card.currentSlice : total || '—';
+            const thumb = card.thumbnailSrc || thumbnailMap[card.displaySetInstanceUID];
 
             return (
               <button
@@ -225,13 +355,35 @@ export function ZelvynSeriesPanel() {
               >
                 <span
                   className={cn(
-                    'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[10px] font-semibold',
+                    'relative mt-0.5 h-10 w-10 shrink-0 overflow-hidden rounded border',
                     card.isActive
-                      ? 'bg-[color:var(--accent,#2DD4BF)]/20 text-[color:var(--accent,#2DD4BF)]'
-                      : 'bg-[color:var(--bg-input,#161E27)] text-[color:var(--text-secondary,#9AA8B6)]'
+                      ? 'border-[color:var(--accent,#2DD4BF)]/50'
+                      : 'border-[color:var(--border-subtle,#1E2A36)]',
+                    'bg-[color:var(--bg-input,#161E27)]'
                   )}
                 >
-                  {card.seriesNumber}
+                  {thumb && !card.noImage ? (
+                    <img
+                      src={thumb}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span
+                      className={cn(
+                        'flex h-full w-full items-center justify-center text-[10px] font-semibold',
+                        card.isActive
+                          ? 'text-[color:var(--accent,#2DD4BF)]'
+                          : 'text-[color:var(--text-secondary,#9AA8B6)]'
+                      )}
+                    >
+                      {card.modality || card.seriesNumber}
+                    </span>
+                  )}
+                  <span className="absolute bottom-0 left-0 rounded-tr bg-black/65 px-0.5 font-mono text-[8px] leading-tight text-white/90">
+                    {card.seriesNumber}
+                  </span>
                 </span>
                 <span className="min-w-0 flex-1 leading-snug">
                   <span className="block truncate text-[12px] font-semibold text-[color:var(--text-primary,#E8EEF4)]">
